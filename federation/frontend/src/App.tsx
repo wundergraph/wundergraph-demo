@@ -49,8 +49,6 @@ const WunderGraphStream = () => {
   )
 }
 
-// curl  -H 'Content-Type: '
-
 const XMLHttpRequestStream = () => {
   const [state,setState] = useState<string>("");
   useEffect(() => {

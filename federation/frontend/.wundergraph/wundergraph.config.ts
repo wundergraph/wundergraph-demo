@@ -10,30 +10,10 @@ const federatedApi = introspect.federation({
     ]
 });
 
-/*
-uncomment this section to create an API from an OpenAPI Specification
-
-const openAPI = introspect.openApi({
-    source: {
-        kind: "file",
-        filePath: "my_api_oas.json"
-    },
-});*/
-
-/*
-uncomment this section to create an API from a GraphQL upstream
-
-const graphQLAPI = introspect.graphql({
-    source: IntrospectionPolicy.Network,
-    url: "http://localhost:4000",
-});*/
-
 const myApplication = new Application({
     name: "app",
     apis: [
         federatedApi,
-        /*openAPI,
-        graphQLAPI*/
     ],
 });
 
