@@ -57,10 +57,10 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@wundergraph/sdk@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.0.5.tgz#69a066566535f8f4baf9661f72e9906b37ef65ab"
-  integrity sha512-Vs52BPV5IVg6lkACxxI5ERKT0lvUn+hZNE1OPqjubBA+51nHdWbKQQpqD32+WJYIg/te1lKy2DUa3LUgFLE6sw==
+"@wundergraph/sdk@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.0.6.tgz#9b0caa962773e67212ee18b56c125c7df705ae15"
+  integrity sha512-yIdbnWlmDkCPHBxgscEuDrKSQCBaAOwrOuWmxQjnj0KGa7IMdvWPn1+4lKFbwY8yinAcltnef0x49guLp3dD+Q==
   dependencies:
     "@graphql-tools/merge" "^6.2.6"
     "@types/chokidar" "^2.1.3"

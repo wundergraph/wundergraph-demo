@@ -114,7 +114,8 @@ export class Client {
 					return;
 				}
 
-				const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+				const reader = response.body.getReader();
+				const decoder = new TextDecoder();
 
 				let message: string = "";
 
@@ -122,7 +123,7 @@ export class Client {
 					const { value, done } = await reader.read();
 					if (done) break;
 					if (!value) continue;
-					message += value;
+					message += decoder.decode(value);
 					if (message.endsWith("\n\n")) {
 						cb({
 							status: "ok",
