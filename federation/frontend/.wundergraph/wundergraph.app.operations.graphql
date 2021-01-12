@@ -1,0 +1,27 @@
+query Me {
+    me {
+        id
+        name
+        username
+    }
+}
+
+subscription UpdatedPrices {
+    updatedPrice {
+        upc
+        name
+        price
+        reviews {
+            id
+            body
+        }
+    }
+}
+
+mutation SetPrice($upc: String!  $price: Int!) {
+    setPrice(upc: $upc, price: $price){
+        upc
+        name
+        price
+    }
+}

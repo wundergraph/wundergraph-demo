@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "app": {
+      "name": "app",
+      "schemaPath": "wundergraph.app.schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "app": {
+            "introspect": false,
+            "url": "http://localhost:9991/app",
+            "headers": {
+              "user-agent": "WunderGraph Client"
+            }
+          }
+        }
+      }
+    }
+  }
+}

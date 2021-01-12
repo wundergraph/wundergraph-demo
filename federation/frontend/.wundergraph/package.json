@@ -1,0 +1,16 @@
+{
+  "name": "wundergraph-application",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "develop": "ts-node-dev --respawn --transpile-only --experimental-modules --quiet wundergraph.config.ts",
+    "deploy": "ts-node wundergraph.config.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.3",
+    "@wundergraph/sdk": "0.0.5"
+  }
+}
