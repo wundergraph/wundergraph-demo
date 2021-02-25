@@ -1,4 +1,10 @@
-import { MeResponse, UpdatedPricesResponse, SetPriceInput, SetPriceResponse } from "./models";
+import {
+	TopProductsResponse,
+	FakeProductsInput,
+	FakeProductsResponse,
+	OasUsersResponse,
+	PriceUpdatesResponse,
+} from "./models";
 
 export type Response<T> = ResponseOK<T> | Loading | Aborted | Error;
 
@@ -39,31 +45,37 @@ export class Client {
 	private readonly baseURL: string = "http://localhost:9991";
 	private readonly applicationID: string = "app";
 	public query = {
-		Me: async (options: RequestOptions) => {
-			return await this.doFetch<MeResponse>({
+		TopProducts: async (options: RequestOptions) => {
+			return await this.doFetch<TopProductsResponse>({
 				method: "GET",
-				path: "Me",
+				path: "TopProducts",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});
 		},
-	};
-	public mutation = {
-		SetPrice: async (options: RequestOptions<SetPriceInput>) => {
-			return await this.doFetch<SetPriceResponse>({
-				method: "POST",
-				path: "SetPrice",
+		FakeProducts: async (options: RequestOptions<FakeProductsInput>) => {
+			return await this.doFetch<FakeProductsResponse>({
+				method: "GET",
+				path: "FakeProducts",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		OasUsers: async (options: RequestOptions) => {
+			return await this.doFetch<OasUsersResponse>({
+				method: "GET",
+				path: "OasUsers",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});
 		},
 	};
 	public subscription = {
-		UpdatedPrices: (options: RequestOptions, cb: (response: Response<UpdatedPricesResponse>) => void) => {
-			return this.startSubscription<UpdatedPricesResponse>(
+		PriceUpdates: (options: RequestOptions, cb: (response: Response<PriceUpdatesResponse>) => void) => {
+			return this.startSubscription<PriceUpdatesResponse>(
 				{
 					method: "GET",
-					path: "UpdatedPrices",
+					path: "PriceUpdates",
 					input: options.input,
 					abortSignal: options.abortSignal,
 				},
@@ -73,14 +85,18 @@ export class Client {
 	};
 	private doFetch = async <T>(fetchConfig: FetchConfig): Promise<Response<T>> => {
 		try {
-			const params = this.queryString({
-				v: fetchConfig.input,
-			});
+			const params =
+				fetchConfig.method !== "POST"
+					? this.queryString({
+							v: fetchConfig.input,
+					  })
+					: "";
+			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
 			const response = await fetch(this.baseURL + "/" + this.applicationID + "/" + fetchConfig.path + params, {
 				headers: {
 					Accept: "application/json",
-					"Content-Type": "application/vnd.wundergraph.com",
 				},
+				body,
 				method: fetchConfig.method,
 				signal: fetchConfig.abortSignal,
 			});

@@ -1,0 +1,445 @@
+{
+  "api": {
+    "enableGraphqlEndpoint": true,
+    "name": "app",
+    "operations": [
+      {
+        "content": "query TopProducts {\n  topProducts {\n    upc\n    name\n    price\n  }\n}",
+        "name": "TopProducts",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "mock": {
+          "enabled": false,
+          "endpoint": "",
+          "subscriptionPollingIntervalMillis": -1
+        }
+      },
+      {
+        "content": "query FakeProducts($first: Int!) {\n  topProducts(first: $first) {\n    upc\n    name\n    price\n  }\n}",
+        "name": "FakeProducts",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{\"first\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"first\"]}",
+        "operationType": 0,
+        "mock": {
+          "enabled": true,
+          "endpoint": "http://localhost:9992/FakeProducts",
+          "subscriptionPollingIntervalMillis": -1
+        }
+      },
+      {
+        "content": "query OasUsers {\n  getUsers {\n    country_code\n    id\n    name\n  }\n}",
+        "name": "OasUsers",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"getUsers\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"country_code\":{\"type\":\"string\"},\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "mock": {
+          "enabled": true,
+          "endpoint": "http://localhost:9992/OasUsers",
+          "subscriptionPollingIntervalMillis": -1
+        }
+      },
+      {
+        "content": "subscription PriceUpdates {\n  updatedPrice {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n    }\n  }\n}",
+        "name": "PriceUpdates",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"updatedPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"reviews\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"id\"]}}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false,\"required\":[\"updatedPrice\"]}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 2,
+        "mock": {
+          "enabled": false,
+          "endpoint": "",
+          "subscriptionPollingIntervalMillis": -1
+        }
+      }
+    ],
+    "engineConfiguration": {
+      "defaultFlushInterval": 500,
+      "graphqlSchema": "type User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Query {\n  me: User\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n",
+      "datasourceConfigurations": [
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4001/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Query @extends {\n  me: User\n}\n\ntype User @key(fields: \"id\") {\n  id: ID!\n  name: String\n  username: String\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "me"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id",
+                "name",
+                "username"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id",
+                "name",
+                "username"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4002/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Review @key(fields: \"id\") {\n  id: ID!\n  body: String\n  author: User @provides(fields: \"username\")\n  product: Product\n}\n\ntype User @extends @key(fields: \"id\") {\n  id: ID! @external\n  username: String @external\n  reviews: [Review]\n}\n\ntype Product @extends @key(fields: \"upc\") {\n  upc: String! @external\n  reviews: [Review]\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Review",
+              "fieldNames": [
+                "id",
+                "body",
+                "author",
+                "product"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "reviews"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "reviews"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Review",
+              "fieldNames": [
+                "id",
+                "body",
+                "author",
+                "product"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4003/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Query @extends {\n  topProducts(first: Int = 5): [Product]\n}\n\ntype Product @key(fields: \"upc\") {\n  upc: String!\n  name: String\n  price: Int\n  weight: Int\n}\n\ntype Subscription @extends {\n  updatedPrice: Product!\n}\n\ntype Mutation @extends {\n  setPrice(upc: String!, price: Int!): Product\n}"
+            },
+            "subscription": {
+              "enabled": true,
+              "url": "ws://localhost:4003/graphql"
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "topProducts"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc",
+                "name",
+                "price",
+                "weight"
+              ]
+            },
+            {
+              "typeName": "Subscription",
+              "fieldNames": [
+                "updatedPrice"
+              ]
+            },
+            {
+              "typeName": "Mutation",
+              "fieldNames": [
+                "setPrice"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc",
+                "name",
+                "price",
+                "weight"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4004/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Product @extends @key(fields: \"upc\") {\n    upc: String! @external\n    weight: Int @external\n    price: Int @external\n    inStock: Boolean\n    shippingEstimate: Int @requires(fields: \"price weight\")\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "inStock",
+                "shippingEstimate"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "getUsers"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "http://localhost:8881/users",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "getUsersUserId"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "http://localhost:8881/users/{{ .arguments.user_id }}",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        }
+      ],
+      "fieldConfigurations": [
+        {
+          "typeName": "User",
+          "fieldName": "reviews",
+          "requiresFields": [
+            "id"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "reviews",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "topProducts",
+          "argumentsConfiguration": [
+            {
+              "name": "first",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Mutation",
+          "fieldName": "setPrice",
+          "argumentsConfiguration": [
+            {
+              "name": "upc",
+              "sourceType": 1,
+              "sourcePath": []
+            },
+            {
+              "name": "price",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "inStock",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "shippingEstimate",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "getUsers",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "getUsersUserId",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        }
+      ]
+    },
+    "corsConfiguration": {
+      "allowCredentials": true,
+      "allowedHeaders": [
+        "*"
+      ],
+      "allowedMethods": [
+        "GET",
+        "POST"
+      ],
+      "allowedOrigins": [
+        "*"
+      ],
+      "exposedHeaders": [
+        "*"
+      ],
+      "maxAge": 120
+    }
+  }
+}

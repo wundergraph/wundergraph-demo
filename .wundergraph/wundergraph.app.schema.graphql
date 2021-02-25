@@ -1,13 +1,15 @@
-type Query {
-  me: User
-  topProducts(first: Int = 5): [Product]
-}
-
 type User {
   id: ID!
   name: String
   username: String
   reviews: [Review]
+}
+
+type Query {
+  me: User
+  topProducts(first: Int = 5): [Product]
+  getUsers: [OasUser]
+  getUsersUserId(user_id: Int!): OasUser
 }
 
 type Review {
@@ -33,4 +35,10 @@ type Mutation {
 
 type Subscription {
   updatedPrice: Product!
+}
+
+type OasUser {
+  id: Int
+  name: String
+  country_code: String
 }

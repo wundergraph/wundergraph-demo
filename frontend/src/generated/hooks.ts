@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { WunderGraphContext } from "./provider";
 import { RequestOptions, Response } from "./client";
-import { SetPriceInput } from "./models";
+import { FakeProductsInput } from "./models";
 
 export const useWunderGraph = () => {
 	const ctx = useContext(WunderGraphContext);
@@ -68,22 +68,23 @@ const Subscription = <R, I>(
 };
 
 export const useQuery = {
-	Me: () => {
+	TopProducts: () => {
 		const { client } = useWunderGraph();
-		return Query(client.query.Me);
+		return Query(client.query.TopProducts);
 	},
-};
-
-export const useMutation = {
-	SetPrice: (input: SetPriceInput) => {
+	FakeProducts: (input: FakeProductsInput) => {
 		const { client } = useWunderGraph();
-		return Query(client.mutation.SetPrice, { input });
+		return Query(client.query.FakeProducts, { input });
+	},
+	OasUsers: () => {
+		const { client } = useWunderGraph();
+		return Query(client.query.OasUsers);
 	},
 };
 
 export const useSubscription = {
-	UpdatedPrices: () => {
+	PriceUpdates: () => {
 		const { client } = useWunderGraph();
-		return Subscription(client.subscription.UpdatedPrices);
+		return Subscription(client.subscription.PriceUpdates);
 	},
 };
