@@ -1,15 +1,15 @@
-type User {
-  id: ID!
-  name: String
-  username: String
-  reviews: [Review]
-}
-
 type Query {
   me: User
   topProducts(first: Int = 5): [Product]
   getUsers: [OasUser]
   getUsersUserId(user_id: Int!): OasUser
+}
+
+type User {
+  id: ID!
+  name: String
+  username: String
+  reviews: [Review]
 }
 
 type Review {

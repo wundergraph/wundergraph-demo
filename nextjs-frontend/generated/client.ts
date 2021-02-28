@@ -4,9 +4,11 @@ import {
 	FakeProductsResponse,
 	OasUsersResponse,
 	PriceUpdatesResponse,
+	SetPriceInput,
+	SetPriceResponse,
 } from "./models";
 
-export type Response<T> = ResponseOK<T> | Loading | Aborted | Error;
+export type Response<T> = ResponseOK<T> | Refetch<T> | Loading | Aborted | Error | None;
 
 export interface ResponseOK<T> {
 	status: "ok";
@@ -15,6 +17,10 @@ export interface ResponseOK<T> {
 
 export interface Loading {
 	status: "loading";
+}
+
+export interface Refetch<T> extends ResponseOK<T> {
+	refetching: true;
 }
 
 export interface Aborted {
@@ -26,6 +32,10 @@ export interface Error {
 	message: string;
 }
 
+export interface None {
+	status: "none";
+}
+
 interface FetchConfig {
 	method: "GET" | "POST";
 	path: string;
@@ -33,9 +43,15 @@ interface FetchConfig {
 	abortSignal?: AbortSignal;
 }
 
-export interface RequestOptions<T = never> {
-	input?: T;
+export interface MutateRequestOptions<Input = never> {
+	input?: Input;
 	abortSignal?: AbortSignal;
+}
+
+export interface RequestOptions<Input = never, InitialState = never> {
+	input?: Input;
+	abortSignal?: AbortSignal;
+	initialState?: InitialState;
 }
 
 export class Client {
@@ -65,6 +81,16 @@ export class Client {
 			return await this.doFetch<OasUsersResponse>({
 				method: "GET",
 				path: "OasUsers",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+	};
+	public mutation = {
+		SetPrice: async (options: RequestOptions<SetPriceInput>) => {
+			return await this.doFetch<SetPriceResponse>({
+				method: "POST",
+				path: "SetPrice",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});

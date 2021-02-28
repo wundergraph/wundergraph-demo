@@ -2,6 +2,11 @@ export interface FakeProductsInput {
 	first: number;
 }
 
+export interface SetPriceInput {
+	upc: string;
+	price: number;
+}
+
 export interface TopProductsResponse {
 	data?: {
 		topProducts?: {
@@ -42,6 +47,16 @@ export interface PriceUpdatesResponse {
 				id: string;
 				body?: string;
 			}[];
+		};
+	};
+}
+
+export interface SetPriceResponse {
+	data?: {
+		setPrice?: {
+			upc: string;
+			name?: string;
+			price?: number;
 		};
 	};
 }

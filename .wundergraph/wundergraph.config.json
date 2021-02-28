@@ -50,11 +50,23 @@
           "endpoint": "",
           "subscriptionPollingIntervalMillis": -1
         }
+      },
+      {
+        "content": "mutation SetPrice($upc: String!, $price: Int!) {\n  setPrice(upc: $upc, price: $price) {\n    upc\n    name\n    price\n  }\n}",
+        "name": "SetPrice",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"setPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\",\"price\"]}",
+        "operationType": 1,
+        "mock": {
+          "enabled": false,
+          "endpoint": "",
+          "subscriptionPollingIntervalMillis": -1
+        }
       }
     ],
     "engineConfiguration": {
       "defaultFlushInterval": 500,
-      "graphqlSchema": "type User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Query {\n  me: User\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n",
+      "graphqlSchema": "type Query {\n  me: User\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n}\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n",
       "datasourceConfigurations": [
         {
           "kind": 2,

@@ -4,6 +4,8 @@ import {
 	FakeProductsResponse,
 	OasUsersResponse,
 	PriceUpdatesResponse,
+	SetPriceInput,
+	SetPriceResponse,
 } from "./models";
 
 export interface appMockConfig {
@@ -12,7 +14,9 @@ export interface appMockConfig {
 		FakeProducts?: (input: FakeProductsInput) => FakeProductsResponse | undefined;
 		OasUsers?: () => OasUsersResponse | undefined;
 	};
-	mutations?: {};
+	mutations?: {
+		SetPrice?: (input: SetPriceInput) => SetPriceResponse | undefined;
+	};
 	subscriptions?: {
 		PriceUpdates?: () => PriceUpdatesResponse | undefined;
 	};

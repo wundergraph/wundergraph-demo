@@ -37,6 +37,8 @@ const myApplication = new Application({
     ],
 });
 
+const randomInt = (max: number) => Math.floor(Math.random() * Math.floor(max)) + 1
+
 const mock = appMock({
     queries: {
         FakeProducts: (input) => {
@@ -45,7 +47,7 @@ const mock = appMock({
                     topProducts: [
                         {
                             name: "foo",
-                            price: input.first,
+                            price: randomInt(100),
                             upc: "bar",
                         }
                     ]
@@ -81,7 +83,13 @@ configureWunderGraphApplication({
                 ...templates.typescript.react,
             ],
             // create-react-app expects all code to be inside /src
-            path: "../frontend/src/generated",
+            path: "../vitejs-react/src/generated",
+        },
+        {
+            templates: [
+                ...templates.typescript.react,
+            ],
+            path: "../nextjs-frontend/generated"
         }
     ],
     mock,

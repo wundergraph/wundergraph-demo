@@ -5,7 +5,7 @@ import {useQuery, useSubscription} from './generated/hooks'
 function App() {
   const updates = useSubscription.PriceUpdates();
   const topProducts = useQuery.TopProducts();
-  const fakeProducts = useQuery.FakeProducts({first: 10});
+  const fakeProducts = useQuery.FakeProducts({input: {first: 10}});
   return (
     <div className="App">
       <h2>TopProducts</h2>
