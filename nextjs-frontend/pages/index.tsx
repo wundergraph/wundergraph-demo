@@ -12,6 +12,7 @@ const IndexPage: NextPage<Props> = ({products}) => {
     const {mutate: setPrice, response: price} = useMutation.SetPrice({price: 0, upc: "1"});
     const priceUpdate = useSubscription.PriceUpdates();
     const oasUsers = useQuery.OasUsers();
+    const countries = useQuery.Countries();
     return (
         <div>
             <h1>
@@ -45,6 +46,12 @@ const IndexPage: NextPage<Props> = ({products}) => {
             </h2>
             <p>
                 {JSON.stringify(oasUsers)}
+            </p>
+            <h2>
+                Countries
+            </h2>
+            <p>
+                {JSON.stringify(countries)}
             </p>
         </div>
     )

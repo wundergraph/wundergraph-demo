@@ -6,6 +6,7 @@ import {
 	PriceUpdatesResponse,
 	SetPriceInput,
 	SetPriceResponse,
+	CountriesResponse,
 } from "./models";
 
 export type Response<T> = ResponseOK<T> | Refetch<T> | Loading | Aborted | Error | None;
@@ -81,6 +82,14 @@ export class Client {
 			return await this.doFetch<OasUsersResponse>({
 				method: "GET",
 				path: "OasUsers",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		Countries: async (options: RequestOptions) => {
+			return await this.doFetch<CountriesResponse>({
+				method: "GET",
+				path: "Countries",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});

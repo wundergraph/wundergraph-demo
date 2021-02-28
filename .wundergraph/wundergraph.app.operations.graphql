@@ -45,3 +45,10 @@ mutation SetPrice($upc: String! $price: Int!) {
         price
     }
 }
+
+query Countries {
+    countries {
+        code
+        name
+    }
+}

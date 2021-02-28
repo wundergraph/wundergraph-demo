@@ -60,3 +60,12 @@ export interface SetPriceResponse {
 		};
 	};
 }
+
+export interface CountriesResponse {
+	data?: {
+		countries: {
+			code: string;
+			name: string;
+		}[];
+	};
+}

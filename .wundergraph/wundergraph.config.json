@@ -62,11 +62,23 @@
           "endpoint": "",
           "subscriptionPollingIntervalMillis": -1
         }
+      },
+      {
+        "content": "query Countries {\n  countries {\n    code\n    name\n  }\n}",
+        "name": "Countries",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"countries\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"code\",\"name\"]}}},\"additionalProperties\":false,\"required\":[\"countries\"]}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "mock": {
+          "enabled": false,
+          "endpoint": "",
+          "subscriptionPollingIntervalMillis": -1
+        }
       }
     ],
     "engineConfiguration": {
       "defaultFlushInterval": 500,
-      "graphqlSchema": "type Query {\n  me: User\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n}\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n",
+      "graphqlSchema": "directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE\n\ntype Query {\n  me: User\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n  continents(filter: ContinentFilterInput): [Continent!]!\n  continent(code: ID!): Continent\n  countries(filter: CountryFilterInput): [Country!]!\n  country(code: ID!): Country\n  languages(filter: LanguageFilterInput): [Language!]!\n  language(code: ID!): Language\n}\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n\ninput ContinentFilterInput {\n  code: StringQueryOperatorInput\n}\n\ninput StringQueryOperatorInput {\n  eq: String\n  ne: String\n  in: [String]\n  nin: [String]\n  regex: String\n  glob: String\n}\n\ntype Continent {\n  code: ID!\n  name: String!\n  countries: [Country!]!\n}\n\ntype Country {\n  code: ID!\n  name: String!\n  native: String!\n  phone: String!\n  continent: Continent!\n  capital: String\n  currency: String\n  languages: [Language!]!\n  emoji: String!\n  emojiU: String!\n  states: [State!]!\n}\n\ntype Language {\n  code: ID!\n  name: String\n  native: String\n  rtl: Boolean!\n}\n\ntype State {\n  code: String\n  name: String!\n  country: Country!\n}\n\ninput CountryFilterInput {\n  code: StringQueryOperatorInput\n  currency: StringQueryOperatorInput\n  continent: StringQueryOperatorInput\n}\n\ninput LanguageFilterInput {\n  code: StringQueryOperatorInput\n}\n\nenum CacheControlScope {\n  PUBLIC\n  PRIVATE\n}\n\nscalar Upload\n",
       "datasourceConfigurations": [
         {
           "kind": 2,
@@ -334,6 +346,83 @@
             }
           },
           "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "https://countries.trevorblades.com/",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": false,
+              "serviceSdl": ""
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "continents",
+                "continent",
+                "countries",
+                "country",
+                "languages",
+                "language"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Continent",
+              "fieldNames": [
+                "code",
+                "name",
+                "countries"
+              ]
+            },
+            {
+              "typeName": "Country",
+              "fieldNames": [
+                "code",
+                "name",
+                "native",
+                "phone",
+                "continent",
+                "capital",
+                "currency",
+                "languages",
+                "emoji",
+                "emojiU",
+                "states"
+              ]
+            },
+            {
+              "typeName": "Language",
+              "fieldNames": [
+                "code",
+                "name",
+                "native",
+                "rtl"
+              ]
+            },
+            {
+              "typeName": "State",
+              "fieldNames": [
+                "code",
+                "name",
+                "country"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
         }
       ],
       "fieldConfigurations": [
@@ -433,6 +522,96 @@
           "requiresFields": [],
           "path": [],
           "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "continents",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "continent",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "countries",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "country",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "languages",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "language",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": []
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
         }
       ]
     },

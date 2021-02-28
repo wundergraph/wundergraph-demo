@@ -1,4 +1,11 @@
-import {Application, configureWunderGraphApplication, introspect, cors, IntrospectionPolicy, templates} from "@wundergraph/sdk";
+import {
+    Application,
+    configureWunderGraphApplication,
+    cors,
+    introspect,
+    IntrospectionPolicy,
+    templates
+} from "@wundergraph/sdk";
 import {appMock} from "./generated/mocks";
 
 const federatedApi = introspect.federation({
@@ -11,6 +18,10 @@ const federatedApi = introspect.federation({
     ]
 });
 
+const countries = introspect.graphql({
+    url: "https://countries.trevorblades.com/",
+    source: IntrospectionPolicy.Network,
+})
 
 const openAPI = introspect.openApi({
     source: {
@@ -33,6 +44,7 @@ const myApplication = new Application({
     apis: [
         federatedApi,
         openAPI,
+        countries,
         /*graphQLAPI*/
     ],
 });

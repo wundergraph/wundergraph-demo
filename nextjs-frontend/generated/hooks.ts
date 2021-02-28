@@ -7,6 +7,7 @@ import {
 	TopProductsResponse,
 	FakeProductsResponse,
 	OasUsersResponse,
+	CountriesResponse,
 } from "./models";
 
 export const useWunderGraph = () => {
@@ -147,6 +148,10 @@ export const useQuery = {
 	OasUsers: (options?: RequestOptions<never, OasUsersResponse>) => {
 		const { client } = useWunderGraph();
 		return Query(client.query.OasUsers, options);
+	},
+	Countries: (options?: RequestOptions<never, CountriesResponse>) => {
+		const { client } = useWunderGraph();
+		return Query(client.query.Countries, options);
 	},
 };
 
