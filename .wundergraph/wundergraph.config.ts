@@ -10,17 +10,31 @@ import {appMock} from "./generated/mocks";
 
 const federatedApi = introspect.federation({
     source: IntrospectionPolicy.Network,
-    urls: [
-        "http://localhost:4001/graphql",
-        "http://localhost:4002/graphql",
-        "http://localhost:4003/graphql",
-        "http://localhost:4004/graphql",
+    upstreams: [
+        {
+            url: "http://localhost:4001/graphql"
+        },
+        {
+            url: "http://localhost:4002/graphql"
+        },
+        {
+            url: "http://localhost:4003/graphql"
+        },
+        {
+            url: "http://localhost:4004/graphql",
+        },
     ]
 });
 
 const countries = introspect.graphql({
     url: "https://countries.trevorblades.com/",
     source: IntrospectionPolicy.Network,
+    // You can add custom headers for APIs that require Authentication.
+    /*
+    headers: {
+        Authorization: "Bearer token",
+        "CustomHeader": "value"
+    }*/
 })
 
 const openAPI = introspect.openApi({
