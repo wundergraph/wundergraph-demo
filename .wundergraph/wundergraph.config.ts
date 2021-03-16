@@ -7,6 +7,7 @@ import {
     templates
 } from "@wundergraph/sdk";
 import {appMock} from "./generated/mocks";
+import {ConfigureOperations, QueryConfiguration} from "./generated/operations";
 
 const federatedApi = introspect.federation({
     source: IntrospectionPolicy.Network,
@@ -96,12 +97,48 @@ const mock = appMock({
     }
 });
 
+const enableCaching = (config: QueryConfiguration) => {
+    return {
+        ...config,
+        caching: {
+            ...config.caching,
+            enable: true,
+        }
+    }
+};
+
+const operations: ConfigureOperations = {
+    defaultConfig: {
+        authentication: {
+            required: false,
+        }
+    },
+    queries: config => {
+        return {
+            ...config,
+            caching: {
+                enable: false,
+                public: true,
+                maxAge: 10,
+                staleWhileRevalidate: 5,
+            }
+        }
+    },
+    custom: {
+        Countries: enableCaching,
+        TopProducts: enableCaching,
+    }
+}
+
 // configureWunderGraph emits the configuration
 configureWunderGraphApplication({
     application: myApplication,
     codeGenerators: [
         {
-            templates: [templates.typescript.mocks]
+            templates: [
+                templates.typescript.mocks,
+                templates.typescript.operations,
+            ]
         },
         {
             templates: [
@@ -120,4 +157,5 @@ configureWunderGraphApplication({
     ],
     mock,
     cors: cors.allowAll,
+    operations,
 });

@@ -1,12 +1,5 @@
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
-type User {
-  id: ID!
-  name: String
-  username: String
-  reviews: [Review]
-}
-
 type Query {
   me: User
   topProducts(first: Int = 5): [Product]
@@ -20,11 +13,11 @@ type Query {
   language(code: ID!): Language
 }
 
-type Review {
+type User {
   id: ID!
-  body: String
-  author: User
-  product: Product
+  name: String
+  username: String
+  reviews: [Review]
 }
 
 type Product {
@@ -35,6 +28,13 @@ type Product {
   weight: Int
   inStock: Boolean
   shippingEstimate: Int
+}
+
+type Review {
+  id: ID!
+  body: String
+  author: User
+  product: Product
 }
 
 type Subscription {

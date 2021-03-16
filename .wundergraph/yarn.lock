@@ -123,7 +123,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.45.tgz#e6676bcca092bae5751d015f074a234d5a82eb63"
   integrity sha512-703YTEp8AwQeapI0PTXDOj+Bs/mtdV/k9VcTP7z/de+lx6XjFMKdB+JhKnK+6PZ5za7omgZ3V6qm/dNkMj/Zow==
 
-"@types/object-hash@^1.3.0":
+"@types/object-hash@^1.3.0", "@types/object-hash@^1.3.4":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-1.3.4.tgz#079ba142be65833293673254831b5e3e847fe58b"
   integrity sha512-xFdpkAkikBgqBdG9vIlsqffDV8GpvnPEzs0IUtr1v3BEB97ijsFQ4RXVbUZwjFThhB4MDSTUfvmxUD5PGx0wXA==
@@ -143,21 +143,22 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@wundergraph/protobuf@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@wundergraph/protobuf/-/protobuf-0.10.0.tgz#e0be5503d9d252eee01ea29189b9741c57e52c23"
-  integrity sha512-KgD5sDwrp/b6nFJRZTQcopA8J6VEmQ43p0KDsqRJAvEiBYg5j8DYvhGeVgQlnrbXgCIk5D5km3SD9ascs0Pdhw==
+"@wundergraph/protobuf@0.18.0":
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/@wundergraph/protobuf/-/protobuf-0.18.0.tgz#3f31ccfcb700a81c637c9915e0ac677978af583b"
+  integrity sha512-T6/UZSY9hk7ecPgDu6gX5enYLNACJsjgNpvMehRFO1ETCvNUgiTcZ53YJWS7LfAWWcemsQOCjRNBY8n7QD+mPw==
   dependencies:
     ts-proto "^1.65.0"
 
-"@wundergraph/sdk@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.4.0.tgz#13894a8a34c934645165a098fbbbc7f21bafddb6"
-  integrity sha512-0ULc8/Yv3g2HkvyxZfKVdpDGUrtedO9pxSa2S6Tu2n89Hb5CiLy3O0bGF8mo/mWFWHYuiiQ0AK0CO0f691eZDw==
+"@wundergraph/sdk@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.8.1.tgz#6679e1a80467b87d89c33b40d7142f9211ad1e7c"
+  integrity sha512-oOuPhvpwkCvplu6phO/T2W+6eMX6zXm3WhbNQjHsvqDOst0VParhmRpk27twf7qSXaAeSc9IMCBRkk4M/cHnug==
   dependencies:
     "@graphql-tools/merge" "^6.2.6"
     "@types/chokidar" "^2.1.3"
-    "@wundergraph/protobuf" "0.10.0"
+    "@types/object-hash" "^1.3.4"
+    "@wundergraph/protobuf" "0.18.0"
     axios "^0.21.0"
     chokidar "^3.4.3"
     fastify "^3.12.0"
@@ -166,6 +167,7 @@
     graphql "^15.4.0"
     handlebars "^4.7.6"
     json-schema "^0.2.5"
+    object-hash "^2.1.1"
     openapi-to-graphql "^2.2.5"
     openapi-types "^7.0.1"
     prettier "^2.2.1"
@@ -1328,6 +1330,11 @@ object-hash@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
   integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
+
+object-hash@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.1.1.tgz#9447d0279b4fcf80cff3259bf66a1dc73afabe09"
+  integrity sha512-VOJmgmS+7wvXf8CjbQmimtCnEx3IAoLxI3fp2fbWehxrWBcAQFbk+vcwb6vzR0VZv/eNCJ/27j151ZTwqW/JeQ==
 
 object-inspect@^1.8.0, object-inspect@^1.9.0:
   version "1.9.0"

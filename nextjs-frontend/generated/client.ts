@@ -60,7 +60,9 @@ export class Client {
 		this.baseURL = baseURL || this.baseURL;
 	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationID: string = "app";
+	private readonly applicationHash: string = "e63517e0";
+	private readonly applicationPath: string = "api/main";
+	private readonly sdkVersion: string = "0.8.1";
 	public query = {
 		TopProducts: async (options: RequestOptions) => {
 			return await this.doFetch<TopProductsResponse>({
@@ -124,12 +126,16 @@ export class Client {
 				fetchConfig.method !== "POST"
 					? this.queryString({
 							v: fetchConfig.input,
+							h: this.applicationHash,
 					  })
-					: "";
+					: this.queryString({
+							h: this.applicationHash,
+					  });
 			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
-			const response = await fetch(this.baseURL + "/" + this.applicationID + "/" + fetchConfig.path + params, {
+			const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
 				headers: {
 					Accept: "application/json",
+					"wg-sdk-version": this.sdkVersion,
 				},
 				body,
 				method: fetchConfig.method,
@@ -152,10 +158,12 @@ export class Client {
 			try {
 				const params = this.queryString({
 					v: fetchConfig.input,
+					h: this.applicationHash,
 				});
-				const response = await fetch(this.baseURL + "/" + this.applicationID + "/" + fetchConfig.path + params, {
+				const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
 					headers: {
-						"Content-Type": "application/vnd.wundergraph.com",
+						"Content-Type": "application/json",
+						"wg-sdk-version": this.sdkVersion,
 					},
 					method: fetchConfig.method,
 					signal: fetchConfig.abortSignal,
