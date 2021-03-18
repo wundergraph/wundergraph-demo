@@ -17,13 +17,21 @@ export const useWunderGraph = () => {
 	}
 	return {
 		client: ctx.client,
+		user: ctx.user,
+		initialized: ctx.initialized,
 	};
 };
 
+interface InternalOptions {
+	requiresAuthentication: boolean;
+}
+
 const Query = <R extends {}, I extends {}>(
 	promiseFactory: (options: RequestOptions<I, R>) => Promise<Response<R>>,
+	internalOptions: InternalOptions,
 	options?: RequestOptions<I, R>
 ) => {
+	const { user, initialized } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [shouldFetch, setShouldFetch] = useState<boolean>(options === undefined || options.initialState === undefined);
 	const refetch = useCallback((options?: RequestOptions<I, R>) => {
@@ -41,6 +49,13 @@ const Query = <R extends {}, I extends {}>(
 			: { status: "loading" }
 	);
 	useEffect(() => {
+		if (!initialized) {
+			return;
+		}
+		if (internalOptions.requiresAuthentication && user === undefined) {
+			setResponse({ status: "requiresAuthentication" });
+			return;
+		}
 		if (!shouldFetch) {
 			return;
 		}
@@ -63,7 +78,8 @@ const Query = <R extends {}, I extends {}>(
 		return () => {
 			abortController.abort();
 		};
-	}, [shouldFetch, _options, promiseFactory]);
+	}, [user, initialized, shouldFetch, _options, promiseFactory]);
+	useEffect(() => setShouldFetch(true), [user]);
 	return {
 		response,
 		refetch,
@@ -72,8 +88,10 @@ const Query = <R extends {}, I extends {}>(
 
 const Mutation = <R extends {}, I extends {}>(
 	promiseFactory: (options: RequestOptions<I, R>) => Promise<Response<R>>,
+	internalOptions: InternalOptions,
 	options?: MutateRequestOptions<I>
 ) => {
+	const { user } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [response, setResponse] = useState<Response<R>>({ status: "none" });
 	const [once, setOnce] = useState(false);
@@ -85,6 +103,10 @@ const Mutation = <R extends {}, I extends {}>(
 	}, []);
 	useEffect(() => {
 		if (!once) {
+			return;
+		}
+		if (internalOptions.requiresAuthentication && user === undefined) {
+			setResponse({ status: "requiresAuthentication" });
 			return;
 		}
 		const abortController = new AbortController();
@@ -103,7 +125,7 @@ const Mutation = <R extends {}, I extends {}>(
 		return () => {
 			abortController.abort();
 		};
-	}, [once, _options, promiseFactory]);
+	}, [user, once, _options, promiseFactory]);
 	return {
 		response,
 		mutate,
@@ -112,11 +134,20 @@ const Mutation = <R extends {}, I extends {}>(
 
 const Subscription = <R, I>(
 	subscriptionFactory: (options: RequestOptions<I>, cb: (response: Response<R>) => void) => void,
+	internalOptions: InternalOptions,
 	options?: RequestOptions<I>
 ) => {
+	const { user, initialized } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [response, setResponse] = useState<Response<R>>({ status: "loading" });
 	useEffect(() => {
+		if (!initialized) {
+			return;
+		}
+		if (internalOptions.requiresAuthentication && user === undefined) {
+			setResponse({ status: "requiresAuthentication" });
+			return;
+		}
 		const controller = new AbortController();
 		subscriptionFactory(
 			{
@@ -130,7 +161,7 @@ const Subscription = <R, I>(
 		return () => {
 			controller.abort();
 		};
-	}, [_options]);
+	}, [user, initialized, _options]);
 	return {
 		response,
 	};
@@ -139,32 +170,32 @@ const Subscription = <R, I>(
 export const useQuery = {
 	TopProducts: (options?: RequestOptions<never, TopProductsResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.TopProducts, options);
+		return Query(client.query.TopProducts, { requiresAuthentication: false }, options);
 	},
 	FakeProducts: (options: RequestOptions<FakeProductsInput, FakeProductsResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.FakeProducts, options);
+		return Query(client.query.FakeProducts, { requiresAuthentication: false }, options);
 	},
 	OasUsers: (options?: RequestOptions<never, OasUsersResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.OasUsers, options);
+		return Query(client.query.OasUsers, { requiresAuthentication: true }, options);
 	},
 	Countries: (options?: RequestOptions<never, CountriesResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.Countries, options);
+		return Query(client.query.Countries, { requiresAuthentication: false }, options);
 	},
 };
 
 export const useMutation = {
 	SetPrice: (input: SetPriceInput) => {
 		const { client } = useWunderGraph();
-		return Mutation(client.mutation.SetPrice, { input });
+		return Mutation(client.mutation.SetPrice, { requiresAuthentication: false }, { input });
 	},
 };
 
 export const useSubscription = {
 	PriceUpdates: () => {
 		const { client } = useWunderGraph();
-		return Subscription(client.subscription.PriceUpdates);
+		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: true });
 	},
 };

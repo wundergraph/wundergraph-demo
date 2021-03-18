@@ -4,10 +4,19 @@ import {
     cors,
     introspect,
     IntrospectionPolicy,
-    templates
+    templates,
+    authProviders
 } from "@wundergraph/sdk";
 import {appMock} from "./generated/mocks";
-import {ConfigureOperations, QueryConfiguration} from "./generated/operations";
+import {
+    BaseOperationConfiguration,
+    ConfigureOperations,
+    MutationConfiguration,
+    QueryConfiguration, SubscriptionConfiguration
+} from "./generated/operations";
+import {config} from "dotenv";
+
+config();
 
 const federatedApi = introspect.federation({
     source: IntrospectionPolicy.Network,
@@ -97,15 +106,20 @@ const mock = appMock({
     }
 });
 
-const enableCaching = (config: QueryConfiguration) => {
-    return {
-        ...config,
-        caching: {
-            ...config.caching,
-            enable: true,
-        }
+const enableCaching = (config: QueryConfiguration) :QueryConfiguration => ({
+    ...config,
+    caching: {
+        ...config.caching,
+        enable: true,
     }
-};
+});
+
+const requireAuth = (config: QueryConfiguration) : QueryConfiguration => ({
+    ...config,
+    authentication: {
+        required: true,
+    }
+})
 
 const operations: ConfigureOperations = {
     defaultConfig: {
@@ -116,6 +130,7 @@ const operations: ConfigureOperations = {
     queries: config => {
         return {
             ...config,
+            kind: "query",
             caching: {
                 enable: false,
                 public: true,
@@ -124,9 +139,24 @@ const operations: ConfigureOperations = {
             }
         }
     },
+    subscriptions: config => ({
+        ...config,
+        kind: "subscription",
+    }),
+    mutations: config => ({
+        ...config,
+        kind: "mutation"
+    }),
     custom: {
         Countries: enableCaching,
         TopProducts: enableCaching,
+        OasUsers: requireAuth,
+        PriceUpdates: config => ({
+            ...config,
+            authentication: {
+                required: true,
+            }
+        })
     }
 }
 
@@ -138,6 +168,7 @@ configureWunderGraphApplication({
             templates: [
                 templates.typescript.mocks,
                 templates.typescript.operations,
+                templates.typescript.environments.default,
             ]
         },
         {
@@ -156,6 +187,22 @@ configureWunderGraphApplication({
         }
     ],
     mock,
-    cors: cors.allowAll,
+    cors: {
+        ...cors.allowAll,
+        allowedOrigins: [
+            "http://localhost:3000"
+        ]
+    },
     operations,
+    authentication: {
+        cookieBased: {
+            providers: [
+                new authProviders.github({
+                    id: "github",
+                    "clientId": process.env.GITHUB_CLIENT_ID!,
+                    "clientSecret": process.env.GITHUB_CLIENT_SECRET!,
+                }),
+            ]
+        }
+    }
 });

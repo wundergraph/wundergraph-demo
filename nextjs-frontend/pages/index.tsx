@@ -1,5 +1,5 @@
 import {GetServerSideProps, NextPage} from 'next'
-import {useMutation, useQuery, useSubscription} from "../generated/hooks";
+import {useMutation, useQuery, useSubscription, useWunderGraph} from "../generated/hooks";
 import {FakeProductsResponse} from "../generated/models";
 import {Client} from "../generated/client";
 
@@ -8,6 +8,7 @@ interface Props {
 }
 
 const IndexPage: NextPage<Props> = ({products}) => {
+    const {client: {login, logout}, user} = useWunderGraph();
     const fakeProducts = useQuery.FakeProducts({input: {first: 5}, initialState: products});
     const {mutate: setPrice, response: price} = useMutation.SetPrice({price: 0, upc: "1"});
     const priceUpdate = useSubscription.PriceUpdates();
@@ -19,12 +20,23 @@ const IndexPage: NextPage<Props> = ({products}) => {
                 Hello Wundergraph
             </h1>
             <h2>
+                User
+            </h2>
+            <p>
+                {user === undefined && "user not logged in!"}
+                {user !== undefined && `name: ${user.name}, email: ${user.email}`}
+            </p>
+            <p>
+                {user === undefined && <button onClick={() => login.github(window.location.toString())}>login</button>}
+                {user !== undefined && <button onClick={() => logout()}>logout</button>}
+            </p>
+            <h2>
                 FakeProducts
             </h2>
             <p>
                 {JSON.stringify(fakeProducts.response)}
             </p>
-            <button onClick={()=>fakeProducts.refetch()}>refetch</button>
+            <button onClick={() => fakeProducts.refetch()}>refetch</button>
             <h2>
                 Set Price
             </h2>

@@ -9,11 +9,15 @@ import {
 	CountriesResponse,
 } from "./models";
 
-export type Response<T> = ResponseOK<T> | Refetch<T> | Loading | Aborted | Error | None;
+export type Response<T> = ResponseOK<T> | Refetch<T> | Loading | Aborted | Error | None | RequiresAuthentication;
 
 export interface ResponseOK<T> {
 	status: "ok";
 	body: T;
+}
+
+export interface RequiresAuthentication {
+	status: "requiresAuthentication";
 }
 
 export interface Loading {
@@ -55,14 +59,47 @@ export interface RequestOptions<Input = never, InitialState = never> {
 	initialState?: InitialState;
 }
 
+export interface User {
+	provider: string;
+	provider_id: string;
+	email: string;
+	email_verified: boolean;
+	name: string;
+	first_name: string;
+	last_name: string;
+	nick_name: string;
+	description: string;
+	user_id: string;
+	avatar_url: string;
+	location: string;
+}
+
 export class Client {
 	constructor(baseURL?: string) {
 		this.baseURL = baseURL || this.baseURL;
 	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "e63517e0";
+	private readonly applicationHash: string = "344f268a";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.8.1";
+	private readonly sdkVersion: string = "0.9.2";
+	private csrfToken: string | undefined;
+	private user: User | undefined;
+	private userListener: (user: User) => void | undefined;
+	public setUserListener = (listener: (user: User) => void) => {
+		this.userListener = listener;
+	};
+	private setUser = (user: User | undefined) => {
+		if (
+			(user === undefined && this.user !== undefined) ||
+			(user !== undefined && this.user === undefined) ||
+			JSON.stringify(user) !== JSON.stringify(this.user)
+		) {
+			this.user = user;
+			if (this.userListener !== undefined) {
+				this.userListener(user);
+			}
+		}
+	};
 	public query = {
 		TopProducts: async (options: RequestOptions) => {
 			return await this.doFetch<TopProductsResponse>({
@@ -128,23 +165,49 @@ export class Client {
 							v: fetchConfig.input,
 							h: this.applicationHash,
 					  })
-					: this.queryString({
-							h: this.applicationHash,
-					  });
+					: "";
+			if (fetchConfig.method === "POST" && this.csrfToken === undefined) {
+				const res = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/csrf", {
+					credentials: "include",
+					mode: "cors",
+				});
+				this.csrfToken = await res.text();
+			}
+			const headers: Headers = new Headers({
+				Accept: "application/json",
+				"WG-SDK-Version": this.sdkVersion,
+			});
+			if (fetchConfig.method === "POST") {
+				if (this.csrfToken) {
+					headers.set("X-CSRF-Token", this.csrfToken);
+				}
+			}
 			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
 			const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
-				headers: {
-					Accept: "application/json",
-					"wg-sdk-version": this.sdkVersion,
-				},
+				headers,
 				body,
 				method: fetchConfig.method,
 				signal: fetchConfig.abortSignal,
+				credentials: "include",
+				mode: "cors",
 			});
-			const data = await response.json();
+			if (response.status === 200) {
+				const data = await response.json();
+				return {
+					status: "ok",
+					body: data,
+				};
+			}
+			if (response.status === 401 || response.status === 403) {
+				this.csrfToken = undefined;
+				return {
+					status: "error",
+					message: "unauthorized",
+				};
+			}
 			return {
-				status: "ok",
-				body: data,
+				status: "error",
+				message: "internal",
 			};
 		} catch (e) {
 			return {
@@ -158,26 +221,27 @@ export class Client {
 			try {
 				const params = this.queryString({
 					v: fetchConfig.input,
-					h: this.applicationHash,
 				});
 				const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
 					headers: {
 						"Content-Type": "application/json",
-						"wg-sdk-version": this.sdkVersion,
+						"WG-SDK-Version": this.sdkVersion,
 					},
 					method: fetchConfig.method,
 					signal: fetchConfig.abortSignal,
+					credentials: "include",
+					mode: "cors",
 				});
-
+				if (response.status === 401) {
+					this.csrfToken = undefined;
+					return;
+				}
 				if (response.status !== 200 || response.body == null) {
 					return;
 				}
-
 				const reader = response.body.getReader();
 				const decoder = new TextDecoder();
-
 				let message: string = "";
-
 				while (true) {
 					const { value, done } = await reader.read();
 					if (done) break;
@@ -215,5 +279,49 @@ export class Client {
 			})
 			.join("&");
 		return query === "" ? query : "?" + query;
+	};
+	public fetchUser = async (abortSignal?: AbortSignal): Promise<User | undefined> => {
+		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user", {
+			headers: {
+				"Content-Type": "application/json",
+				"WG-SDK-Version": this.sdkVersion,
+			},
+			method: "GET",
+			signal: abortSignal,
+			credentials: "include",
+			mode: "cors",
+		});
+		if (response.status === 200) {
+			const user = await response.json();
+			this.setUser(user);
+			return this.user;
+		}
+		this.setUser(undefined);
+		return undefined;
+	};
+	public login = {
+		github: (redirectURI?: string) => {
+			this.startLogin("github", redirectURI);
+		},
+	};
+	public logout = async (): Promise<boolean> => {
+		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user/logout", {
+			headers: {
+				"Content-Type": "application/json",
+				"WG-SDK-Version": this.sdkVersion,
+			},
+			method: "GET",
+			credentials: "include",
+			mode: "cors",
+		});
+		this.setUser(undefined);
+		return response.status === 200;
+	};
+	private startLogin = (providerID: string, redirectURI?: string) => {
+		const query =
+			this.queryString({
+				redirect_uri: redirectURI,
+			}) || "";
+		window.location.replace(`${this.baseURL}/${this.applicationPath}/auth/cookie/authorize/${providerID}${query}`);
 	};
 }
