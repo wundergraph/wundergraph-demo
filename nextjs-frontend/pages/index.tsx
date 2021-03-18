@@ -27,7 +27,7 @@ const IndexPage: NextPage<Props> = ({products}) => {
                 {user !== undefined && `name: ${user.name}, email: ${user.email}`}
             </p>
             <p>
-                {user === undefined && <button onClick={() => login.github(window.location.toString())}>login</button>}
+                {user === undefined && <button onClick={() => login.github()}>login</button>}
                 {user !== undefined && <button onClick={() => logout()}>logout</button>}
             </p>
             <h2>

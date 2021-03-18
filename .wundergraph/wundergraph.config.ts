@@ -15,6 +15,7 @@ import {
     QueryConfiguration, SubscriptionConfiguration
 } from "./generated/operations";
 import {config as dotEnvConfig} from "dotenv";
+import environments from "./generated/environments";
 
 dotEnvConfig();
 
@@ -85,6 +86,11 @@ const mock = appMock({
                             name: "foo",
                             price: randomInt(100),
                             upc: "bar",
+                        },
+                        {
+                            name: "foo",
+                            price: randomInt(100),
+                            upc: "bar2"
                         }
                     ]
                 }
@@ -134,8 +140,8 @@ const operations: ConfigureOperations = {
             caching: {
                 enable: false,
                 public: true,
-                maxAge: 120,
-                staleWhileRevalidate: 60,
+                maxAge: 10,
+                staleWhileRevalidate: 5,
             }
         }
     },
@@ -204,5 +210,5 @@ configureWunderGraphApplication({
                 }),
             ]
         }
-    }
+    },
 });

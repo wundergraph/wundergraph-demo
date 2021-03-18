@@ -43,6 +43,7 @@ mutation SetPrice($upc: String! $price: Int!) {
         upc
         name
         price
+        weight
     }
 }
 

@@ -79,9 +79,9 @@ export class Client {
 		this.baseURL = baseURL || this.baseURL;
 	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "993b8410";
+	private readonly applicationHash: string = "d658655b";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.9.2";
+	private readonly sdkVersion: string = "0.9.3";
 	private csrfToken: string | undefined;
 	private user: User | undefined;
 	private userListener: (user: User) => void | undefined;
@@ -318,10 +318,9 @@ export class Client {
 		return response.status === 200;
 	};
 	private startLogin = (providerID: string, redirectURI?: string) => {
-		const query =
-			this.queryString({
-				redirect_uri: redirectURI,
-			}) || "";
+		const query = this.queryString({
+			redirect_uri: redirectURI || window.location.toString(),
+		});
 		window.location.replace(`${this.baseURL}/${this.applicationPath}/auth/cookie/authorize/${providerID}${query}`);
 	};
 }

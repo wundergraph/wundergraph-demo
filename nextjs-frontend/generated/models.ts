@@ -57,6 +57,7 @@ export interface SetPriceResponse {
 			upc: string;
 			name?: string;
 			price?: number;
+			weight?: number;
 		};
 	};
 }
