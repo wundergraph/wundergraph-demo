@@ -14,9 +14,9 @@ import {
     MutationConfiguration,
     QueryConfiguration, SubscriptionConfiguration
 } from "./generated/operations";
-import {config} from "dotenv";
+import {config as dotEnvConfig} from "dotenv";
 
-config();
+dotEnvConfig();
 
 const federatedApi = introspect.federation({
     source: IntrospectionPolicy.Network,
@@ -134,8 +134,8 @@ const operations: ConfigureOperations = {
             caching: {
                 enable: false,
                 public: true,
-                maxAge: 10,
-                staleWhileRevalidate: 5,
+                maxAge: 120,
+                staleWhileRevalidate: 60,
             }
         }
     },
@@ -156,7 +156,7 @@ const operations: ConfigureOperations = {
             authentication: {
                 required: true,
             }
-        })
+        }),
     }
 }
 

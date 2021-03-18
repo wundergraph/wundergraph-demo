@@ -37,12 +37,12 @@ type Review {
   product: Product
 }
 
-type Subscription {
-  updatedPrice: Product!
-}
-
 type Mutation {
   setPrice(upc: String!, price: Int!): Product
+}
+
+type Subscription {
+  updatedPrice: Product!
 }
 
 type OasUser {
