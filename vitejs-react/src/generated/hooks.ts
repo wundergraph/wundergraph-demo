@@ -19,6 +19,8 @@ export const useWunderGraph = () => {
 		client: ctx.client,
 		user: ctx.user,
 		initialized: ctx.initialized,
+		onWindowFocus: ctx.onWindowFocus,
+		onWindowBlur: ctx.onWindowBlur,
 	};
 };
 
@@ -31,7 +33,7 @@ const Query = <R extends {}, I extends {}>(
 	internalOptions: InternalOptions,
 	options?: RequestOptions<I, R>
 ) => {
-	const { user, initialized } = useWunderGraph();
+	const { user, initialized, onWindowFocus } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [shouldFetch, setShouldFetch] = useState<boolean>(options === undefined || options.initialState === undefined);
 	const refetch = useCallback((options?: RequestOptions<I, R>) => {
@@ -40,6 +42,11 @@ const Query = <R extends {}, I extends {}>(
 		}
 		setShouldFetch(true);
 	}, []);
+	useEffect(() => {
+		if (options && options.refetchOnWindowFocus === true) {
+			setShouldFetch(true);
+		}
+	}, [onWindowFocus]);
 	const [response, setResponse] = useState<Response<R>>(
 		options !== undefined && options.initialState !== undefined
 			? {

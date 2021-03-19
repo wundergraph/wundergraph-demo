@@ -15,7 +15,7 @@ import {
     QueryConfiguration, SubscriptionConfiguration
 } from "./generated/operations";
 import {config as dotEnvConfig} from "dotenv";
-import environments from "./generated/environments";
+import namespaces from "./generated/namespaces";
 
 dotEnvConfig();
 
@@ -174,7 +174,7 @@ configureWunderGraphApplication({
             templates: [
                 templates.typescript.mocks,
                 templates.typescript.operations,
-                templates.typescript.environments.default,
+                templates.typescript.namespaces,
             ]
         },
         {

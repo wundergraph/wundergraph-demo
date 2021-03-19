@@ -57,7 +57,10 @@ export interface RequestOptions<Input = never, InitialState = never> {
 	input?: Input;
 	abortSignal?: AbortSignal;
 	initialState?: InitialState;
+	refetchOnWindowFocus?: boolean;
 }
+
+export type UserListener = (user: User | undefined) => void;
 
 export interface User {
 	provider: string;
@@ -79,13 +82,13 @@ export class Client {
 		this.baseURL = baseURL || this.baseURL;
 	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "d658655b";
+	private readonly applicationHash: string = "9f91adf5";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.9.3";
+	private readonly sdkVersion: string = "0.11.3";
 	private csrfToken: string | undefined;
 	private user: User | undefined;
-	private userListener: (user: User) => void | undefined;
-	public setUserListener = (listener: (user: User) => void) => {
+	private userListener: UserListener | undefined;
+	public setUserListener = (listener: UserListener) => {
 		this.userListener = listener;
 	};
 	private setUser = (user: User | undefined) => {
@@ -183,14 +186,17 @@ export class Client {
 				}
 			}
 			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
-			const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
-				headers,
-				body,
-				method: fetchConfig.method,
-				signal: fetchConfig.abortSignal,
-				credentials: "include",
-				mode: "cors",
-			});
+			const response = await fetch(
+				this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,
+				{
+					headers,
+					body,
+					method: fetchConfig.method,
+					signal: fetchConfig.abortSignal,
+					credentials: "include",
+					mode: "cors",
+				}
+			);
 			if (response.status === 200) {
 				const data = await response.json();
 				return {
@@ -200,6 +206,7 @@ export class Client {
 			}
 			if (response.status === 401 || response.status === 403) {
 				this.csrfToken = undefined;
+				this.fetchUser();
 				return {
 					status: "error",
 					message: "unauthorized",
@@ -222,16 +229,19 @@ export class Client {
 				const params = this.queryString({
 					v: fetchConfig.input,
 				});
-				const response = await fetch(this.baseURL + "/" + this.applicationPath + "/" + fetchConfig.path + params, {
-					headers: {
-						"Content-Type": "application/json",
-						"WG-SDK-Version": this.sdkVersion,
-					},
-					method: fetchConfig.method,
-					signal: fetchConfig.abortSignal,
-					credentials: "include",
-					mode: "cors",
-				});
+				const response = await fetch(
+					this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,
+					{
+						headers: {
+							"Content-Type": "application/json",
+							"WG-SDK-Version": this.sdkVersion,
+						},
+						method: fetchConfig.method,
+						signal: fetchConfig.abortSignal,
+						credentials: "include",
+						mode: "cors",
+					}
+				);
 				if (response.status === 401) {
 					this.csrfToken = undefined;
 					return;

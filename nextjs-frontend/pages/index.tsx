@@ -12,7 +12,7 @@ const IndexPage: NextPage<Props> = ({products}) => {
     const fakeProducts = useQuery.FakeProducts({input: {first: 5}, initialState: products});
     const {mutate: setPrice, response: price} = useMutation.SetPrice({price: 0, upc: "1"});
     const priceUpdate = useSubscription.PriceUpdates();
-    const oasUsers = useQuery.OasUsers();
+    const oasUsers = useQuery.OasUsers({refetchOnWindowFocus: true});
     const countries = useQuery.Countries();
     return (
         <div>
