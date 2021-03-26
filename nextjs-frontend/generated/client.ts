@@ -46,11 +46,13 @@ interface FetchConfig {
 	path: string;
 	input?: Object;
 	abortSignal?: AbortSignal;
+	liveQuery?: boolean;
 }
 
 export interface MutateRequestOptions<Input = never> {
 	input?: Input;
 	abortSignal?: AbortSignal;
+	refetchMountedQueriesOnSuccess?: boolean;
 }
 
 export interface RequestOptions<Input = never, InitialState = never> {
@@ -82,9 +84,9 @@ export class Client {
 		this.baseURL = baseURL || this.baseURL;
 	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "9f91adf5";
+	private readonly applicationHash: string = "fc3ea720";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.11.3";
+	private readonly sdkVersion: string = "0.16.1";
 	private csrfToken: string | undefined;
 	private user: User | undefined;
 	private userListener: UserListener | undefined;
@@ -160,6 +162,20 @@ export class Client {
 			);
 		},
 	};
+	public liveQuery = {
+		TopProducts: (options: RequestOptions, cb: (response: Response<TopProductsResponse>) => void) => {
+			return this.startSubscription<TopProductsResponse>(
+				{
+					method: "GET",
+					path: "TopProducts",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+	};
 	private doFetch = async <T>(fetchConfig: FetchConfig): Promise<Response<T>> => {
 		try {
 			const params =
@@ -228,6 +244,7 @@ export class Client {
 			try {
 				const params = this.queryString({
 					v: fetchConfig.input,
+					live: fetchConfig.liveQuery === true ? true : undefined,
 				});
 				const response = await fetch(
 					this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,

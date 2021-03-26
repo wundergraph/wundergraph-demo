@@ -35,6 +35,10 @@ export interface QueryConfiguration extends BaseOperationConfiguration {
 		maxAge: number;
 		staleWhileRevalidate: number;
 	};
+	liveQuery: {
+		enable: boolean;
+		pollingIntervalSeconds: number;
+	};
 }
 
 export interface MutationConfiguration extends BaseOperationConfiguration {}

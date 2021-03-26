@@ -1,5 +1,5 @@
 import {GetServerSideProps, NextPage} from 'next'
-import {useMutation, useQuery, useSubscription, useWunderGraph} from "../generated/hooks";
+import {useLiveQuery, useMutation, useQuery, useSubscription, useWunderGraph} from "../generated/hooks";
 import {FakeProductsResponse} from "../generated/models";
 import {Client} from "../generated/client";
 
@@ -10,10 +10,11 @@ interface Props {
 const IndexPage: NextPage<Props> = ({products}) => {
     const {client: {login, logout}, user} = useWunderGraph();
     const fakeProducts = useQuery.FakeProducts({input: {first: 5}, initialState: products});
-    const {mutate: setPrice, response: price} = useMutation.SetPrice({price: 0, upc: "1"});
+    const {mutate: setPrice, response: price} = useMutation.SetPrice({input: {price: 0, upc: "1"}});
     const priceUpdate = useSubscription.PriceUpdates();
     const oasUsers = useQuery.OasUsers({refetchOnWindowFocus: true});
     const countries = useQuery.Countries();
+    const {response: liveProducts} = useLiveQuery.TopProducts();
     return (
         <div>
             <h1>
@@ -52,6 +53,12 @@ const IndexPage: NextPage<Props> = ({products}) => {
             </h2>
             <p>
                 {JSON.stringify(priceUpdate)}
+            </p>
+            <h2>
+                Products LiveQuery
+            </h2>
+            <p>
+                {JSON.stringify(liveProducts)}
             </p>
             <h2>
                 OAS Users

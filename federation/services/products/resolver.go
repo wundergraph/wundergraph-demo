@@ -43,6 +43,13 @@ func (r *queryResolver) TopProducts(ctx context.Context, first *int) ([]*Product
 	if first == nil || *first > len(products) {
 		first = num(len(products))
 	}
+	productsMux.Lock()
+	defer productsMux.Unlock()
+	for _, product := range products {
+		min := 10
+		max := 1499
+		product.Price = num(rand.Intn(max-min+1) + min)
+	}
 	return products[0:*first], nil
 }
 

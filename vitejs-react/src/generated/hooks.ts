@@ -21,6 +21,8 @@ export const useWunderGraph = () => {
 		initialized: ctx.initialized,
 		onWindowFocus: ctx.onWindowFocus,
 		onWindowBlur: ctx.onWindowBlur,
+		refetchMountedQueries: ctx.refetchMountedQueries,
+		setRefetchMountedQueries: ctx.setRefetchMountedQueries,
 	};
 };
 
@@ -33,7 +35,7 @@ const Query = <R extends {}, I extends {}>(
 	internalOptions: InternalOptions,
 	options?: RequestOptions<I, R>
 ) => {
-	const { user, initialized, onWindowFocus } = useWunderGraph();
+	const { user, initialized, onWindowFocus, refetchMountedQueries } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [shouldFetch, setShouldFetch] = useState<boolean>(options === undefined || options.initialState === undefined);
 	const refetch = useCallback((options?: RequestOptions<I, R>) => {
@@ -75,18 +77,18 @@ const Query = <R extends {}, I extends {}>(
 				..._options,
 				abortSignal: abortController.signal,
 			});
-			setShouldFetch(false);
 			if (abortController.signal.aborted) {
 				setResponse({ status: "aborted" });
 				return;
 			}
 			setResponse(result);
+			setShouldFetch(false);
 		})();
 		return () => {
 			abortController.abort();
 		};
 	}, [user, initialized, shouldFetch, _options, promiseFactory]);
-	useEffect(() => setShouldFetch(true), [user]);
+	useEffect(() => setShouldFetch(true), [user, refetchMountedQueries]);
 	return {
 		response,
 		refetch,
@@ -98,12 +100,19 @@ const Mutation = <R extends {}, I extends {}>(
 	internalOptions: InternalOptions,
 	options?: MutateRequestOptions<I>
 ) => {
-	const { user } = useWunderGraph();
+	const { user, setRefetchMountedQueries } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [response, setResponse] = useState<Response<R>>({ status: "none" });
 	const [once, setOnce] = useState(false);
 	const mutate = useCallback((options?: MutateRequestOptions<I>) => {
-		_setOptions(options);
+		_setOptions((prev) => ({
+			refetchMountedQueriesOnSuccess:
+				options.refetchMountedQueriesOnSuccess !== undefined
+					? options.refetchMountedQueriesOnSuccess
+					: prev.refetchMountedQueriesOnSuccess,
+			input: options.input !== undefined ? options.input : prev.input,
+			abortSignal: options.abortSignal !== undefined ? options.abortSignal : prev.abortSignal,
+		}));
 		if (!once) {
 			setOnce(true);
 		}
@@ -128,6 +137,9 @@ const Mutation = <R extends {}, I extends {}>(
 				return;
 			}
 			setResponse(result);
+			if (result.status === "ok" && _options && _options.refetchMountedQueriesOnSuccess === true) {
+				setRefetchMountedQueries(new Date());
+			}
 		})();
 		return () => {
 			abortController.abort();
@@ -194,9 +206,9 @@ export const useQuery = {
 };
 
 export const useMutation = {
-	SetPrice: (input: SetPriceInput) => {
+	SetPrice: (options: MutateRequestOptions<SetPriceInput>) => {
 		const { client } = useWunderGraph();
-		return Mutation(client.mutation.SetPrice, { requiresAuthentication: false }, { input });
+		return Mutation(client.mutation.SetPrice, { requiresAuthentication: false }, options);
 	},
 };
 
@@ -204,5 +216,12 @@ export const useSubscription = {
 	PriceUpdates: () => {
 		const { client } = useWunderGraph();
 		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: true });
+	},
+};
+
+export const useLiveQuery = {
+	TopProducts: () => {
+		const { client } = useWunderGraph();
+		return Subscription(client.liveQuery.TopProducts, { requiresAuthentication: false });
 	},
 };

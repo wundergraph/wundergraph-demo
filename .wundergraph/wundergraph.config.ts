@@ -9,13 +9,10 @@ import {
 } from "@wundergraph/sdk";
 import {appMock} from "./generated/mocks";
 import {
-    BaseOperationConfiguration,
     ConfigureOperations,
-    MutationConfiguration,
-    QueryConfiguration, SubscriptionConfiguration
+    QueryConfiguration,
 } from "./generated/operations";
 import {config as dotEnvConfig} from "dotenv";
-import namespaces from "./generated/namespaces";
 
 dotEnvConfig();
 
@@ -53,6 +50,9 @@ const openAPI = introspect.openApi({
         kind: "file",
         filePath: "users_oas.json"
     },
+    headers: {
+        "Authorization": "token"
+    }
 });
 
 /*
@@ -142,6 +142,10 @@ const operations: ConfigureOperations = {
                 public: true,
                 maxAge: 10,
                 staleWhileRevalidate: 5,
+            },
+            liveQuery: {
+                enable: false,
+                pollingIntervalSeconds: 5,
             }
         }
     },
@@ -155,7 +159,17 @@ const operations: ConfigureOperations = {
     }),
     custom: {
         Countries: enableCaching,
-        TopProducts: enableCaching,
+        TopProducts: config => ({
+            ...config,
+            caching: {
+                ...config.caching,
+                enable: true
+            },
+            liveQuery: {
+                enable: true,
+                pollingIntervalSeconds: 2,
+            }
+        }),
         OasUsers: requireAuth,
         PriceUpdates: config => ({
             ...config,
@@ -203,7 +217,7 @@ configureWunderGraphApplication({
     authentication: {
         cookieBased: {
             providers: [
-                new authProviders.github({
+                authProviders.github({
                     id: "github",
                     "clientId": process.env.GITHUB_CLIENT_ID!,
                     "clientSecret": process.env.GITHUB_CLIENT_SECRET!,

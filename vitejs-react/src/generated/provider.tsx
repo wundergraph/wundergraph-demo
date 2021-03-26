@@ -1,5 +1,5 @@
 import { Client, User } from "./client";
-import React, { createContext, FunctionComponent, useMemo, useEffect, useState } from "react";
+import React, { createContext, FunctionComponent, useMemo, useEffect, useState, Dispatch, SetStateAction } from "react";
 
 export interface Config {
 	client: Client;
@@ -7,6 +7,8 @@ export interface Config {
 	initialized: boolean;
 	onWindowFocus: Date;
 	onWindowBlur: Date;
+	refetchMountedQueries: Date;
+	setRefetchMountedQueries: Dispatch<SetStateAction<Date>>;
 }
 
 export const WunderGraphContext = createContext<Config | undefined>(undefined);
@@ -19,6 +21,7 @@ export const WunderGraphProvider: FunctionComponent<Props> = ({ endpoint, childr
 	const [user, setUser] = useState<User | undefined>();
 	const [onWindowBlur, setOnWindowBlur] = useState(new Date());
 	const [onWindowFocus, setOnWindowFocus] = useState(new Date());
+	const [refetchMountedQueries, setRefetchMountedQueries] = useState(new Date());
 	const [initialized, setInitialized] = useState(false);
 	const client = useMemo<Client>(() => {
 		return new Client(endpoint);
@@ -53,6 +56,8 @@ export const WunderGraphProvider: FunctionComponent<Props> = ({ endpoint, childr
 				initialized,
 				onWindowBlur,
 				onWindowFocus,
+				refetchMountedQueries,
+				setRefetchMountedQueries,
 			}}
 		>
 			{children}
