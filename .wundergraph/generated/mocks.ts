@@ -7,6 +7,7 @@ import {
 	SetPriceInput,
 	SetPriceResponse,
 	CountriesResponse,
+	UsersResponse,
 } from "./models";
 
 export interface appMockConfig {
@@ -15,6 +16,7 @@ export interface appMockConfig {
 		FakeProducts?: (input: FakeProductsInput) => FakeProductsResponse | undefined;
 		OasUsers?: () => OasUsersResponse | undefined;
 		Countries?: () => CountriesResponse | undefined;
+		Users?: () => UsersResponse | undefined;
 	};
 	mutations?: {
 		SetPrice?: (input: SetPriceInput) => SetPriceResponse | undefined;

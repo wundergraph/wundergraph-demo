@@ -4,13 +4,14 @@
   "description": "",
   "scripts": {
     "develop": "ts-node-dev --respawn --transpile-only --experimental-modules --quiet wundergraph.config.ts",
+    "dev": "$npm_execpath develop",
     "deploy": "ts-node wundergraph.config.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/dotenv": "^8.2.0",
-    "@wundergraph/sdk": "^0.16.1",
+    "@wundergraph/sdk": "^0.18.2",
     "dotenv": "^8.2.0",
     "ts-node-dev": "^1.1.1",
     "typescript": "^4.1.3"

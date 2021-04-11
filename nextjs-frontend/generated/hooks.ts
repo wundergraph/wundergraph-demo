@@ -8,6 +8,7 @@ import {
 	FakeProductsResponse,
 	OasUsersResponse,
 	CountriesResponse,
+	UsersResponse,
 } from "./models";
 
 export const useWunderGraph = () => {
@@ -19,10 +20,12 @@ export const useWunderGraph = () => {
 		client: ctx.client,
 		user: ctx.user,
 		initialized: ctx.initialized,
+		initializing: ctx.initializing,
 		onWindowFocus: ctx.onWindowFocus,
 		onWindowBlur: ctx.onWindowBlur,
 		refetchMountedQueries: ctx.refetchMountedQueries,
 		setRefetchMountedQueries: ctx.setRefetchMountedQueries,
+		queryCache: ctx.queryCache,
 	};
 };
 
@@ -35,7 +38,7 @@ const Query = <R extends {}, I extends {}>(
 	internalOptions: InternalOptions,
 	options?: RequestOptions<I, R>
 ) => {
-	const { user, initialized, onWindowFocus, refetchMountedQueries } = useWunderGraph();
+	const { user, initialized, onWindowFocus, refetchMountedQueries, queryCache } = useWunderGraph();
 	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
 	const [shouldFetch, setShouldFetch] = useState<boolean>(options === undefined || options.initialState === undefined);
 	const refetch = useCallback((options?: RequestOptions<I, R>) => {
@@ -72,6 +75,14 @@ const Query = <R extends {}, I extends {}>(
 		if (response.status === "ok") {
 			setResponse({ status: "ok", refetching: true, body: response.body });
 		}
+		const cacheKey = JSON.stringify(_options);
+		const cached = queryCache[cacheKey];
+		if (response.status !== "ok" && cached) {
+			setResponse({
+				status: "cached",
+				body: cached as R,
+			});
+		}
 		(async () => {
 			const result = await promiseFactory({
 				..._options,
@@ -80,6 +91,9 @@ const Query = <R extends {}, I extends {}>(
 			if (abortController.signal.aborted) {
 				setResponse({ status: "aborted" });
 				return;
+			}
+			if (result.status === "ok") {
+				queryCache[cacheKey] = result.body;
 			}
 			setResponse(result);
 			setShouldFetch(false);
@@ -157,8 +171,17 @@ const Subscription = <R, I>(
 	options?: RequestOptions<I>
 ) => {
 	const { user, initialized } = useWunderGraph();
-	const [_options, _setOptions] = useState<MutateRequestOptions<I>>(options);
+	const [_options, _setOptions] = useState<RequestOptions<I> | undefined>(options);
 	const [response, setResponse] = useState<Response<R>>({ status: "loading" });
+	const [key, setKey] = useState<string>("");
+	useEffect(() => {
+		const nextKey = JSON.stringify(options);
+		if (nextKey === key) {
+			return;
+		}
+		setKey(nextKey);
+		_setOptions(options);
+	}, [options]);
 	useEffect(() => {
 		if (!initialized) {
 			return;
@@ -189,7 +212,7 @@ const Subscription = <R, I>(
 export const useQuery = {
 	TopProducts: (options?: RequestOptions<never, TopProductsResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.TopProducts, { requiresAuthentication: false }, options);
+		return Query(client.query.TopProducts, { requiresAuthentication: true }, options);
 	},
 	FakeProducts: (options: RequestOptions<FakeProductsInput, FakeProductsResponse>) => {
 		const { client } = useWunderGraph();
@@ -203,6 +226,10 @@ export const useQuery = {
 		const { client } = useWunderGraph();
 		return Query(client.query.Countries, { requiresAuthentication: false }, options);
 	},
+	Users: (options?: RequestOptions<never, UsersResponse>) => {
+		const { client } = useWunderGraph();
+		return Query(client.query.Users, { requiresAuthentication: false }, options);
+	},
 };
 
 export const useMutation = {
@@ -215,13 +242,13 @@ export const useMutation = {
 export const useSubscription = {
 	PriceUpdates: () => {
 		const { client } = useWunderGraph();
-		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: true });
+		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: false });
 	},
 };
 
 export const useLiveQuery = {
 	TopProducts: () => {
 		const { client } = useWunderGraph();
-		return Subscription(client.liveQuery.TopProducts, { requiresAuthentication: false });
+		return Subscription(client.liveQuery.TopProducts, { requiresAuthentication: true });
 	},
 };

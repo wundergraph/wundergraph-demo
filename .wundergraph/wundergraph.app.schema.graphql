@@ -1,5 +1,12 @@
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
+type User {
+  id: ID!
+  name: String
+  username: String
+  reviews: [Review]
+}
+
 type Query {
   me: User
   topProducts(first: Int = 5): [Product]
@@ -11,13 +18,10 @@ type Query {
   country(code: ID!): Country
   languages(filter: LanguageFilterInput): [Language!]!
   language(code: ID!): Language
-}
-
-type User {
-  id: ID!
-  name: String
-  username: String
-  reviews: [Review]
+  posts: [Post]
+  postComments(postID: String!): [Comment]
+  users: [JSP_User]
+  userPosts(userID: String!): [Post]
 }
 
 type Review {
@@ -37,12 +41,12 @@ type Product {
   shippingEstimate: Int
 }
 
-type Subscription {
-  updatedPrice: Product!
-}
-
 type Mutation {
   setPrice(upc: String!, price: Int!): Product
+}
+
+type Subscription {
+  updatedPrice: Product!
 }
 
 type OasUser {
@@ -113,3 +117,50 @@ enum CacheControlScope {
 }
 
 scalar Upload
+
+type Post {
+  id: Int
+  userId: Int
+  title: String
+  body: String
+  comments: [Comment]
+}
+
+type Comment {
+  id: Int
+  name: String
+  email: String
+  body: String
+  postId: Int
+}
+
+type JSP_User {
+  id: Int
+  name: String
+  username: String
+  email: String
+  address: Address
+  phone: String
+  website: String
+  company: Company
+  posts: [Post]
+}
+
+type Address {
+  street: String
+  suite: String
+  city: String
+  zipcode: String
+  geo: Geo
+}
+
+type Geo {
+  lat: String
+  lng: String
+}
+
+type Company {
+  name: String
+  catchPhrase: String
+  bs: String
+}

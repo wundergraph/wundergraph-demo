@@ -15,6 +15,7 @@ const IndexPage: NextPage<Props> = ({products}) => {
     const oasUsers = useQuery.OasUsers({refetchOnWindowFocus: true});
     const countries = useQuery.Countries();
     const {response: liveProducts} = useLiveQuery.TopProducts();
+    const users = useQuery.Users();
     return (
         <div>
             <h1>
@@ -71,6 +72,12 @@ const IndexPage: NextPage<Props> = ({products}) => {
             </h2>
             <p>
                 {JSON.stringify(countries)}
+            </p>
+            <h2>
+                JSON Placeholder Users
+            </h2>
+            <p>
+                {JSON.stringify(users)}
             </p>
         </div>
     )

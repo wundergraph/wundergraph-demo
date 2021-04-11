@@ -7,12 +7,26 @@ import {
 	SetPriceInput,
 	SetPriceResponse,
 	CountriesResponse,
+	UsersResponse,
 } from "./models";
 
-export type Response<T> = ResponseOK<T> | Refetch<T> | Loading | Aborted | Error | None | RequiresAuthentication;
+export type Response<T> =
+	| ResponseOK<T>
+	| CachedResponse<T>
+	| Refetch<T>
+	| Loading
+	| Aborted
+	| Error
+	| None
+	| RequiresAuthentication;
 
 export interface ResponseOK<T> {
 	status: "ok";
+	body: T;
+}
+
+export interface CachedResponse<T> {
+	status: "cached";
 	body: T;
 }
 
@@ -83,10 +97,14 @@ export class Client {
 	constructor(baseURL?: string) {
 		this.baseURL = baseURL || this.baseURL;
 	}
+	private logoutCallback: undefined | (() => void);
+	public setLogoutCallback(cb: () => void) {
+		this.logoutCallback = cb;
+	}
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "fc3ea720";
+	private readonly applicationHash: string = "5b77c037";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.16.1";
+	private readonly sdkVersion: string = "0.18.2";
 	private csrfToken: string | undefined;
 	private user: User | undefined;
 	private userListener: UserListener | undefined;
@@ -134,6 +152,14 @@ export class Client {
 			return await this.doFetch<CountriesResponse>({
 				method: "GET",
 				path: "Countries",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		Users: async (options: RequestOptions) => {
+			return await this.doFetch<UsersResponse>({
+				method: "GET",
+				path: "Users",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});
@@ -202,7 +228,7 @@ export class Client {
 				}
 			}
 			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
-			const response = await fetch(
+			const data = await this.fetch(
 				this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,
 				{
 					headers,
@@ -213,24 +239,9 @@ export class Client {
 					mode: "cors",
 				}
 			);
-			if (response.status === 200) {
-				const data = await response.json();
-				return {
-					status: "ok",
-					body: data,
-				};
-			}
-			if (response.status === 401 || response.status === 403) {
-				this.csrfToken = undefined;
-				this.fetchUser();
-				return {
-					status: "error",
-					message: "unauthorized",
-				};
-			}
 			return {
-				status: "error",
-				message: "internal",
+				status: "ok",
+				body: data,
 			};
 		} catch (e) {
 			return {
@@ -238,6 +249,41 @@ export class Client {
 				message: e,
 			};
 		}
+	};
+	private inflight: {
+		[key: string]: {
+			reject: (reason?: any) => void;
+			resolve: (value: globalThis.Response | PromiseLike<globalThis.Response>) => void;
+		}[];
+	} = {};
+	private fetch = (input: globalThis.RequestInfo, init?: RequestInit): Promise<any> => {
+		const key = input.toString();
+		return new Promise<any>(async (resolve, reject) => {
+			if (this.inflight[key]) {
+				this.inflight[key].push({ resolve, reject });
+				return;
+			}
+			this.inflight[key] = [{ resolve, reject }];
+			try {
+				const res = await fetch(input, init);
+				const inflight = this.inflight[key];
+				if (res.status === 200) {
+					const json = await res.json();
+					delete this.inflight[key];
+					process.nextTick(() => inflight.forEach((cb) => cb.resolve(json)));
+				}
+				if (res.status >= 401 && res.status <= 499) {
+					this.csrfToken = undefined;
+					delete this.inflight[key];
+					inflight.forEach((cb) => cb.reject("unauthorized"));
+					this.fetchUser();
+				}
+			} catch (e) {
+				const inflight = this.inflight[key];
+				delete this.inflight[key];
+				inflight.forEach((cb) => cb.reject(e));
+			}
+		});
 	};
 	private startSubscription = <T>(fetchConfig: FetchConfig, cb: (response: Response<T>) => void) => {
 		(async () => {
@@ -342,6 +388,9 @@ export class Client {
 			mode: "cors",
 		});
 		this.setUser(undefined);
+		if (this.logoutCallback) {
+			this.logoutCallback();
+		}
 		return response.status === 200;
 	};
 	private startLogin = (providerID: string, redirectURI?: string) => {

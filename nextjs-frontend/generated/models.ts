@@ -7,6 +7,11 @@ export interface SetPriceInput {
 	price: number;
 }
 
+export interface GraphQLError {
+	message: string;
+	path?: ReadonlyArray<string | number>;
+}
+
 export interface TopProductsResponse {
 	data?: {
 		topProducts?: {
@@ -15,6 +20,7 @@ export interface TopProductsResponse {
 			price?: number;
 		}[];
 	};
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface FakeProductsResponse {
@@ -25,6 +31,7 @@ export interface FakeProductsResponse {
 			price?: number;
 		}[];
 	};
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface OasUsersResponse {
@@ -35,6 +42,7 @@ export interface OasUsersResponse {
 			name?: string;
 		}[];
 	};
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface PriceUpdatesResponse {
@@ -49,6 +57,7 @@ export interface PriceUpdatesResponse {
 			}[];
 		};
 	};
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface SetPriceResponse {
@@ -60,6 +69,7 @@ export interface SetPriceResponse {
 			weight?: number;
 		};
 	};
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface CountriesResponse {
@@ -69,4 +79,25 @@ export interface CountriesResponse {
 			name: string;
 		}[];
 	};
+	errors?: ReadonlyArray<GraphQLError>;
+}
+
+export interface UsersResponse {
+	data?: {
+		users?: {
+			id?: number;
+			name?: string;
+			website?: string;
+			posts?: {
+				id?: number;
+				title?: string;
+				comments?: {
+					id?: number;
+					name?: string;
+					body?: string;
+				}[];
+			}[];
+		}[];
+	};
+	errors?: ReadonlyArray<GraphQLError>;
 }

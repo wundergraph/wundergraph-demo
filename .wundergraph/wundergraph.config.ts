@@ -13,8 +13,17 @@ import {
     QueryConfiguration,
 } from "./generated/operations";
 import {config as dotEnvConfig} from "dotenv";
+import transformApi from "@wundergraph/sdk/dist/transformations";
+import linkBuilder from "../nextjs-frontend/generated/linkbuilder";
 
 dotEnvConfig();
+
+const jsonPlaceholder = introspect.openApi({
+    source: {
+        kind: "file",
+        filePath: "jsonplaceholder.v1.yaml",
+    }
+})
 
 const federatedApi = introspect.federation({
     source: IntrospectionPolicy.Network,
@@ -63,6 +72,7 @@ const graphQLAPI = introspect.graphql({
     url: "http://localhost:4000",
 });*/
 
+const renamedJsonPlaceholder = transformApi.renameTypes(jsonPlaceholder,{from: "User",to: "JSP_User"});
 
 const myApplication = new Application({
     name: "app",
@@ -70,6 +80,7 @@ const myApplication = new Application({
         federatedApi,
         openAPI,
         countries,
+        renamedJsonPlaceholder,
         /*graphQLAPI*/
     ],
 });
@@ -168,13 +179,24 @@ const operations: ConfigureOperations = {
             liveQuery: {
                 enable: true,
                 pollingIntervalSeconds: 2,
+            },
+            authentication: {
+                required: true,
             }
         }),
         OasUsers: requireAuth,
         PriceUpdates: config => ({
             ...config,
             authentication: {
-                required: true,
+                required: false,
+            }
+        }),
+        Users: config => ({
+            ...config,
+            caching: {
+                ...config.caching,
+                enable: true,
+                maxAge: 120,
             }
         }),
     }
@@ -189,6 +211,7 @@ configureWunderGraphApplication({
                 templates.typescript.mocks,
                 templates.typescript.operations,
                 templates.typescript.namespaces,
+                templates.typescript.linkBuilder,
             ]
         },
         {
@@ -225,4 +248,16 @@ configureWunderGraphApplication({
             ]
         }
     },
+    links: [
+        linkBuilder
+            .source("userPosts")
+            .target("JSP_User","posts")
+            .argument("userID", "objectField", "id")
+            .build(),
+        linkBuilder
+            .source("postComments")
+            .target("Post","comments")
+            .argument("postID", "objectField", "id")
+            .build(),
+    ]
 });

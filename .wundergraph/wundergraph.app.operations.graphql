@@ -53,3 +53,20 @@ query Countries {
         name
     }
 }
+
+query Users {
+    users {
+        id
+        name
+        website
+        posts {
+            id
+            title
+            comments {
+                id
+                name
+                body
+            }
+        }
+    }
+}
