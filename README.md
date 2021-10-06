@@ -1,4 +1,4 @@
-# WunderGraph Demo with Apollo Federation & Subscriptions
+# WunderGraph Demo joining Apollo Federation (with Subscriptions), REST and GraphQL APIs and consuming it from a NextJS application
 
 This repository demonstrates how to combine multiple APIs into one unified API
 and exposing it as a secure JSON API without losing on developer experience.
@@ -19,6 +19,12 @@ WunderGraph is the only GraphQL Gateway that supports this feature.
 
 Additionally, this example also shows Live Queries.
 By using server-side Polling, we're able to turn any API into a realtime stream.
+
+## Resources
+
+Read the docs: https://wundergraph.com/docs
+
+If you have Questions, join our Discord: https://wundergraph.com/discord
 
 ## Prerequisites
 
@@ -60,6 +66,8 @@ yarn dev
 Open your browser and go to `http://localhost:3000`
 
 ## How does it work?
+
+### Merging the APIs
 
 Have a look at `./wundergraph/wundergraph.config.ts`.
 The following code-snipped introspects the different APIs and merges them all together.
@@ -117,6 +125,25 @@ const myApplication = new Application({
     ],
 });
 ```
+
+Once everything is merged, and the configuration is built,
+the WunderGraph engine is able to delegate all Requests to the correct upstream(s).
+
+### Request Flow
+
+All Operations from the `.wundergraph/operations` folder will be automatically turned into Persisted Operations.
+That is, each Operation will be pre-compiled and mounted on a unique URL Path.
+E.g. the Operation `Countries.graphql` will turn into the Endpoint `/api/main/operations/Contries`.
+
+In addition to this Endpoint, `wunderctl up` will also start a code-generator that generates a TypeScript API Client, React Hooks, etc...
+Have a look at the folder `nextjs-frontend/generated` to see all the generated code.
+
+Once a JSON-RPC Request hits the WunderNode (WunderGraph Server),
+it will call into various middlewares for authentication, caching, etc.
+and then execute the pre-compiled Operation.
+
+This makes the API very secure and performant.
+Additionally, our GraphQL Gateway Engine is capable of doing Subscriptions for Apollo Federation as well as Live-Queries to keep the UI automatically updated.
 
 ## Hacking
 
