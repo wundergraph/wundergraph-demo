@@ -8,15 +8,9 @@ import {
     authProviders
 } from "@wundergraph/sdk";
 import {appMock} from "./generated/mocks";
-import {
-    ConfigureOperations,
-    QueryConfiguration,
-} from "./generated/operations";
-import {config as dotEnvConfig} from "dotenv";
 import transformApi from "@wundergraph/sdk/dist/transformations";
-import linkBuilder from "../nextjs-frontend/generated/linkbuilder";
-
-dotEnvConfig();
+import linkBuilder from "./generated/linkbuilder";
+import operations from "./wundergraph.operations";
 
 const jsonPlaceholder = introspect.openApi({
     source: {
@@ -46,12 +40,6 @@ const federatedApi = introspect.federation({
 const countries = introspect.graphql({
     url: "https://countries.trevorblades.com/",
     source: IntrospectionPolicy.Network,
-    // You can add custom headers for APIs that require Authentication.
-    /*
-    headers: {
-        Authorization: "Bearer token",
-        "CustomHeader": "value"
-    }*/
 })
 
 const openAPI = introspect.openApi({
@@ -64,14 +52,6 @@ const openAPI = introspect.openApi({
     }
 });
 
-/*
-uncomment this section to create an API from a GraphQL upstream
-
-const graphQLAPI = introspect.graphql({
-    source: IntrospectionPolicy.Network,
-    url: "http://localhost:4000",
-});*/
-
 const renamedJsonPlaceholder = transformApi.renameTypes(jsonPlaceholder,{from: "User",to: "JSP_User"});
 
 const myApplication = new Application({
@@ -81,7 +61,6 @@ const myApplication = new Application({
         openAPI,
         countries,
         renamedJsonPlaceholder,
-        /*graphQLAPI*/
     ],
 });
 
@@ -123,85 +102,6 @@ const mock = appMock({
     }
 });
 
-const enableCaching = (config: QueryConfiguration) :QueryConfiguration => ({
-    ...config,
-    caching: {
-        ...config.caching,
-        enable: true,
-    }
-});
-
-const requireAuth = (config: QueryConfiguration) : QueryConfiguration => ({
-    ...config,
-    authentication: {
-        required: true,
-    }
-})
-
-const operations: ConfigureOperations = {
-    defaultConfig: {
-        authentication: {
-            required: false,
-        }
-    },
-    queries: config => {
-        return {
-            ...config,
-            kind: "query",
-            caching: {
-                enable: false,
-                public: true,
-                maxAge: 10,
-                staleWhileRevalidate: 5,
-            },
-            liveQuery: {
-                enable: false,
-                pollingIntervalSeconds: 5,
-            }
-        }
-    },
-    subscriptions: config => ({
-        ...config,
-        kind: "subscription",
-    }),
-    mutations: config => ({
-        ...config,
-        kind: "mutation"
-    }),
-    custom: {
-        Countries: enableCaching,
-        TopProducts: config => ({
-            ...config,
-            caching: {
-                ...config.caching,
-                enable: true
-            },
-            liveQuery: {
-                enable: true,
-                pollingIntervalSeconds: 2,
-            },
-            authentication: {
-                required: true,
-            }
-        }),
-        OasUsers: requireAuth,
-        PriceUpdates: config => ({
-            ...config,
-            authentication: {
-                required: false,
-            }
-        }),
-        Users: config => ({
-            ...config,
-            caching: {
-                ...config.caching,
-                enable: true,
-                maxAge: 120,
-            }
-        }),
-    }
-}
-
 // configureWunderGraph emits the configuration
 configureWunderGraphApplication({
     application: myApplication,
@@ -212,6 +112,7 @@ configureWunderGraphApplication({
                 templates.typescript.operations,
                 templates.typescript.namespaces,
                 templates.typescript.linkBuilder,
+                ...templates.typescript.all,
             ]
         },
         {
@@ -240,11 +141,10 @@ configureWunderGraphApplication({
     authentication: {
         cookieBased: {
             providers: [
-                authProviders.github({
-                    id: "github",
-                    "clientId": process.env.GITHUB_CLIENT_ID!,
-                    "clientSecret": process.env.GITHUB_CLIENT_SECRET!,
-                }),
+                authProviders.demo(),
+            ],
+            authorizedRedirectUris: [
+                "http://localhost:3000/"
             ]
         }
     },

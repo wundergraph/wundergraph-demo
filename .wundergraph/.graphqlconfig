@@ -7,7 +7,7 @@
         "endpoints": {
           "app": {
             "introspect": false,
-            "url": "http://localhost:9991/app",
+            "url": "http://localhost:9991/app/main/graphql",
             "headers": {
               "user-agent": "WunderGraph Client"
             }

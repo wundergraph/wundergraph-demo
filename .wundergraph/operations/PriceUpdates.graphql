@@ -1,0 +1,11 @@
+subscription {
+    updatedPrice {
+        upc
+        name
+        price
+        reviews {
+            id
+            body
+        }
+    }
+}

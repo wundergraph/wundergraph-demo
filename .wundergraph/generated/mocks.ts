@@ -1,21 +1,21 @@
 import {
-	TopProductsResponse,
+	CountriesResponse,
 	FakeProductsInput,
 	FakeProductsResponse,
 	OasUsersResponse,
 	PriceUpdatesResponse,
 	SetPriceInput,
 	SetPriceResponse,
-	CountriesResponse,
+	TopProductsResponse,
 	UsersResponse,
 } from "./models";
 
 export interface appMockConfig {
 	queries?: {
-		TopProducts?: () => TopProductsResponse | undefined;
+		Countries?: () => CountriesResponse | undefined;
 		FakeProducts?: (input: FakeProductsInput) => FakeProductsResponse | undefined;
 		OasUsers?: () => OasUsersResponse | undefined;
-		Countries?: () => CountriesResponse | undefined;
+		TopProducts?: () => TopProductsResponse | undefined;
 		Users?: () => UsersResponse | undefined;
 	};
 	mutations?: {

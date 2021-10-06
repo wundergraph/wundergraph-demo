@@ -1,12 +1,12 @@
 import {
-	TopProductsResponse,
+	CountriesResponse,
 	FakeProductsInput,
 	FakeProductsResponse,
 	OasUsersResponse,
 	PriceUpdatesResponse,
 	SetPriceInput,
 	SetPriceResponse,
-	CountriesResponse,
+	TopProductsResponse,
 	UsersResponse,
 } from "./models";
 
@@ -76,7 +76,13 @@ export interface RequestOptions<Input = never, InitialState = never> {
 	refetchOnWindowFocus?: boolean;
 }
 
-export type UserListener = (user: User | undefined) => void;
+export interface SubscriptionRequestOptions<Input = never> {
+	input?: Input;
+	abortSignal?: AbortSignal;
+	stopOnWindowBlur?: boolean;
+}
+
+export type UserListener = (user: User | null) => void;
 
 export interface User {
 	provider: string;
@@ -93,62 +99,58 @@ export interface User {
 	location: string;
 }
 
+export interface ClientConfig {
+	baseURL?: string;
+	extraHeaders?: HeadersInit;
+}
+
+export enum AuthProviderId {
+	"github" = "github",
+}
+
+export interface AuthProvider {
+	id: AuthProviderId;
+	login: (redirectURI?: string) => void;
+}
+
 export class Client {
-	constructor(baseURL?: string) {
-		this.baseURL = baseURL || this.baseURL;
+	constructor(config?: ClientConfig) {
+		this.baseURL = config?.baseURL || this.baseURL;
+		this.extraHeaders = config?.extraHeaders;
+		this.user = null;
 	}
 	private logoutCallback: undefined | (() => void);
 	public setLogoutCallback(cb: () => void) {
 		this.logoutCallback = cb;
 	}
+	public setExtraHeaders = (headers: HeadersInit) => {
+		this.extraHeaders = headers;
+	};
+	private extraHeaders?: HeadersInit;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "5b77c037";
+	private readonly applicationHash: string = "d11730c9";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.18.2";
+	private readonly sdkVersion: string = "0.35.0";
 	private csrfToken: string | undefined;
-	private user: User | undefined;
+	private user: User | null;
 	private userListener: UserListener | undefined;
 	public setUserListener = (listener: UserListener) => {
 		this.userListener = listener;
 	};
-	private setUser = (user: User | undefined) => {
+	private setUser = (user: User | null) => {
 		if (
-			(user === undefined && this.user !== undefined) ||
-			(user !== undefined && this.user === undefined) ||
+			(user === null && this.user !== null) ||
+			(user !== null && this.user === null) ||
 			JSON.stringify(user) !== JSON.stringify(this.user)
 		) {
 			this.user = user;
 			if (this.userListener !== undefined) {
-				this.userListener(user);
+				this.userListener(this.user);
 			}
 		}
 	};
 	public query = {
-		TopProducts: async (options: RequestOptions) => {
-			return await this.doFetch<TopProductsResponse>({
-				method: "GET",
-				path: "TopProducts",
-				input: options.input,
-				abortSignal: options.abortSignal,
-			});
-		},
-		FakeProducts: async (options: RequestOptions<FakeProductsInput>) => {
-			return await this.doFetch<FakeProductsResponse>({
-				method: "GET",
-				path: "FakeProducts",
-				input: options.input,
-				abortSignal: options.abortSignal,
-			});
-		},
-		OasUsers: async (options: RequestOptions) => {
-			return await this.doFetch<OasUsersResponse>({
-				method: "GET",
-				path: "OasUsers",
-				input: options.input,
-				abortSignal: options.abortSignal,
-			});
-		},
-		Countries: async (options: RequestOptions) => {
+		Countries: async (options: RequestOptions<never, CountriesResponse>) => {
 			return await this.doFetch<CountriesResponse>({
 				method: "GET",
 				path: "Countries",
@@ -156,7 +158,31 @@ export class Client {
 				abortSignal: options.abortSignal,
 			});
 		},
-		Users: async (options: RequestOptions) => {
+		FakeProducts: async (options: RequestOptions<FakeProductsInput, FakeProductsResponse>) => {
+			return await this.doFetch<FakeProductsResponse>({
+				method: "GET",
+				path: "FakeProducts",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		OasUsers: async (options: RequestOptions<never, OasUsersResponse>) => {
+			return await this.doFetch<OasUsersResponse>({
+				method: "GET",
+				path: "OasUsers",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		TopProducts: async (options: RequestOptions<never, TopProductsResponse>) => {
+			return await this.doFetch<TopProductsResponse>({
+				method: "GET",
+				path: "TopProducts",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		Users: async (options: RequestOptions<never, UsersResponse>) => {
 			return await this.doFetch<UsersResponse>({
 				method: "GET",
 				path: "Users",
@@ -166,7 +192,7 @@ export class Client {
 		},
 	};
 	public mutation = {
-		SetPrice: async (options: RequestOptions<SetPriceInput>) => {
+		SetPrice: async (options: RequestOptions<SetPriceInput, SetPriceResponse>) => {
 			return await this.doFetch<SetPriceResponse>({
 				method: "POST",
 				path: "SetPrice",
@@ -176,7 +202,10 @@ export class Client {
 		},
 	};
 	public subscription = {
-		PriceUpdates: (options: RequestOptions, cb: (response: Response<PriceUpdatesResponse>) => void) => {
+		PriceUpdates: (
+			options: RequestOptions<never, PriceUpdatesResponse>,
+			cb: (response: Response<PriceUpdatesResponse>) => void
+		) => {
 			return this.startSubscription<PriceUpdatesResponse>(
 				{
 					method: "GET",
@@ -189,11 +218,71 @@ export class Client {
 		},
 	};
 	public liveQuery = {
-		TopProducts: (options: RequestOptions, cb: (response: Response<TopProductsResponse>) => void) => {
+		Countries: (
+			options: RequestOptions<never, CountriesResponse>,
+			cb: (response: Response<CountriesResponse>) => void
+		) => {
+			return this.startSubscription<CountriesResponse>(
+				{
+					method: "GET",
+					path: "Countries",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+		FakeProducts: (
+			options: RequestOptions<FakeProductsInput, FakeProductsResponse>,
+			cb: (response: Response<FakeProductsResponse>) => void
+		) => {
+			return this.startSubscription<FakeProductsResponse>(
+				{
+					method: "GET",
+					path: "FakeProducts",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+		OasUsers: (
+			options: RequestOptions<never, OasUsersResponse>,
+			cb: (response: Response<OasUsersResponse>) => void
+		) => {
+			return this.startSubscription<OasUsersResponse>(
+				{
+					method: "GET",
+					path: "OasUsers",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+		TopProducts: (
+			options: RequestOptions<never, TopProductsResponse>,
+			cb: (response: Response<TopProductsResponse>) => void
+		) => {
 			return this.startSubscription<TopProductsResponse>(
 				{
 					method: "GET",
 					path: "TopProducts",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+		Users: (options: RequestOptions<never, UsersResponse>, cb: (response: Response<UsersResponse>) => void) => {
+			return this.startSubscription<UsersResponse>(
+				{
+					method: "GET",
+					path: "Users",
 					input: options.input,
 					abortSignal: options.abortSignal,
 					liveQuery: true,
@@ -207,8 +296,8 @@ export class Client {
 			const params =
 				fetchConfig.method !== "POST"
 					? this.queryString({
-							v: fetchConfig.input,
-							h: this.applicationHash,
+							wg_variables: fetchConfig.input,
+							wg_api_hash: this.applicationHash,
 					  })
 					: "";
 			if (fetchConfig.method === "POST" && this.csrfToken === undefined) {
@@ -219,6 +308,7 @@ export class Client {
 				this.csrfToken = await res.text();
 			}
 			const headers: Headers = new Headers({
+				...this.extraHeaders,
 				Accept: "application/json",
 				"WG-SDK-Version": this.sdkVersion,
 			});
@@ -289,13 +379,14 @@ export class Client {
 		(async () => {
 			try {
 				const params = this.queryString({
-					v: fetchConfig.input,
-					live: fetchConfig.liveQuery === true ? true : undefined,
+					wg_variables: fetchConfig.input,
+					wg_live: fetchConfig.liveQuery === true ? true : undefined,
 				});
 				const response = await fetch(
 					this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,
 					{
 						headers: {
+							...this.extraHeaders,
 							"Content-Type": "application/json",
 							"WG-SDK-Version": this.sdkVersion,
 						},
@@ -353,9 +444,10 @@ export class Client {
 			.join("&");
 		return query === "" ? query : "?" + query;
 	};
-	public fetchUser = async (abortSignal?: AbortSignal): Promise<User | undefined> => {
+	public fetchUser = async (abortSignal?: AbortSignal): Promise<User | null> => {
 		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user", {
 			headers: {
+				...this.extraHeaders,
 				"Content-Type": "application/json",
 				"WG-SDK-Version": this.sdkVersion,
 			},
@@ -369,17 +461,24 @@ export class Client {
 			this.setUser(user);
 			return this.user;
 		}
-		this.setUser(undefined);
-		return undefined;
+		this.setUser(null);
+		return null;
 	};
-	public login = {
-		github: (redirectURI?: string) => {
-			this.startLogin("github", redirectURI);
+	public login: Record<AuthProviderId, AuthProvider["login"]> = {
+		github: (redirectURI?: string): void => {
+			this.startLogin(AuthProviderId.github, redirectURI);
 		},
 	};
+	public authProviders: Array<AuthProvider> = [
+		{
+			id: AuthProviderId.github,
+			login: this.login[AuthProviderId.github],
+		},
+	];
 	public logout = async (): Promise<boolean> => {
 		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user/logout", {
 			headers: {
+				...this.extraHeaders,
 				"Content-Type": "application/json",
 				"WG-SDK-Version": this.sdkVersion,
 			},
@@ -387,13 +486,13 @@ export class Client {
 			credentials: "include",
 			mode: "cors",
 		});
-		this.setUser(undefined);
+		this.setUser(null);
 		if (this.logoutCallback) {
 			this.logoutCallback();
 		}
 		return response.status === 200;
 	};
-	private startLogin = (providerID: string, redirectURI?: string) => {
+	private startLogin = (providerID: AuthProviderId, redirectURI?: string) => {
 		const query = this.queryString({
 			redirect_uri: redirectURI || window.location.toString(),
 		});

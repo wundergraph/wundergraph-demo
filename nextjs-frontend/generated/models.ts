@@ -12,12 +12,11 @@ export interface GraphQLError {
 	path?: ReadonlyArray<string | number>;
 }
 
-export interface TopProductsResponse {
+export interface CountriesResponse {
 	data?: {
-		topProducts?: {
-			upc: string;
-			name?: string;
-			price?: number;
+		countries: {
+			code: string;
+			name: string;
 		}[];
 	};
 	errors?: ReadonlyArray<GraphQLError>;
@@ -72,11 +71,12 @@ export interface SetPriceResponse {
 	errors?: ReadonlyArray<GraphQLError>;
 }
 
-export interface CountriesResponse {
+export interface TopProductsResponse {
 	data?: {
-		countries: {
-			code: string;
-			name: string;
+		topProducts?: {
+			upc: string;
+			name?: string;
+			price?: number;
 		}[];
 	};
 	errors?: ReadonlyArray<GraphQLError>;

@@ -1,4 +1,4 @@
-export interface ConfigureOperations {
+export interface OperationsConfiguration {
 	// defaultConfig is the base for all configurations
 	// all configuration shared across queries, mutations and subscriptions can be done in the default config
 	defaultConfig: BaseOperationConfiguration;
@@ -13,12 +13,12 @@ export interface ConfigureOperations {
 	// custom allows you to override settings for each individual operation
 	// the input config is the default config + the query/mutation/subscription extra config
 	custom?: {
-		TopProducts?: CustomizeQuery;
+		Countries?: CustomizeQuery;
 		FakeProducts?: CustomizeQuery;
 		OasUsers?: CustomizeQuery;
 		PriceUpdates?: CustomizeSubscription;
 		SetPrice?: CustomizeMutation;
-		Countries?: CustomizeQuery;
+		TopProducts?: CustomizeQuery;
 		Users?: CustomizeQuery;
 	};
 }
@@ -55,3 +55,5 @@ export type ConfigureMutation = (config: BaseOperationConfiguration) => Mutation
 export type CustomizeMutation = (config: MutationConfiguration) => MutationConfiguration;
 export type ConfigureSubscription = (config: BaseOperationConfiguration) => SubscriptionConfiguration;
 export type CustomizeSubscription = (config: SubscriptionConfiguration) => SubscriptionConfiguration;
+
+export const configureWunderGraphOperations = (config: OperationsConfiguration) => config;

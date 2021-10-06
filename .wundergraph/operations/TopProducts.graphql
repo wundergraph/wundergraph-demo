@@ -1,0 +1,7 @@
+query {
+    topProducts {
+        upc
+        name
+        price
+    }
+}
