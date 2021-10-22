@@ -52,6 +52,9 @@ docker-compose up
 
 ```shell
 cd .wundergraph
+npm install
+or
+yarn
 wunderctl up
 ```
 
