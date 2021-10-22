@@ -117,14 +117,6 @@ configureWunderGraphApplication({
         },
         {
             templates: [
-                // use all the typescript react templates to generate a client
-                ...templates.typescript.react,
-            ],
-            // create-react-app expects all code to be inside /src
-            path: "../vitejs-react/src/generated",
-        },
-        {
-            templates: [
                 ...templates.typescript.react,
             ],
             path: "../nextjs-frontend/generated"

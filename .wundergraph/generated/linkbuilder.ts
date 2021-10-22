@@ -72,8 +72,8 @@ const targetStep = <T, F extends keyof T, R>(field: F) => ({
 
 interface TargetTypes {
 	User: "id" | "name" | "username" | "reviews";
-	Product: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate";
 	Review: "id" | "body" | "author" | "product";
+	Product: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate";
 	OasUser: "id" | "name" | "country_code";
 	Continent: "code" | "name" | "countries";
 	Country:

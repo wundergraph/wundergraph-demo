@@ -127,7 +127,16 @@ const jsonSchema: Schema = {
 									type: "array",
 									items: {
 										type: "object",
-										properties: { id: { type: "string" }, body: { type: "string" } },
+										properties: {
+											id: { type: "string" },
+											body: { type: "string" },
+											author: {
+												type: "object",
+												properties: { id: { type: "string" }, name: { type: "string" } },
+												additionalProperties: false,
+												required: ["id"],
+											},
+										},
 										additionalProperties: false,
 										required: ["id"],
 									},
@@ -187,7 +196,33 @@ const jsonSchema: Schema = {
 							type: "array",
 							items: {
 								type: "object",
-								properties: { upc: { type: "string" }, name: { type: "string" }, price: { type: "integer" } },
+								properties: {
+									upc: { type: "string" },
+									name: { type: "string" },
+									price: { type: "integer" },
+									reviews: {
+										type: "array",
+										items: {
+											type: "object",
+											properties: {
+												id: { type: "string" },
+												body: { type: "string" },
+												author: {
+													type: "object",
+													properties: {
+														id: { type: "string" },
+														name: { type: "string" },
+														username: { type: "string" },
+													},
+													additionalProperties: false,
+													required: ["id"],
+												},
+											},
+											additionalProperties: false,
+											required: ["id"],
+										},
+									},
+								},
 								additionalProperties: false,
 								required: ["upc"],
 							},

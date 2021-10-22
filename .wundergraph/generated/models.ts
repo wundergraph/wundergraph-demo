@@ -53,6 +53,10 @@ export interface PriceUpdatesResponse {
 			reviews?: {
 				id: string;
 				body?: string;
+				author?: {
+					id: string;
+					name?: string;
+				};
 			}[];
 		};
 	};
@@ -77,6 +81,15 @@ export interface TopProductsResponse {
 			upc: string;
 			name?: string;
 			price?: number;
+			reviews?: {
+				id: string;
+				body?: string;
+				author?: {
+					id: string;
+					name?: string;
+					username?: string;
+				};
+			}[];
 		}[];
 	};
 	errors?: ReadonlyArray<GraphQLError>;

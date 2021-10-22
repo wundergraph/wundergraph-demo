@@ -6,6 +6,10 @@ subscription {
         reviews {
             id
             body
+            author {
+                id
+                name
+            }
         }
     }
 }

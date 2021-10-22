@@ -215,7 +215,7 @@ export const useQuery = {
 	},
 	TopProducts: (options?: RequestOptions<never, TopProductsResponse>) => {
 		const { client } = useWunderGraph();
-		return Query(client.query.TopProducts, { requiresAuthentication: true }, options);
+		return Query(client.query.TopProducts, { requiresAuthentication: false }, options);
 	},
 	Users: (options?: RequestOptions<never, UsersResponse>) => {
 		const { client } = useWunderGraph();
@@ -252,7 +252,7 @@ export const useLiveQuery = {
 	},
 	TopProducts: (options?: SubscriptionRequestOptions) => {
 		const { client } = useWunderGraph();
-		return Subscription(client.liveQuery.TopProducts, { requiresAuthentication: true }, options);
+		return Subscription(client.liveQuery.TopProducts, { requiresAuthentication: false }, options);
 	},
 	Users: (options?: SubscriptionRequestOptions) => {
 		const { client } = useWunderGraph();

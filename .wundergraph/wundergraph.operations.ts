@@ -63,7 +63,7 @@ const operations = configureWunderGraphOperations({
                 pollingIntervalSeconds: 2,
             },
             authentication: {
-                required: true,
+                required: false,
             }
         }),
         OasUsers: enableAuth,
@@ -73,14 +73,7 @@ const operations = configureWunderGraphOperations({
                 required: false,
             }
         }),
-        Users: config => ({
-            ...config,
-            caching: {
-                ...config.caching,
-                enable: true,
-                maxAge: 120,
-            }
-        }),
+        Users: enableCaching,
     }
 });
 

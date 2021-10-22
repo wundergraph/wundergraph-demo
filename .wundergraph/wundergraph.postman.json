@@ -2,9 +2,9 @@
   "item": [
     {
       "_": {
-        "postman_id": "18237166-4de5-4876-9015-724ad8d8cd1c"
+        "postman_id": "1b56828c-0002-4538-8a6f-842196a2d304"
       },
-      "id": "18237166-4de5-4876-9015-724ad8d8cd1c",
+      "id": "1b56828c-0002-4538-8a6f-842196a2d304",
       "name": "Queries",
       "description": {
         "content": "All your query operations",
@@ -12,7 +12,7 @@
       },
       "item": [
         {
-          "id": "fe5b5e79-0f10-4165-b086-7699fc0919ce",
+          "id": "6501ec4f-4efc-43be-8c99-422fe8f68039",
           "name": "Countries",
           "request": {
             "url": {
@@ -40,7 +40,7 @@
           "event": []
         },
         {
-          "id": "7628ab67-4291-4008-8fe9-e0b90d9f9cdf",
+          "id": "0edf2629-8456-4174-8762-1b6fe916a728",
           "name": "FakeProducts",
           "request": {
             "url": {
@@ -78,7 +78,7 @@
           "event": []
         },
         {
-          "id": "2353bf23-56c1-46b1-8aa3-01841c226bad",
+          "id": "fb7ac4c4-52e4-4d2c-9117-bb73e7505201",
           "name": "OasUsers",
           "request": {
             "url": {
@@ -106,7 +106,7 @@
           "event": []
         },
         {
-          "id": "3bf8d828-7428-44b0-9530-1d0ac5bdc2a1",
+          "id": "9531d696-b7ce-4ea7-b1db-3388e90aa32f",
           "name": "PriceUpdates",
           "request": {
             "url": {
@@ -134,7 +134,7 @@
           "event": []
         },
         {
-          "id": "ad3f228e-3bd7-4977-9381-8461561ce81e",
+          "id": "25aaf975-28f4-41a1-9dbb-5d09de7175cc",
           "name": "TopProducts",
           "request": {
             "url": {
@@ -162,7 +162,7 @@
           "event": []
         },
         {
-          "id": "c80e7c80-489d-4a5c-acf3-a78a68c5a5ca",
+          "id": "0c6c281b-e544-419b-b584-281af7b8e6c9",
           "name": "Users",
           "request": {
             "url": {
@@ -194,9 +194,9 @@
     },
     {
       "_": {
-        "postman_id": "df4eb5c1-6121-4232-b522-7af51c8f4c0a"
+        "postman_id": "46902d05-c35e-490c-8c73-2b754a160c28"
       },
-      "id": "df4eb5c1-6121-4232-b522-7af51c8f4c0a",
+      "id": "46902d05-c35e-490c-8c73-2b754a160c28",
       "name": "Mutations",
       "description": {
         "content": "All your mutation operations",
@@ -204,7 +204,7 @@
       },
       "item": [
         {
-          "id": "b535e884-3afe-4c3c-b557-45044b342456",
+          "id": "9f8d0f5c-abe3-4928-887b-fa5aac52d68e",
           "name": "SetPrice",
           "request": {
             "url": {
@@ -261,7 +261,7 @@
     }
   ],
   "info": {
-    "_postman_id": "3bb8796a-7117-4124-a70c-4fe383c65d1a",
+    "_postman_id": "a9f85b2f-888d-4b5d-80ec-a3c321d8a7e4",
     "name": "Wundergraph",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

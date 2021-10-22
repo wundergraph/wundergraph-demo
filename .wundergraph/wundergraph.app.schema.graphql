@@ -149,6 +149,13 @@ type User {
   reviews: [Review]
 }
 
+type Review {
+  id: ID!
+  body: String
+  author: User
+  product: Product
+}
+
 type Product {
   upc: String!
   reviews: [Review]
@@ -157,13 +164,6 @@ type Product {
   weight: Int
   inStock: Boolean
   shippingEstimate: Int
-}
-
-type Review {
-  id: ID!
-  body: String
-  author: User
-  product: Product
 }
 
 type Subscription {
