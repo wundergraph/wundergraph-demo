@@ -3,7 +3,6 @@ import {
     configureWunderGraphApplication,
     cors,
     introspect,
-    IntrospectionPolicy,
     templates,
     authProviders
 } from "@wundergraph/sdk";
@@ -16,11 +15,10 @@ const jsonPlaceholder = introspect.openApi({
     source: {
         kind: "file",
         filePath: "jsonplaceholder.v1.yaml",
-    }
+    },
 })
 
 const federatedApi = introspect.federation({
-    source: IntrospectionPolicy.Network,
     upstreams: [
         {
             url: "http://localhost:4001/graphql"
@@ -39,7 +37,6 @@ const federatedApi = introspect.federation({
 
 const countries = introspect.graphql({
     url: "https://countries.trevorblades.com/",
-    source: IntrospectionPolicy.Network,
 })
 
 const openAPI = introspect.openApi({
@@ -47,9 +44,6 @@ const openAPI = introspect.openApi({
         kind: "file",
         filePath: "users_oas.json"
     },
-    headers: {
-        "Authorization": "token"
-    }
 });
 
 const renamedJsonPlaceholder = transformApi.renameTypes(jsonPlaceholder,{from: "User",to: "JSP_User"});
