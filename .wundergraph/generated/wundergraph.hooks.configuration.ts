@@ -38,16 +38,40 @@ export interface User {
 	user_id?: string;
 	avatar_url?: string;
 	location?: string;
+	roles?: Role[];
+}
+
+export type Role = "admin" | "user";
+
+export type AuthenticationResponse = AuthenticationOK | AuthenticationDeny;
+
+export interface AuthenticationOK {
+	status: "ok";
+	user: User;
+	message?: never;
+}
+
+export interface AuthenticationDeny {
+	status: "deny";
+	user?: never;
+	message?: string;
 }
 
 export interface HooksConfig {
+	authentication?: {
+		postAuthentication?: (user: User) => Promise<void>;
+		mutatingPostAuthentication?: (user: User) => Promise<AuthenticationResponse>;
+		revalidate?: (user: User) => Promise<AuthenticationResponse>;
+	};
 	queries?: {
 		Countries?: {
+			mockResolve?: (ctx: Context) => Promise<CountriesResponse>;
 			preResolve?: (ctx: Context) => Promise<void>;
 			postResolve?: (ctx: Context, response: CountriesResponse) => Promise<void>;
 			mutatingPostResolve?: (ctx: Context, response: CountriesResponse) => Promise<CountriesResponse>;
 		};
 		FakeProducts?: {
+			mockResolve?: (ctx: Context, input: FakeProductsInput) => Promise<FakeProductsResponse>;
 			preResolve?: (ctx: Context, input: FakeProductsInput) => Promise<void>;
 			mutatingPreResolve?: (ctx: Context, input: FakeProductsInput) => Promise<FakeProductsInput>;
 			postResolve?: (ctx: Context, input: FakeProductsInput, response: FakeProductsResponse) => Promise<void>;
@@ -58,16 +82,19 @@ export interface HooksConfig {
 			) => Promise<FakeProductsResponse>;
 		};
 		OasUsers?: {
+			mockResolve?: (ctx: Context) => Promise<OasUsersResponse>;
 			preResolve?: (ctx: Context) => Promise<void>;
 			postResolve?: (ctx: Context, response: OasUsersResponse) => Promise<void>;
 			mutatingPostResolve?: (ctx: Context, response: OasUsersResponse) => Promise<OasUsersResponse>;
 		};
 		TopProducts?: {
+			mockResolve?: (ctx: Context) => Promise<TopProductsResponse>;
 			preResolve?: (ctx: Context) => Promise<void>;
 			postResolve?: (ctx: Context, response: TopProductsResponse) => Promise<void>;
 			mutatingPostResolve?: (ctx: Context, response: TopProductsResponse) => Promise<TopProductsResponse>;
 		};
 		Users?: {
+			mockResolve?: (ctx: Context) => Promise<UsersResponse>;
 			preResolve?: (ctx: Context) => Promise<void>;
 			postResolve?: (ctx: Context, response: UsersResponse) => Promise<void>;
 			mutatingPostResolve?: (ctx: Context, response: UsersResponse) => Promise<UsersResponse>;
@@ -75,6 +102,7 @@ export interface HooksConfig {
 	};
 	mutations?: {
 		SetPrice?: {
+			mockResolve?: (ctx: Context, input: SetPriceInput) => Promise<SetPriceResponse>;
 			preResolve?: (ctx: Context, input: SetPriceInput) => Promise<void>;
 			mutatingPreResolve?: (ctx: Context, input: SetPriceInput) => Promise<SetPriceInput>;
 			postResolve?: (ctx: Context, input: SetPriceInput, response: SetPriceResponse) => Promise<void>;
@@ -91,6 +119,11 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 	const hooksConfig: HooksConfiguration = {
 		queries: config.queries as { [name: string]: { preResolve: any; postResolve: any; mutatingPostResolve: any } },
 		mutations: config.mutations as { [name: string]: { preResolve: any; postResolve: any; mutatingPostResolve: any } },
+		authentication: config.authentication as {
+			postAuthentication?: any;
+			mutatingPostAuthentication?: any;
+			revalidate?: any;
+		},
 	};
 	const server = {
 		config: hooksConfig,
@@ -105,12 +138,74 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				};
 			});
 
+			// authentication
+			fastify.post("/authentication/postAuthentication", async (request, reply) => {
+				reply.type("application/json").code(200);
+				if (config.authentication?.postAuthentication !== undefined && request.ctx.user !== undefined) {
+					try {
+						await config.authentication.postAuthentication(request.ctx.user);
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { hook: "postAuthentication", error: err };
+					}
+				}
+				return {
+					hook: "postAuthentication",
+				};
+			});
+			fastify.post("/authentication/mutatingPostAuthentication", async (request, reply) => {
+				reply.type("application/json").code(200);
+				if (config.authentication?.mutatingPostAuthentication !== undefined && request.ctx.user !== undefined) {
+					try {
+						const out = await config.authentication.mutatingPostAuthentication(request.ctx.user);
+						return {
+							hook: "mutatingPostAuthentication",
+							response: out,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { hook: "mutatingPostAuthentication", error: err };
+					}
+				}
+			});
+			fastify.post("/authentication/revalidateAuthentication", async (request, reply) => {
+				reply.type("application/json").code(200);
+				if (config.authentication?.revalidate !== undefined && request.ctx.user !== undefined) {
+					try {
+						const out = await config.authentication.revalidate(request.ctx.user);
+						return {
+							hook: "revalidateAuthentication",
+							response: out,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { hook: "revalidateAuthentication", error: err };
+					}
+				}
+			});
+
 			/**
 			 * Queries
 			 */
 
+			// mock
+			fastify.post("/operation/Countries/mockResolve", async (request, reply) => {
+				reply.type("application/json").code(200);
+				try {
+					const mutated = await config?.queries?.Countries?.mockResolve?.(request.ctx);
+					return { op: "Countries", hook: "mock", response: mutated };
+				} catch (err) {
+					request.log.error(err);
+					reply.code(500);
+					return { op: "Countries", hook: "mock", error: err };
+				}
+			});
+
 			// preResolve
-			fastify.post("/Countries/preResolve", async (request, reply) => {
+			fastify.post("/operation/Countries/preResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.queries?.Countries?.preResolve?.(request.ctx);
@@ -122,20 +217,23 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			});
 			// postResolve
-			fastify.post<{ Body: { response: CountriesResponse } }>("/Countries/postResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.queries?.Countries?.postResolve?.(request.ctx, request.body.response);
-					return { op: "Countries", hook: "postResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "Countries", hook: "postResolve", error: err };
+			fastify.post<{ Body: { response: CountriesResponse } }>(
+				"/operation/Countries/postResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.Countries?.postResolve?.(request.ctx, request.body.response);
+						return { op: "Countries", hook: "postResolve" };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "Countries", hook: "postResolve", error: err };
+					}
 				}
-			});
+			);
 			// mutatingPostResolve
 			fastify.post<{ Body: { response: CountriesResponse } }>(
-				"/Countries/mutatingPostResolve",
+				"/operation/Countries/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -149,21 +247,40 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 
-			// preResolve
-			fastify.post<{ Body: { input: FakeProductsInput } }>("/FakeProducts/preResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.queries?.FakeProducts?.preResolve?.(request.ctx, request.body.input);
-					return { op: "FakeProducts", hook: "preResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "FakeProducts", hook: "preResolve", error: err };
+			// mock
+			fastify.post<{ Body: { input: FakeProductsInput } }>(
+				"/operation/FakeProducts/mockResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.queries?.FakeProducts?.mockResolve?.(request.ctx, request.body.input);
+						return { op: "FakeProducts", hook: "mock", response: mutated };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "FakeProducts", hook: "mock", error: err };
+					}
 				}
-			});
+			);
+
+			// preResolve
+			fastify.post<{ Body: { input: FakeProductsInput } }>(
+				"/operation/FakeProducts/preResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.FakeProducts?.preResolve?.(request.ctx, request.body.input);
+						return { op: "FakeProducts", hook: "preResolve" };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "FakeProducts", hook: "preResolve", error: err };
+					}
+				}
+			);
 			// postResolve
 			fastify.post<{ Body: { input: FakeProductsInput; response: FakeProductsResponse } }>(
-				"/FakeProducts/postResolve",
+				"/operation/FakeProducts/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -178,7 +295,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 			// mutatingPreResolve
 			fastify.post<{ Body: { input: FakeProductsInput } }>(
-				"/FakeProducts/mutatingPreResolve",
+				"/operation/FakeProducts/mutatingPreResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -193,7 +310,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 			// mutatingPostResolve
 			fastify.post<{ Body: { input: FakeProductsInput; response: FakeProductsResponse } }>(
-				"/FakeProducts/mutatingPostResolve",
+				"/operation/FakeProducts/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -211,8 +328,21 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 
+			// mock
+			fastify.post("/operation/OasUsers/mockResolve", async (request, reply) => {
+				reply.type("application/json").code(200);
+				try {
+					const mutated = await config?.queries?.OasUsers?.mockResolve?.(request.ctx);
+					return { op: "OasUsers", hook: "mock", response: mutated };
+				} catch (err) {
+					request.log.error(err);
+					reply.code(500);
+					return { op: "OasUsers", hook: "mock", error: err };
+				}
+			});
+
 			// preResolve
-			fastify.post("/OasUsers/preResolve", async (request, reply) => {
+			fastify.post("/operation/OasUsers/preResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.queries?.OasUsers?.preResolve?.(request.ctx);
@@ -224,20 +354,23 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			});
 			// postResolve
-			fastify.post<{ Body: { response: OasUsersResponse } }>("/OasUsers/postResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.queries?.OasUsers?.postResolve?.(request.ctx, request.body.response);
-					return { op: "OasUsers", hook: "postResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "OasUsers", hook: "postResolve", error: err };
+			fastify.post<{ Body: { response: OasUsersResponse } }>(
+				"/operation/OasUsers/postResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.OasUsers?.postResolve?.(request.ctx, request.body.response);
+						return { op: "OasUsers", hook: "postResolve" };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "OasUsers", hook: "postResolve", error: err };
+					}
 				}
-			});
+			);
 			// mutatingPostResolve
 			fastify.post<{ Body: { response: OasUsersResponse } }>(
-				"/OasUsers/mutatingPostResolve",
+				"/operation/OasUsers/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -251,8 +384,21 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 
+			// mock
+			fastify.post("/operation/TopProducts/mockResolve", async (request, reply) => {
+				reply.type("application/json").code(200);
+				try {
+					const mutated = await config?.queries?.TopProducts?.mockResolve?.(request.ctx);
+					return { op: "TopProducts", hook: "mock", response: mutated };
+				} catch (err) {
+					request.log.error(err);
+					reply.code(500);
+					return { op: "TopProducts", hook: "mock", error: err };
+				}
+			});
+
 			// preResolve
-			fastify.post("/TopProducts/preResolve", async (request, reply) => {
+			fastify.post("/operation/TopProducts/preResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.queries?.TopProducts?.preResolve?.(request.ctx);
@@ -264,20 +410,23 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			});
 			// postResolve
-			fastify.post<{ Body: { response: TopProductsResponse } }>("/TopProducts/postResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.queries?.TopProducts?.postResolve?.(request.ctx, request.body.response);
-					return { op: "TopProducts", hook: "postResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "TopProducts", hook: "postResolve", error: err };
+			fastify.post<{ Body: { response: TopProductsResponse } }>(
+				"/operation/TopProducts/postResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.TopProducts?.postResolve?.(request.ctx, request.body.response);
+						return { op: "TopProducts", hook: "postResolve" };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "TopProducts", hook: "postResolve", error: err };
+					}
 				}
-			});
+			);
 			// mutatingPostResolve
 			fastify.post<{ Body: { response: TopProductsResponse } }>(
-				"/TopProducts/mutatingPostResolve",
+				"/operation/TopProducts/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -294,8 +443,21 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 
+			// mock
+			fastify.post("/operation/Users/mockResolve", async (request, reply) => {
+				reply.type("application/json").code(200);
+				try {
+					const mutated = await config?.queries?.Users?.mockResolve?.(request.ctx);
+					return { op: "Users", hook: "mock", response: mutated };
+				} catch (err) {
+					request.log.error(err);
+					reply.code(500);
+					return { op: "Users", hook: "mock", error: err };
+				}
+			});
+
 			// preResolve
-			fastify.post("/Users/preResolve", async (request, reply) => {
+			fastify.post("/operation/Users/preResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.queries?.Users?.preResolve?.(request.ctx);
@@ -307,7 +469,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			});
 			// postResolve
-			fastify.post<{ Body: { response: UsersResponse } }>("/Users/postResolve", async (request, reply) => {
+			fastify.post<{ Body: { response: UsersResponse } }>("/operation/Users/postResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.queries?.Users?.postResolve?.(request.ctx, request.body.response);
@@ -319,24 +481,40 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			});
 			// mutatingPostResolve
-			fastify.post<{ Body: { response: UsersResponse } }>("/Users/mutatingPostResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					const mutated = await config?.queries?.Users?.mutatingPostResolve?.(request.ctx, request.body.response);
-					return { op: "Users", hook: "mutatingPostResolve", response: mutated };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "Users", hook: "mutatingPostResolve", error: err };
+			fastify.post<{ Body: { response: UsersResponse } }>(
+				"/operation/Users/mutatingPostResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.queries?.Users?.mutatingPostResolve?.(request.ctx, request.body.response);
+						return { op: "Users", hook: "mutatingPostResolve", response: mutated };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "Users", hook: "mutatingPostResolve", error: err };
+					}
 				}
-			});
+			);
 
 			/**
 			 * Mutations
 			 */
 
+			// mock
+			fastify.post<{ Body: { input: SetPriceInput } }>("/operation/SetPrice/mockResolve", async (request, reply) => {
+				reply.type("application/json").code(200);
+				try {
+					const mutated = await config?.mutations?.SetPrice?.mockResolve?.(request.ctx, request.body.input);
+					return { op: "SetPrice", hook: "mock", response: mutated };
+				} catch (err) {
+					request.log.error(err);
+					reply.code(500);
+					return { op: "SetPrice", hook: "mock", error: err };
+				}
+			});
+
 			// preResolve
-			fastify.post<{ Body: { input: SetPriceInput } }>("/SetPrice/preResolve", async (request, reply) => {
+			fastify.post<{ Body: { input: SetPriceInput } }>("/operation/SetPrice/preResolve", async (request, reply) => {
 				reply.type("application/json").code(200);
 				try {
 					await config?.mutations?.SetPrice?.preResolve?.(request.ctx, request.body.input);
@@ -349,7 +527,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			});
 			// postResolve
 			fastify.post<{ Body: { input: SetPriceInput; response: SetPriceResponse } }>(
-				"/SetPrice/postResolve",
+				"/operation/SetPrice/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {
@@ -363,20 +541,23 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPreResolve
-			fastify.post<{ Body: { input: SetPriceInput } }>("/SetPrice/mutatingPreResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					const mutated = await config?.mutations?.SetPrice?.mutatingPreResolve?.(request.ctx, request.body.input);
-					return { op: "SetPrice", hook: "mutatingPreResolve", input: mutated };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "SetPrice", hook: "mutatingPreResolve", error: err };
+			fastify.post<{ Body: { input: SetPriceInput } }>(
+				"/operation/SetPrice/mutatingPreResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.mutations?.SetPrice?.mutatingPreResolve?.(request.ctx, request.body.input);
+						return { op: "SetPrice", hook: "mutatingPreResolve", input: mutated };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "SetPrice", hook: "mutatingPreResolve", error: err };
+					}
 				}
-			});
+			);
 			// mutatingPostResolve
 			fastify.post<{ Body: { input: SetPriceInput; response: SetPriceResponse } }>(
-				"/SetPrice/mutatingPostResolve",
+				"/operation/SetPrice/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
 					try {

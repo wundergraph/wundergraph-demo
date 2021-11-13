@@ -1,4 +1,4 @@
-query {
+{
     topProducts {
         upc
         name

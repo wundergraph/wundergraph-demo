@@ -58,51 +58,12 @@ const myApplication = new Application({
     ],
 });
 
-const randomInt = (max: number) => Math.floor(Math.random() * Math.floor(max)) + 1
-
-const mock = appMock({
-    queries: {
-        FakeProducts: (input) => {
-            return {
-                data: {
-                    topProducts: [
-                        {
-                            name: "foo",
-                            price: randomInt(100),
-                            upc: "bar",
-                        },
-                        {
-                            name: "foo",
-                            price: randomInt(100),
-                            upc: "bar2"
-                        }
-                    ]
-                }
-            }
-        },
-        OasUsers: () => {
-            return {
-                data: {
-                    getUsers: [
-                        {
-                            name: "Jens",
-                            country_code: "DE",
-                            id: 1,
-                        }
-                    ]
-                }
-            }
-        }
-    }
-});
-
 // configureWunderGraph emits the configuration
 configureWunderGraphApplication({
     application: myApplication,
     codeGenerators: [
         {
             templates: [
-                templates.typescript.mocks,
                 templates.typescript.operations,
                 templates.typescript.namespaces,
                 templates.typescript.linkBuilder,
@@ -116,7 +77,6 @@ configureWunderGraphApplication({
             path: "../nextjs-frontend/generated"
         }
     ],
-    mock,
     cors: {
         ...cors.allowAll,
         allowedOrigins: [

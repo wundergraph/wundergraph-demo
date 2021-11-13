@@ -2,6 +2,8 @@ import {
 	CountriesResponse,
 	FakeProductsInput,
 	FakeProductsResponse,
+	GuidoInput,
+	GuidoResponse,
 	OasUsersResponse,
 	PriceUpdatesResponse,
 	SetPriceInput,
@@ -14,6 +16,7 @@ export interface appMockConfig {
 	queries?: {
 		Countries?: () => CountriesResponse | undefined;
 		FakeProducts?: (input: FakeProductsInput) => FakeProductsResponse | undefined;
+		Guido?: (input: GuidoInput) => GuidoResponse | undefined;
 		OasUsers?: () => OasUsersResponse | undefined;
 		TopProducts?: () => TopProductsResponse | undefined;
 		Users?: () => UsersResponse | undefined;

@@ -10,6 +10,9 @@ import {
 	UsersResponse,
 } from "./models";
 
+export const WUNDERGRAPH_S3_ENABLED = false;
+export const WUNDERGRAPH_AUTH_ENABLED = true;
+
 export type Response<T> =
 	| ResponseOK<T>
 	| CachedResponse<T>
@@ -54,7 +57,6 @@ export interface Error {
 export interface None {
 	status: "none";
 }
-
 interface FetchConfig {
 	method: "GET" | "POST";
 	path: string;
@@ -97,6 +99,7 @@ export interface User {
 	user_id: string;
 	avatar_url: string;
 	location: string;
+	roles: string[];
 }
 
 export interface ClientConfig {
@@ -128,9 +131,9 @@ export class Client {
 	};
 	private extraHeaders?: HeadersInit;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "923f0dfb";
+	private readonly applicationHash: string = "b9978417";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.35.0";
+	private readonly sdkVersion: string = "0.39.0";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener | undefined;
@@ -333,7 +336,7 @@ export class Client {
 				status: "ok",
 				body: data,
 			};
-		} catch (e) {
+		} catch (e: any) {
 			return {
 				status: "error",
 				message: e,
@@ -368,7 +371,7 @@ export class Client {
 					inflight.forEach((cb) => cb.reject("unauthorized"));
 					this.fetchUser();
 				}
-			} catch (e) {
+			} catch (e: any) {
 				const inflight = this.inflight[key];
 				delete this.inflight[key];
 				inflight.forEach((cb) => cb.reject(e));
@@ -419,7 +422,7 @@ export class Client {
 						message = "";
 					}
 				}
-			} catch (e) {
+			} catch (e: any) {
 				cb({
 					status: "error",
 					message: e,
@@ -444,15 +447,15 @@ export class Client {
 			.join("&");
 		return query === "" ? query : "?" + query;
 	};
-	public fetchUser = async (abortSignal?: AbortSignal): Promise<User | null> => {
-		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user", {
+	public fetchUser = async (revalidate?: boolean): Promise<User | null> => {
+		const revalidateTrailer = revalidate === undefined ? "" : "?revalidate=true";
+		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user" + revalidateTrailer, {
 			headers: {
 				...this.extraHeaders,
 				"Content-Type": "application/json",
 				"WG-SDK-Version": this.sdkVersion,
 			},
 			method: "GET",
-			signal: abortSignal,
 			credentials: "include",
 			mode: "cors",
 		});

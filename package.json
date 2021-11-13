@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@rjsf/core": "^3.2.0"
+  }
+}

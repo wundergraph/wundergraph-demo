@@ -125,6 +125,17 @@ directive @jsonSchema(
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
+directive @rbac(
+  """the user must match all roles"""
+  requireMatchAll: [WG_ROLE]
+  """the user must match at least one of the roles"""
+  requireMatchAny: [WG_ROLE]
+  """the user must not match all of the roles"""
+  denyMatchAll: [WG_ROLE]
+  """the user must not match any of the roles"""
+  denyMatchAny: [WG_ROLE]
+) on QUERY | MUTATION | SUBSCRIPTION
+
 type Query {
   me: User
   topProducts(first: Int = 5): [Product]
@@ -302,4 +313,9 @@ type Company {
   name: String
   catchPhrase: String
   bs: String
+}
+
+enum WG_ROLE {
+  admin
+  user
 }
