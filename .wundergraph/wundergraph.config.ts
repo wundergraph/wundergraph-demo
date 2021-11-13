@@ -6,7 +6,6 @@ import {
     templates,
     authProviders
 } from "@wundergraph/sdk";
-import {appMock} from "./generated/mocks";
 import transformApi from "@wundergraph/sdk/dist/transformations";
 import linkBuilder from "./generated/linkbuilder";
 import operations from "./wundergraph.operations";
@@ -93,6 +92,12 @@ configureWunderGraphApplication({
                 "http://localhost:3000/"
             ]
         }
+    },
+    authorization: {
+      roles: [
+          "admin",
+          "user"
+      ]
     },
     links: [
         linkBuilder

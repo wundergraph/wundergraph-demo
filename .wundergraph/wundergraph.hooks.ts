@@ -5,7 +5,7 @@ const randomInt = (max: number) => Math.floor(Math.random() * Math.floor(max)) +
 const wunderGraphHooks = configureWunderGraphHooks({
     queries: {
         FakeProducts: {
-            mockResolve: async () => {
+            mockResolve: async (ctx,input) => {
                 return {
                     data: {
                         topProducts: [
