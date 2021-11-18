@@ -1,0 +1,1101 @@
+{
+  "apiName": "api",
+  "apiId": "",
+  "deploymentName": "main",
+  "environmentIds": [
+    ""
+  ],
+  "api": {
+    "enableGraphqlEndpoint": false,
+    "operations": [
+      {
+        "content": "query Countries {\n  countries {\n    code\n    name\n  }\n}\n",
+        "name": "Countries",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"countries\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"code\",\"name\"]}}},\"additionalProperties\":false,\"required\":[\"countries\"]}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "cacheConfig": {
+          "enable": true,
+          "maxAge": 60,
+          "public": true,
+          "staleWhileRevalidate": 60
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "liveQueryConfig": {
+          "enable": true,
+          "pollingIntervalSeconds": 1
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "query FakeProducts($first: Int!) {\n  topProducts(first: $first) {\n    upc\n    name\n    price\n  }\n}\n",
+        "name": "FakeProducts",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{\"first\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"first\"]}",
+        "operationType": 0,
+        "cacheConfig": {
+          "enable": false,
+          "maxAge": 60,
+          "public": true,
+          "staleWhileRevalidate": 60
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "liveQueryConfig": {
+          "enable": true,
+          "pollingIntervalSeconds": 1
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "query OasUsers {\n  getUsers {\n    country_code\n    id\n    name\n  }\n}\n",
+        "name": "OasUsers",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"getUsers\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"country_code\":{\"type\":\"string\"},\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "cacheConfig": {
+          "enable": false,
+          "maxAge": 60,
+          "public": true,
+          "staleWhileRevalidate": 60
+        },
+        "authenticationConfig": {
+          "authRequired": true
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "liveQueryConfig": {
+          "enable": true,
+          "pollingIntervalSeconds": 1
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "subscription PriceUpdates {\n  updatedPrice {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n      }\n    }\n  }\n}\n",
+        "name": "PriceUpdates",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"updatedPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"reviews\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"author\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"id\"]}},\"additionalProperties\":false,\"required\":[\"id\"]}}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false,\"required\":[\"updatedPrice\"]}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 2,
+        "cacheConfig": {
+          "enable": false,
+          "maxAge": 0,
+          "public": false,
+          "staleWhileRevalidate": 0
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "mutation SetPrice($upc: String!, $price: Int!) {\n  setPrice(upc: $upc, price: $price) {\n    upc\n    name\n    price\n    weight\n  }\n}\n",
+        "name": "SetPrice",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"setPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"weight\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\",\"price\"]}",
+        "operationType": 1,
+        "cacheConfig": {
+          "enable": false,
+          "maxAge": 0,
+          "public": false,
+          "staleWhileRevalidate": 0
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "query TopProducts {\n  topProducts {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n        username\n      }\n    }\n  }\n}\n",
+        "name": "TopProducts",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"reviews\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"author\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"username\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"id\"]}},\"additionalProperties\":false,\"required\":[\"id\"]}}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "cacheConfig": {
+          "enable": true,
+          "maxAge": 60,
+          "public": true,
+          "staleWhileRevalidate": 60
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "liveQueryConfig": {
+          "enable": true,
+          "pollingIntervalSeconds": 2
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      },
+      {
+        "content": "query Users {\n  users {\n    id\n    name\n    website\n    posts {\n      id\n      title\n      comments {\n        id\n        name\n        body\n      }\n    }\n  }\n}\n",
+        "name": "Users",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"users\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"website\":{\"type\":\"string\"},\"posts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"comments\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
+        "operationType": 0,
+        "cacheConfig": {
+          "enable": true,
+          "maxAge": 60,
+          "public": true,
+          "staleWhileRevalidate": 60
+        },
+        "authenticationConfig": {
+          "authRequired": false
+        },
+        "authorizationConfig": {
+          "claims": [],
+          "roleConfig": {
+            "requireMatchAll": [],
+            "requireMatchAny": [],
+            "denyMatchAll": [],
+            "denyMatchAny": []
+          }
+        },
+        "liveQueryConfig": {
+          "enable": true,
+          "pollingIntervalSeconds": 1
+        },
+        "hooksConfiguration": {
+          "preResolve": false,
+          "postResolve": false,
+          "mutatingPreResolve": false,
+          "mutatingPostResolve": false,
+          "mockResolve": {
+            "enable": false,
+            "subscriptionPollingIntervalMillis": 0
+          }
+        }
+      }
+    ],
+    "engineConfiguration": {
+      "defaultFlushInterval": 500,
+      "graphqlSchema": "directive @fromClaim(name: Claim) on VARIABLE_DEFINITION\n\ndirective @hooksVariable on VARIABLE_DEFINITION\n\ndirective @jsonSchema(\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  title: String\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  description: String\n  \"\"\"\n  The value of \"multipleOf\" MUST be a number, strictly greater than 0.\n  \n  A numeric instance is valid only if division by this keyword's value\n  results in an integer.\n  \"\"\"\n  multipleOf: Int\n  \"\"\"\n  The value of \"maximum\" MUST be a number, representing an inclusive\n  upper limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is less than or exactly equal to \"maximum\".\n  \"\"\"\n  maximum: Int\n  \"\"\"\n  The value of \"exclusiveMaximum\" MUST be number, representing an\n  exclusive upper limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly less than (not equal to) \"exclusiveMaximum\".\n  \"\"\"\n  exclusiveMaximum: Int\n  \"\"\"\n  The value of \"minimum\" MUST be a number, representing an inclusive\n  lower limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is greater than or exactly equal to \"minimum\".\n  \"\"\"\n  minimum: Int\n  \"\"\"\n  The value of \"exclusiveMinimum\" MUST be number, representing an\n  exclusive lower limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly greater than (not equal to) \"exclusiveMinimum\".\n  \"\"\"\n  exclusiveMinimum: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is less\n  than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \"\"\"\n  maxLength: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is\n  greater than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minLength: Int\n  \"\"\"\n  The value of this keyword MUST be a string.  This string SHOULD be a\n  valid regular expression, according to the ECMA 262 regular\n  expression dialect.\n  \n  A string instance is considered valid if the regular expression\n  matches the instance successfully.  Recall: regular expressions are\n  not implicitly anchored.\n  \"\"\"\n  pattern: String\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"maxItems\" if its size is less\n  than, or equal to, the value of this keyword.\n  \"\"\"\n  maxItems: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"minItems\" if its size is greater\n  than, or equal to, the value of this keyword.\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minItems: Int\n  \"\"\"\n  The value of this keyword MUST be a boolean.\n  \n  If this keyword has boolean value false, the instance validates\n  successfully.  If it has boolean value true, the instance validates\n  successfully if all of its elements are unique.\n  \n  Omitting this keyword has the same behavior as a value of false.\n  \"\"\"\n  uniqueItems: Boolean\n  commonPattern: COMMON_REGEX_PATTERN\n) on VARIABLE_DEFINITION\n\ndirective @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE\n\ndirective @rbac(\n  \"\"\"the user must match all roles\"\"\"\n  requireMatchAll: [WG_ROLE]\n  \"\"\"the user must match at least one of the roles\"\"\"\n  requireMatchAny: [WG_ROLE]\n  \"\"\"the user must not match all of the roles\"\"\"\n  denyMatchAll: [WG_ROLE]\n  \"\"\"the user must not match any of the roles\"\"\"\n  denyMatchAny: [WG_ROLE]\n) on QUERY | MUTATION | SUBSCRIPTION\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Query {\n  me: User\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n  continents(filter: ContinentFilterInput): [Continent!]!\n  continent(code: ID!): Continent\n  countries(filter: CountryFilterInput): [Country!]!\n  country(code: ID!): Country\n  languages(filter: LanguageFilterInput): [Language!]!\n  language(code: ID!): Language\n  posts: [Post]\n  postComments(postID: String!): [Comment]\n  users: [JSP_User]\n  userPosts(userID: String!): [Post]\n}\n\nscalar _Any\n\nunion _Entity = User | Product | Review\n\nscalar _FieldSet\n\ntype _Service {\n  sdl: String\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\nenum Claim {\n  EMAIL\n  EMAIL_VERIFIED\n  NAME\n  NICKNAME\n  LOCATION\n  PROVIDER\n}\n\nenum COMMON_REGEX_PATTERN {\n  EMAIL\n  DOMAIN\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n\ninput ContinentFilterInput {\n  code: StringQueryOperatorInput\n}\n\ninput StringQueryOperatorInput {\n  eq: String\n  ne: String\n  in: [String]\n  nin: [String]\n  regex: String\n  glob: String\n}\n\ntype Continent {\n  code: ID!\n  name: String!\n  countries: [Country!]!\n}\n\ntype Country {\n  code: ID!\n  name: String!\n  native: String!\n  phone: String!\n  continent: Continent!\n  capital: String\n  currency: String\n  languages: [Language!]!\n  emoji: String!\n  emojiU: String!\n  states: [State!]!\n}\n\ntype Language {\n  code: ID!\n  name: String\n  native: String\n  rtl: Boolean!\n}\n\ntype State {\n  code: String\n  name: String!\n  country: Country!\n}\n\ninput CountryFilterInput {\n  code: StringQueryOperatorInput\n  currency: StringQueryOperatorInput\n  continent: StringQueryOperatorInput\n}\n\ninput LanguageFilterInput {\n  code: StringQueryOperatorInput\n}\n\nenum CacheControlScope {\n  PUBLIC\n  PRIVATE\n}\n\nscalar Upload\n\ntype Post {\n  id: Int\n  userId: Int\n  title: String\n  body: String\n  comments: [Comment]\n}\n\ntype Comment {\n  id: Int\n  name: String\n  email: String\n  body: String\n  postId: Int\n}\n\ntype JSP_User {\n  id: Int\n  name: String\n  username: String\n  email: String\n  address: Address\n  phone: String\n  website: String\n  company: Company\n  posts: [Post]\n}\n\ntype Address {\n  street: String\n  suite: String\n  city: String\n  zipcode: String\n  geo: Geo\n}\n\ntype Geo {\n  lat: String\n  lng: String\n}\n\ntype Company {\n  name: String\n  catchPhrase: String\n  bs: String\n}\n\nenum WG_ROLE {\n  admin\n  user\n}\n",
+      "datasourceConfigurations": [
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4001/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Query @extends {\n  me: User\n}\n\ntype User @key(fields: \"id\") {\n  id: ID!\n  name: String\n  username: String\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "me"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id",
+                "name",
+                "username"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id",
+                "name",
+                "username"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4002/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Review @key(fields: \"id\") {\n  id: ID!\n  body: String\n  author: User @provides(fields: \"username\")\n  product: Product\n}\n\ntype User @extends @key(fields: \"id\") {\n  id: ID! @external\n  username: String @external\n  reviews: [Review]\n}\n\ntype Product @extends @key(fields: \"upc\") {\n  upc: String! @external\n  reviews: [Review]\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Review",
+              "fieldNames": [
+                "id",
+                "body",
+                "author",
+                "product"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "reviews"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "reviews"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Review",
+              "fieldNames": [
+                "id",
+                "body",
+                "author",
+                "product"
+              ]
+            },
+            {
+              "typeName": "User",
+              "fieldNames": [
+                "id"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4003/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Query @extends {\n  topProducts(first: Int = 5): [Product]\n}\n\ntype Product @key(fields: \"upc\") {\n  upc: String!\n  name: String\n  price: Int\n  weight: Int\n}\n\ntype Subscription @extends {\n  updatedPrice: Product!\n}\n\ntype Mutation @extends {\n  setPrice(upc: String!, price: Int!): Product\n}"
+            },
+            "subscription": {
+              "enabled": true,
+              "url": "ws://localhost:4003/graphql"
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "topProducts"
+              ]
+            },
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc",
+                "name",
+                "price",
+                "weight"
+              ]
+            },
+            {
+              "typeName": "Subscription",
+              "fieldNames": [
+                "updatedPrice"
+              ]
+            },
+            {
+              "typeName": "Mutation",
+              "fieldNames": [
+                "setPrice"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc",
+                "name",
+                "price",
+                "weight"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "http://localhost:4004/graphql",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": true,
+              "serviceSdl": "type Product @extends @key(fields: \"upc\") {\n    upc: String! @external\n    weight: Int @external\n    price: Int @external\n    inStock: Boolean\n    shippingEstimate: Int @requires(fields: \"price weight\")\n}\n"
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "inStock",
+                "shippingEstimate"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Product",
+              "fieldNames": [
+                "upc"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "getUsers"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "http://localhost:8881/users",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "getUsersUserId"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "http://localhost:8881/users/{{ .arguments.user_id }}",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 2,
+          "customGraphql": {
+            "fetch": {
+              "url": "https://countries.trevorblades.com/",
+              "method": 1,
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "federation": {
+              "enabled": false,
+              "serviceSdl": ""
+            },
+            "subscription": {
+              "enabled": false,
+              "url": ""
+            }
+          },
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "continents",
+                "continent",
+                "countries",
+                "country",
+                "languages",
+                "language"
+              ]
+            }
+          ],
+          "childNodes": [
+            {
+              "typeName": "Continent",
+              "fieldNames": [
+                "code",
+                "name",
+                "countries"
+              ]
+            },
+            {
+              "typeName": "Country",
+              "fieldNames": [
+                "code",
+                "name",
+                "native",
+                "phone",
+                "continent",
+                "capital",
+                "currency",
+                "languages",
+                "emoji",
+                "emojiU",
+                "states"
+              ]
+            },
+            {
+              "typeName": "Language",
+              "fieldNames": [
+                "code",
+                "name",
+                "native",
+                "rtl"
+              ]
+            },
+            {
+              "typeName": "State",
+              "fieldNames": [
+                "code",
+                "name",
+                "country"
+              ]
+            }
+          ],
+          "overrideFieldPathFromAlias": true
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "posts"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/posts",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "postComments"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/posts/{{ .arguments.postID }}/comments",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "users"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/users",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Query",
+              "fieldNames": [
+                "userPosts"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/users/{{ .arguments.userID }}/posts",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "JSP_User",
+              "fieldNames": [
+                "posts"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/users/{{ .object.id }}/posts",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        },
+        {
+          "kind": 1,
+          "rootNodes": [
+            {
+              "typeName": "Post",
+              "fieldNames": [
+                "comments"
+              ]
+            }
+          ],
+          "childNodes": [],
+          "customRest": {
+            "fetch": {
+              "method": 0,
+              "url": "https://jsonplaceholder.typicode.com/posts/{{ .object.id }}/comments",
+              "body": "",
+              "header": {},
+              "query": []
+            },
+            "subscription": {
+              "enabled": false,
+              "pollingIntervalMillis": 500,
+              "skipPublishSameResponse": false
+            }
+          },
+          "overrideFieldPathFromAlias": false
+        }
+      ],
+      "fieldConfigurations": [
+        {
+          "typeName": "User",
+          "fieldName": "reviews",
+          "requiresFields": [
+            "id"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "reviews",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "topProducts",
+          "argumentsConfiguration": [
+            {
+              "name": "first",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Mutation",
+          "fieldName": "setPrice",
+          "argumentsConfiguration": [
+            {
+              "name": "upc",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            },
+            {
+              "name": "price",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "inStock",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Product",
+          "fieldName": "shippingEstimate",
+          "requiresFields": [
+            "upc"
+          ],
+          "argumentsConfiguration": [],
+          "respectOverrideFieldPathFromAlias": true,
+          "path": [],
+          "disableDefaultFieldMapping": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "getUsers",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "getUsersUserId",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "continents",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "continent",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "countries",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "country",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "languages",
+          "argumentsConfiguration": [
+            {
+              "name": "filter",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "language",
+          "argumentsConfiguration": [
+            {
+              "name": "code",
+              "sourceType": 1,
+              "sourcePath": [],
+              "renderConfiguration": 0
+            }
+          ],
+          "disableDefaultFieldMapping": false,
+          "path": [],
+          "requiresFields": [],
+          "respectOverrideFieldPathFromAlias": true
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "posts",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "postComments",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "users",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "userPosts",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "JSP_User",
+          "fieldName": "posts",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [
+            {
+              "name": "userID",
+              "sourceType": 0,
+              "sourcePath": [
+                "id"
+              ],
+              "renderConfiguration": 1
+            }
+          ],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        },
+        {
+          "typeName": "Post",
+          "fieldName": "comments",
+          "disableDefaultFieldMapping": true,
+          "argumentsConfiguration": [
+            {
+              "name": "postID",
+              "sourceType": 0,
+              "sourcePath": [
+                "id"
+              ],
+              "renderConfiguration": 1
+            }
+          ],
+          "requiresFields": [],
+          "path": [],
+          "respectOverrideFieldPathFromAlias": false
+        }
+      ]
+    },
+    "s3UploadConfiguration": [],
+    "corsConfiguration": {
+      "allowCredentials": true,
+      "allowedHeaders": [
+        "*"
+      ],
+      "allowedMethods": [
+        "GET",
+        "POST"
+      ],
+      "allowedOrigins": [
+        "http://localhost:3000"
+      ],
+      "exposedHeaders": [
+        "*"
+      ],
+      "maxAge": 120
+    },
+    "authenticationConfig": {
+      "cookieBased": {
+        "providers": [
+          {
+            "kind": 0,
+            "githubConfig": {
+              "clientId": "demo",
+              "clientSecret": "demo"
+            },
+            "id": "github"
+          }
+        ],
+        "authorizedRedirectUris": [
+          "http://localhost:3000/"
+        ]
+      },
+      "hooks": {
+        "postAuthentication": false,
+        "mutatingPostAuthentication": false,
+        "revalidateAuthentication": false
+      }
+    }
+  },
+  "dangerouslyEnableGraphQLEndpoint": false
+}

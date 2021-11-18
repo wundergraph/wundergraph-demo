@@ -136,8 +136,17 @@ directive @rbac(
   denyMatchAny: [WG_ROLE]
 ) on QUERY | MUTATION | SUBSCRIPTION
 
+type User {
+  id: ID!
+  name: String
+  username: String
+  reviews: [Review]
+}
+
 type Query {
   me: User
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
   topProducts(first: Int = 5): [Product]
   getUsers: [OasUser]
   getUsersUserId(user_id: Int!): OasUser
@@ -153,18 +162,14 @@ type Query {
   userPosts(userID: String!): [Post]
 }
 
-type User {
-  id: ID!
-  name: String
-  username: String
-  reviews: [Review]
-}
+scalar _Any
 
-type Review {
-  id: ID!
-  body: String
-  author: User
-  product: Product
+union _Entity = User | Product | Review
+
+scalar _FieldSet
+
+type _Service {
+  sdl: String
 }
 
 type Product {
@@ -175,6 +180,13 @@ type Product {
   weight: Int
   inStock: Boolean
   shippingEstimate: Int
+}
+
+type Review {
+  id: ID!
+  body: String
+  author: User
+  product: Product
 }
 
 type Subscription {

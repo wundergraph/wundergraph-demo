@@ -10,6 +10,7 @@ import {
 	TopProductsResponse,
 	UsersResponse,
 } from "./models";
+import { InternalFakeProductsInput, InternalSetPriceInput } from "./models";
 import { HooksConfiguration } from "@wundergraph/sdk/dist/configure";
 
 declare module "fastify" {
@@ -71,13 +72,13 @@ export interface HooksConfig {
 			mutatingPostResolve?: (ctx: Context, response: CountriesResponse) => Promise<CountriesResponse>;
 		};
 		FakeProducts?: {
-			mockResolve?: (ctx: Context, input: FakeProductsInput) => Promise<FakeProductsResponse>;
-			preResolve?: (ctx: Context, input: FakeProductsInput) => Promise<void>;
-			mutatingPreResolve?: (ctx: Context, input: FakeProductsInput) => Promise<FakeProductsInput>;
-			postResolve?: (ctx: Context, input: FakeProductsInput, response: FakeProductsResponse) => Promise<void>;
+			mockResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<FakeProductsResponse>;
+			preResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<void>;
+			mutatingPreResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<InternalFakeProductsInput>;
+			postResolve?: (ctx: Context, input: InternalFakeProductsInput, response: FakeProductsResponse) => Promise<void>;
 			mutatingPostResolve?: (
 				ctx: Context,
-				input: FakeProductsInput,
+				input: InternalFakeProductsInput,
 				response: FakeProductsResponse
 			) => Promise<FakeProductsResponse>;
 		};
@@ -102,13 +103,13 @@ export interface HooksConfig {
 	};
 	mutations?: {
 		SetPrice?: {
-			mockResolve?: (ctx: Context, input: SetPriceInput) => Promise<SetPriceResponse>;
-			preResolve?: (ctx: Context, input: SetPriceInput) => Promise<void>;
-			mutatingPreResolve?: (ctx: Context, input: SetPriceInput) => Promise<SetPriceInput>;
-			postResolve?: (ctx: Context, input: SetPriceInput, response: SetPriceResponse) => Promise<void>;
+			mockResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<SetPriceResponse>;
+			preResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<void>;
+			mutatingPreResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<InternalSetPriceInput>;
+			postResolve?: (ctx: Context, input: InternalSetPriceInput, response: SetPriceResponse) => Promise<void>;
 			mutatingPostResolve?: (
 				ctx: Context,
-				input: SetPriceInput,
+				input: InternalSetPriceInput,
 				response: SetPriceResponse
 			) => Promise<SetPriceResponse>;
 		};
@@ -248,7 +249,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 
 			// mock
-			fastify.post<{ Body: { input: FakeProductsInput } }>(
+			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
 				"/operation/FakeProducts/mockResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -264,7 +265,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 
 			// preResolve
-			fastify.post<{ Body: { input: FakeProductsInput } }>(
+			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
 				"/operation/FakeProducts/preResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -279,7 +280,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// postResolve
-			fastify.post<{ Body: { input: FakeProductsInput; response: FakeProductsResponse } }>(
+			fastify.post<{ Body: { input: InternalFakeProductsInput; response: FakeProductsResponse } }>(
 				"/operation/FakeProducts/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -294,7 +295,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPreResolve
-			fastify.post<{ Body: { input: FakeProductsInput } }>(
+			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
 				"/operation/FakeProducts/mutatingPreResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -309,7 +310,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPostResolve
-			fastify.post<{ Body: { input: FakeProductsInput; response: FakeProductsResponse } }>(
+			fastify.post<{ Body: { input: InternalFakeProductsInput; response: FakeProductsResponse } }>(
 				"/operation/FakeProducts/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -501,32 +502,38 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			 */
 
 			// mock
-			fastify.post<{ Body: { input: SetPriceInput } }>("/operation/SetPrice/mockResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					const mutated = await config?.mutations?.SetPrice?.mockResolve?.(request.ctx, request.body.input);
-					return { op: "SetPrice", hook: "mock", response: mutated };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "SetPrice", hook: "mock", error: err };
+			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
+				"/operation/SetPrice/mockResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.mutations?.SetPrice?.mockResolve?.(request.ctx, request.body.input);
+						return { op: "SetPrice", hook: "mock", response: mutated };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "SetPrice", hook: "mock", error: err };
+					}
 				}
-			});
+			);
 
 			// preResolve
-			fastify.post<{ Body: { input: SetPriceInput } }>("/operation/SetPrice/preResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.mutations?.SetPrice?.preResolve?.(request.ctx, request.body.input);
-					return { op: "SetPrice", hook: "preResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "SetPrice", hook: "preResolve", error: err };
+			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
+				"/operation/SetPrice/preResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.mutations?.SetPrice?.preResolve?.(request.ctx, request.body.input);
+						return { op: "SetPrice", hook: "preResolve" };
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "SetPrice", hook: "preResolve", error: err };
+					}
 				}
-			});
+			);
 			// postResolve
-			fastify.post<{ Body: { input: SetPriceInput; response: SetPriceResponse } }>(
+			fastify.post<{ Body: { input: InternalSetPriceInput; response: SetPriceResponse } }>(
 				"/operation/SetPrice/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -541,7 +548,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPreResolve
-			fastify.post<{ Body: { input: SetPriceInput } }>(
+			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
 				"/operation/SetPrice/mutatingPreResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -556,7 +563,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPostResolve
-			fastify.post<{ Body: { input: SetPriceInput; response: SetPriceResponse } }>(
+			fastify.post<{ Body: { input: InternalSetPriceInput; response: SetPriceResponse } }>(
 				"/operation/SetPrice/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);

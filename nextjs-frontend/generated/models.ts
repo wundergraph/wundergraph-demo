@@ -7,6 +7,15 @@ export interface SetPriceInput {
 	price: number;
 }
 
+export interface InternalFakeProductsInput {
+	first: number;
+}
+
+export interface InternalSetPriceInput {
+	upc: string;
+	price: number;
+}
+
 export interface GraphQLError {
 	message: string;
 	path?: ReadonlyArray<string | number>;
