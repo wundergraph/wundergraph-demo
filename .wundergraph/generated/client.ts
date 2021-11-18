@@ -131,9 +131,9 @@ export class Client {
 	};
 	private extraHeaders?: HeadersInit;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "b1cc760b";
+	private readonly applicationHash: string = "6991446d";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.43.0";
+	private readonly sdkVersion: string = "0.43.1";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener | undefined;
@@ -448,22 +448,27 @@ export class Client {
 		return query === "" ? query : "?" + query;
 	};
 	public fetchUser = async (revalidate?: boolean): Promise<User | null> => {
-		const revalidateTrailer = revalidate === undefined ? "" : "?revalidate=true";
-		const response = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user" + revalidateTrailer, {
-			headers: {
-				...this.extraHeaders,
-				"Content-Type": "application/json",
-				"WG-SDK-Version": this.sdkVersion,
-			},
-			method: "GET",
-			credentials: "include",
-			mode: "cors",
-		});
-		if (response.status === 200) {
-			const user = await response.json();
-			this.setUser(user);
-			return this.user;
-		}
+		try {
+			const revalidateTrailer = revalidate === undefined ? "" : "?revalidate=true";
+			const response = await fetch(
+				this.baseURL + "/" + this.applicationPath + "/auth/cookie/user" + revalidateTrailer,
+				{
+					headers: {
+						...this.extraHeaders,
+						"Content-Type": "application/json",
+						"WG-SDK-Version": this.sdkVersion,
+					},
+					method: "GET",
+					credentials: "include",
+					mode: "cors",
+				}
+			);
+			if (response.status === 200) {
+				const user = await response.json();
+				this.setUser(user);
+				return this.user;
+			}
+		} catch {}
 		this.setUser(null);
 		return null;
 	};

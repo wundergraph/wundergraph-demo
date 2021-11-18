@@ -136,6 +136,12 @@ directive @rbac(
   denyMatchAny: [WG_ROLE]
 ) on QUERY | MUTATION | SUBSCRIPTION
 
+scalar _FieldSet
+
+type _Service {
+  sdl: String
+}
+
 type User {
   id: ID!
   name: String
@@ -165,12 +171,6 @@ type Query {
 scalar _Any
 
 union _Entity = User | Product | Review
-
-scalar _FieldSet
-
-type _Service {
-  sdl: String
-}
 
 type Product {
   upc: String!
