@@ -16,6 +16,15 @@ export interface InternalSetPriceInput {
 	price: number;
 }
 
+export interface InjectedFakeProductsInput {
+	first: number;
+}
+
+export interface InjectedSetPriceInput {
+	upc: string;
+	price: number;
+}
+
 export interface GraphQLError {
 	message: string;
 	path?: ReadonlyArray<string | number>;
@@ -37,17 +46,6 @@ export interface FakeProductsResponse {
 			upc: string;
 			name?: string;
 			price?: number;
-		}[];
-	};
-	errors?: ReadonlyArray<GraphQLError>;
-}
-
-export interface OasUsersResponse {
-	data?: {
-		getUsers?: {
-			country_code?: string;
-			id?: number;
-			name?: string;
 		}[];
 	};
 	errors?: ReadonlyArray<GraphQLError>;
@@ -110,16 +108,77 @@ export interface UsersResponse {
 			id?: number;
 			name?: string;
 			website?: string;
-			posts?: {
-				id?: number;
-				title?: string;
-				comments?: {
-					id?: number;
-					name?: string;
-					body?: string;
-				}[];
-			}[];
 		}[];
 	};
 	errors?: ReadonlyArray<GraphQLError>;
+}
+
+export interface GraphQLError {
+	message: string;
+	path?: ReadonlyArray<string | number>;
+}
+
+export interface CountriesResponseData {
+	countries: {
+		code: string;
+		name: string;
+	}[];
+}
+
+export interface FakeProductsResponseData {
+	topProducts?: {
+		upc: string;
+		name?: string;
+		price?: number;
+	}[];
+}
+
+export interface PriceUpdatesResponseData {
+	updatedPrice: {
+		upc: string;
+		name?: string;
+		price?: number;
+		reviews?: {
+			id: string;
+			body?: string;
+			author?: {
+				id: string;
+				name?: string;
+			};
+		}[];
+	};
+}
+
+export interface SetPriceResponseData {
+	setPrice?: {
+		upc: string;
+		name?: string;
+		price?: number;
+		weight?: number;
+	};
+}
+
+export interface TopProductsResponseData {
+	topProducts?: {
+		upc: string;
+		name?: string;
+		price?: number;
+		reviews?: {
+			id: string;
+			body?: string;
+			author?: {
+				id: string;
+				name?: string;
+				username?: string;
+			};
+		}[];
+	}[];
+}
+
+export interface UsersResponseData {
+	users?: {
+		id?: number;
+		name?: string;
+		website?: string;
+	}[];
 }

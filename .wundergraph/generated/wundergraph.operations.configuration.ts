@@ -15,7 +15,6 @@ export interface OperationsConfiguration {
 	custom?: {
 		Countries?: CustomizeQuery;
 		FakeProducts?: CustomizeQuery;
-		OasUsers?: CustomizeQuery;
 		PriceUpdates?: CustomizeSubscription;
 		SetPrice?: CustomizeMutation;
 		TopProducts?: CustomizeQuery;

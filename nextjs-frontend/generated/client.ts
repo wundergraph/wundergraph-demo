@@ -1,11 +1,10 @@
 import {
 	CountriesResponse,
-	FakeProductsInput,
 	FakeProductsResponse,
-	OasUsersResponse,
+	FakeProductsInput,
 	PriceUpdatesResponse,
-	SetPriceInput,
 	SetPriceResponse,
+	SetPriceInput,
 	TopProductsResponse,
 	UsersResponse,
 } from "./models";
@@ -131,9 +130,9 @@ export class Client {
 	};
 	private extraHeaders?: HeadersInit;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "6991446d";
+	private readonly applicationHash: string = "05a368e0";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.43.1";
+	private readonly sdkVersion: string = "0.48.2";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener | undefined;
@@ -165,14 +164,6 @@ export class Client {
 			return await this.doFetch<FakeProductsResponse>({
 				method: "GET",
 				path: "FakeProducts",
-				input: options.input,
-				abortSignal: options.abortSignal,
-			});
-		},
-		OasUsers: async (options: RequestOptions<never, OasUsersResponse>) => {
-			return await this.doFetch<OasUsersResponse>({
-				method: "GET",
-				path: "OasUsers",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});
@@ -244,21 +235,6 @@ export class Client {
 				{
 					method: "GET",
 					path: "FakeProducts",
-					input: options.input,
-					abortSignal: options.abortSignal,
-					liveQuery: true,
-				},
-				cb
-			);
-		},
-		OasUsers: (
-			options: RequestOptions<never, OasUsersResponse>,
-			cb: (response: Response<OasUsersResponse>) => void
-		) => {
-			return this.startSubscription<OasUsersResponse>(
-				{
-					method: "GET",
-					path: "OasUsers",
 					input: options.input,
 					abortSignal: options.abortSignal,
 					liveQuery: true,

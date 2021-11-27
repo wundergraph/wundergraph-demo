@@ -12,7 +12,6 @@ const IndexPage: NextPage<Props> = ({products}) => {
     const fakeProducts = useQuery.FakeProducts({input: {first: 5}, initialState: products});
     const {mutate: setPrice, response: price} = useMutation.SetPrice({input: {price: 0, upc: "1"}});
     const priceUpdate = useSubscription.PriceUpdates();
-    const oasUsers = useQuery.OasUsers({refetchOnWindowFocus: true});
     const countries = useQuery.Countries();
     const {response: liveProducts} = useLiveQuery.TopProducts();
     const users = useQuery.Users();
@@ -60,12 +59,6 @@ const IndexPage: NextPage<Props> = ({products}) => {
             </h2>
             <p>
                 {JSON.stringify(liveProducts)}
-            </p>
-            <h2>
-                OAS Users
-            </h2>
-            <p>
-                {JSON.stringify(oasUsers)}
             </p>
             <h2>
                 Countries

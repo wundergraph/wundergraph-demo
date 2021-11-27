@@ -6,7 +6,6 @@ import {
 	SetPriceInput,
 	CountriesResponse,
 	FakeProductsResponse,
-	OasUsersResponse,
 	TopProductsResponse,
 	UsersResponse,
 } from "./models";
@@ -209,10 +208,6 @@ export const useQuery = {
 		const { client } = useWunderGraph();
 		return Query(client.query.FakeProducts, { requiresAuthentication: false }, options);
 	},
-	OasUsers: (options?: RequestOptions<never, OasUsersResponse>) => {
-		const { client } = useWunderGraph();
-		return Query(client.query.OasUsers, { requiresAuthentication: true }, options);
-	},
 	TopProducts: (options?: RequestOptions<never, TopProductsResponse>) => {
 		const { client } = useWunderGraph();
 		return Query(client.query.TopProducts, { requiresAuthentication: false }, options);
@@ -245,10 +240,6 @@ export const useLiveQuery = {
 	FakeProducts: (options: SubscriptionRequestOptions<FakeProductsInput>) => {
 		const { client } = useWunderGraph();
 		return Subscription(client.liveQuery.FakeProducts, { requiresAuthentication: false }, options);
-	},
-	OasUsers: (options?: SubscriptionRequestOptions) => {
-		const { client } = useWunderGraph();
-		return Subscription(client.liveQuery.OasUsers, { requiresAuthentication: true }, options);
 	},
 	TopProducts: (options?: SubscriptionRequestOptions) => {
 		const { client } = useWunderGraph();

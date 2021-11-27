@@ -1,5 +1,5 @@
 {
-    topProducts {
+    topProducts: federated_topProducts {
         upc
         name
         price

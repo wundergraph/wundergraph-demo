@@ -1,6 +1,6 @@
 # from mock API
 query ($first: Int!) {
-    topProducts(first: $first) {
+    topProducts: federated_topProducts(first: $first) {
         upc
         name
         price

@@ -9,7 +9,7 @@
     "enableGraphqlEndpoint": false,
     "operations": [
       {
-        "content": "query Countries {\n  countries {\n    code\n    name\n  }\n}\n",
+        "content": "query Countries {\n  countries: countries_countries {\n    code\n    name\n  }\n}\n",
         "name": "Countries",
         "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"countries\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"code\",\"name\"]}}},\"additionalProperties\":false,\"required\":[\"countries\"]}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
@@ -45,10 +45,14 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       },
       {
-        "content": "query FakeProducts($first: Int!) {\n  topProducts(first: $first) {\n    upc\n    name\n    price\n  }\n}\n",
+        "content": "query FakeProducts($first: Int!) {\n  topProducts: federated_topProducts(first: $first) {\n    upc\n    name\n    price\n  }\n}\n",
         "name": "FakeProducts",
         "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{\"first\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"first\"]}",
@@ -84,49 +88,14 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       },
       {
-        "content": "query OasUsers {\n  getUsers {\n    country_code\n    id\n    name\n  }\n}\n",
-        "name": "OasUsers",
-        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"getUsers\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"country_code\":{\"type\":\"string\"},\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
-        "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
-        "operationType": 0,
-        "cacheConfig": {
-          "enable": false,
-          "maxAge": 60,
-          "public": true,
-          "staleWhileRevalidate": 60
-        },
-        "authenticationConfig": {
-          "authRequired": true
-        },
-        "authorizationConfig": {
-          "claims": [],
-          "roleConfig": {
-            "requireMatchAll": [],
-            "requireMatchAny": [],
-            "denyMatchAll": [],
-            "denyMatchAny": []
-          }
-        },
-        "liveQueryConfig": {
-          "enable": true,
-          "pollingIntervalSeconds": 1
-        },
-        "hooksConfiguration": {
-          "preResolve": false,
-          "postResolve": false,
-          "mutatingPreResolve": false,
-          "mutatingPostResolve": false,
-          "mockResolve": {
-            "enable": false,
-            "subscriptionPollingIntervalMillis": 0
-          }
-        }
-      },
-      {
-        "content": "subscription PriceUpdates {\n  updatedPrice {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n      }\n    }\n  }\n}\n",
+        "content": "subscription PriceUpdates {\n  updatedPrice: federated_updatedPrice {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n      }\n    }\n  }\n}\n",
         "name": "PriceUpdates",
         "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"updatedPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"reviews\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"author\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"id\"]}},\"additionalProperties\":false,\"required\":[\"id\"]}}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false,\"required\":[\"updatedPrice\"]}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
@@ -158,10 +127,14 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       },
       {
-        "content": "mutation SetPrice($upc: String!, $price: Int!) {\n  setPrice(upc: $upc, price: $price) {\n    upc\n    name\n    price\n    weight\n  }\n}\n",
+        "content": "mutation SetPrice($upc: String!, $price: Int!) {\n  setPrice: federated_setPrice(upc: $upc, price: $price) {\n    upc\n    name\n    price\n    weight\n  }\n}\n",
         "name": "SetPrice",
         "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"setPrice\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"weight\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\"]}},\"additionalProperties\":false}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"}},\"additionalProperties\":false,\"required\":[\"upc\",\"price\"]}",
@@ -193,10 +166,14 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       },
       {
-        "content": "query TopProducts {\n  topProducts {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n        username\n      }\n    }\n  }\n}\n",
+        "content": "query TopProducts {\n  topProducts: federated_topProducts {\n    upc\n    name\n    price\n    reviews {\n      id\n      body\n      author {\n        id\n        name\n        username\n      }\n    }\n  }\n}\n",
         "name": "TopProducts",
         "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"topProducts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"upc\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"integer\"},\"reviews\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"author\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"username\":{\"type\":\"string\"}},\"additionalProperties\":false,\"required\":[\"id\"]}},\"additionalProperties\":false,\"required\":[\"id\"]}}},\"additionalProperties\":false,\"required\":[\"upc\"]}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
@@ -232,12 +209,16 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       },
       {
-        "content": "query Users {\n  users {\n    id\n    name\n    website\n    posts {\n      id\n      title\n      comments {\n        id\n        name\n        body\n      }\n    }\n  }\n}\n",
+        "content": "query Users {\n  users: jsp_users {\n    id\n    name\n    website\n  }\n}\n",
         "name": "Users",
-        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"users\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"website\":{\"type\":\"string\"},\"posts\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"title\":{\"type\":\"string\"},\"comments\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
+        "responseSchema": "{\"type\":\"object\",\"properties\":{\"data\":{\"type\":\"object\",\"properties\":{\"users\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"website\":{\"type\":\"string\"}},\"additionalProperties\":false}}},\"additionalProperties\":false}},\"additionalProperties\":false}",
         "variablesSchema": "{\"type\":\"object\",\"properties\":{},\"additionalProperties\":false}",
         "operationType": 0,
         "cacheConfig": {
@@ -271,12 +252,16 @@
             "enable": false,
             "subscriptionPollingIntervalMillis": 0
           }
-        }
+        },
+        "variablesConfiguration": {
+          "injectVariables": []
+        },
+        "internal": false
       }
     ],
     "engineConfiguration": {
       "defaultFlushInterval": 500,
-      "graphqlSchema": "directive @fromClaim(name: Claim) on VARIABLE_DEFINITION\n\ndirective @hooksVariable on VARIABLE_DEFINITION\n\ndirective @jsonSchema(\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  title: String\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  description: String\n  \"\"\"\n  The value of \"multipleOf\" MUST be a number, strictly greater than 0.\n  \n  A numeric instance is valid only if division by this keyword's value\n  results in an integer.\n  \"\"\"\n  multipleOf: Int\n  \"\"\"\n  The value of \"maximum\" MUST be a number, representing an inclusive\n  upper limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is less than or exactly equal to \"maximum\".\n  \"\"\"\n  maximum: Int\n  \"\"\"\n  The value of \"exclusiveMaximum\" MUST be number, representing an\n  exclusive upper limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly less than (not equal to) \"exclusiveMaximum\".\n  \"\"\"\n  exclusiveMaximum: Int\n  \"\"\"\n  The value of \"minimum\" MUST be a number, representing an inclusive\n  lower limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is greater than or exactly equal to \"minimum\".\n  \"\"\"\n  minimum: Int\n  \"\"\"\n  The value of \"exclusiveMinimum\" MUST be number, representing an\n  exclusive lower limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly greater than (not equal to) \"exclusiveMinimum\".\n  \"\"\"\n  exclusiveMinimum: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is less\n  than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \"\"\"\n  maxLength: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is\n  greater than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minLength: Int\n  \"\"\"\n  The value of this keyword MUST be a string.  This string SHOULD be a\n  valid regular expression, according to the ECMA 262 regular\n  expression dialect.\n  \n  A string instance is considered valid if the regular expression\n  matches the instance successfully.  Recall: regular expressions are\n  not implicitly anchored.\n  \"\"\"\n  pattern: String\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"maxItems\" if its size is less\n  than, or equal to, the value of this keyword.\n  \"\"\"\n  maxItems: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"minItems\" if its size is greater\n  than, or equal to, the value of this keyword.\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minItems: Int\n  \"\"\"\n  The value of this keyword MUST be a boolean.\n  \n  If this keyword has boolean value false, the instance validates\n  successfully.  If it has boolean value true, the instance validates\n  successfully if all of its elements are unique.\n  \n  Omitting this keyword has the same behavior as a value of false.\n  \"\"\"\n  uniqueItems: Boolean\n  commonPattern: COMMON_REGEX_PATTERN\n) on VARIABLE_DEFINITION\n\ndirective @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE\n\ndirective @rbac(\n  \"\"\"the user must match all roles\"\"\"\n  requireMatchAll: [WG_ROLE]\n  \"\"\"the user must match at least one of the roles\"\"\"\n  requireMatchAny: [WG_ROLE]\n  \"\"\"the user must not match all of the roles\"\"\"\n  denyMatchAll: [WG_ROLE]\n  \"\"\"the user must not match any of the roles\"\"\"\n  denyMatchAny: [WG_ROLE]\n) on QUERY | MUTATION | SUBSCRIPTION\n\nscalar _FieldSet\n\ntype _Service {\n  sdl: String\n}\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review]\n}\n\ntype Query {\n  me: User\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n  topProducts(first: Int = 5): [Product]\n  getUsers: [OasUser]\n  getUsersUserId(user_id: Int!): OasUser\n  continents(filter: ContinentFilterInput): [Continent!]!\n  continent(code: ID!): Continent\n  countries(filter: CountryFilterInput): [Country!]!\n  country(code: ID!): Country\n  languages(filter: LanguageFilterInput): [Language!]!\n  language(code: ID!): Language\n  posts: [Post]\n  postComments(postID: String!): [Comment]\n  users: [JSP_User]\n  userPosts(userID: String!): [Post]\n}\n\nscalar _Any\n\nunion _Entity = User | Product | Review\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\nenum Claim {\n  EMAIL\n  EMAIL_VERIFIED\n  NAME\n  NICKNAME\n  LOCATION\n  PROVIDER\n}\n\nenum COMMON_REGEX_PATTERN {\n  EMAIL\n  DOMAIN\n}\n\ntype OasUser {\n  id: Int\n  name: String\n  country_code: String\n}\n\ninput ContinentFilterInput {\n  code: StringQueryOperatorInput\n}\n\ninput StringQueryOperatorInput {\n  eq: String\n  ne: String\n  in: [String]\n  nin: [String]\n  regex: String\n  glob: String\n}\n\ntype Continent {\n  code: ID!\n  name: String!\n  countries: [Country!]!\n}\n\ntype Country {\n  code: ID!\n  name: String!\n  native: String!\n  phone: String!\n  continent: Continent!\n  capital: String\n  currency: String\n  languages: [Language!]!\n  emoji: String!\n  emojiU: String!\n  states: [State!]!\n}\n\ntype Language {\n  code: ID!\n  name: String\n  native: String\n  rtl: Boolean!\n}\n\ntype State {\n  code: String\n  name: String!\n  country: Country!\n}\n\ninput CountryFilterInput {\n  code: StringQueryOperatorInput\n  currency: StringQueryOperatorInput\n  continent: StringQueryOperatorInput\n}\n\ninput LanguageFilterInput {\n  code: StringQueryOperatorInput\n}\n\nenum CacheControlScope {\n  PUBLIC\n  PRIVATE\n}\n\nscalar Upload\n\ntype Post {\n  id: Int\n  userId: Int\n  title: String\n  body: String\n  comments: [Comment]\n}\n\ntype Comment {\n  id: Int\n  name: String\n  email: String\n  body: String\n  postId: Int\n}\n\ntype JSP_User {\n  id: Int\n  name: String\n  username: String\n  email: String\n  address: Address\n  phone: String\n  website: String\n  company: Company\n  posts: [Post]\n}\n\ntype Address {\n  street: String\n  suite: String\n  city: String\n  zipcode: String\n  geo: Geo\n}\n\ntype Geo {\n  lat: String\n  lng: String\n}\n\ntype Company {\n  name: String\n  catchPhrase: String\n  bs: String\n}\n\nenum WG_ROLE {\n  admin\n  user\n}\n",
+      "graphqlSchema": "directive @fromClaim(name: Claim) on VARIABLE_DEFINITION\n\ndirective @hooksVariable on VARIABLE_DEFINITION\n\ndirective @jsonSchema(\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  title: String\n  \"\"\"\n  The value of both of these keywords MUST be a string.\n  \n  Both of these keywords can be used to decorate a user interface with\n  information about the data produced by this user interface.  A title\n  will preferably be short, whereas a description will provide\n  explanation about the purpose of the instance described by this\n  schema.\n  \"\"\"\n  description: String\n  \"\"\"\n  The value of \"multipleOf\" MUST be a number, strictly greater than 0.\n  \n  A numeric instance is valid only if division by this keyword's value\n  results in an integer.\n  \"\"\"\n  multipleOf: Int\n  \"\"\"\n  The value of \"maximum\" MUST be a number, representing an inclusive\n  upper limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is less than or exactly equal to \"maximum\".\n  \"\"\"\n  maximum: Int\n  \"\"\"\n  The value of \"exclusiveMaximum\" MUST be number, representing an\n  exclusive upper limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly less than (not equal to) \"exclusiveMaximum\".\n  \"\"\"\n  exclusiveMaximum: Int\n  \"\"\"\n  The value of \"minimum\" MUST be a number, representing an inclusive\n  lower limit for a numeric instance.\n  \n  If the instance is a number, then this keyword validates only if the\n  instance is greater than or exactly equal to \"minimum\".\n  \"\"\"\n  minimum: Int\n  \"\"\"\n  The value of \"exclusiveMinimum\" MUST be number, representing an\n  exclusive lower limit for a numeric instance.\n  \n  If the instance is a number, then the instance is valid only if it\n  has a value strictly greater than (not equal to) \"exclusiveMinimum\".\n  \"\"\"\n  exclusiveMinimum: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is less\n  than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \"\"\"\n  maxLength: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  A string instance is valid against this keyword if its length is\n  greater than, or equal to, the value of this keyword.\n  \n  The length of a string instance is defined as the number of its\n  characters as defined by RFC 7159 [RFC7159].\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minLength: Int\n  \"\"\"\n  The value of this keyword MUST be a string.  This string SHOULD be a\n  valid regular expression, according to the ECMA 262 regular\n  expression dialect.\n  \n  A string instance is considered valid if the regular expression\n  matches the instance successfully.  Recall: regular expressions are\n  not implicitly anchored.\n  \"\"\"\n  pattern: String\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"maxItems\" if its size is less\n  than, or equal to, the value of this keyword.\n  \"\"\"\n  maxItems: Int\n  \"\"\"\n  The value of this keyword MUST be a non-negative integer.\n  \n  An array instance is valid against \"minItems\" if its size is greater\n  than, or equal to, the value of this keyword.\n  \n  Omitting this keyword has the same behavior as a value of 0.\n  \"\"\"\n  minItems: Int\n  \"\"\"\n  The value of this keyword MUST be a boolean.\n  \n  If this keyword has boolean value false, the instance validates\n  successfully.  If it has boolean value true, the instance validates\n  successfully if all of its elements are unique.\n  \n  Omitting this keyword has the same behavior as a value of false.\n  \"\"\"\n  uniqueItems: Boolean\n  commonPattern: COMMON_REGEX_PATTERN\n) on VARIABLE_DEFINITION\n\n\"\"\"\nThe directive @injectCurrentDateTime injects a DateTime string of the current date and time into the variable.\nThis variable MUST be a string compatible scalar. \n\nThe default format, is: ISO 8601\nIf no format is chosen, the default format is used.\nCustom formats are allowed by specifying a format conforming to the Golang specification for specifying a date time format.\n\"\"\"\ndirective @injectCurrentDateTime(\n  format: WunderGraphDateTimeFormat = ISO8601\n  \"\"\"customFormat must conform to the Golang specification for specifying a date time format\"\"\"\n  customFormat: String\n) on VARIABLE_DEFINITION\n\n\"\"\"\nThe directive @injectGeneratedUUID injects a generated UUID into the variable.\nThis variable MUST be a string.\nAt the same time, it removes the variable from the input definition,\ndisallowing the user to supply it.\n\nThis means, the UUID is 100% generated server-side and can be considered untempered.\n\"\"\"\ndirective @injectGeneratedUUID on VARIABLE_DEFINITION\n\n\"\"\"\nThe @internalOperation Directive marks an Operation as internal.\nBy doing so, the Operation is no longer accessible from the public API.\nIt can only be accessed by internal services, like hooks.\n\"\"\"\ndirective @internalOperation on QUERY | MUTATION | SUBSCRIPTION\n\ndirective @cacheControl(maxAge: Int, scope: CacheControlScope_countries) on FIELD_DEFINITION | OBJECT | INTERFACE\n\ndirective @rbac(\n  \"\"\"the user must match all roles\"\"\"\n  requireMatchAll: [WG_ROLE]\n  \"\"\"the user must match at least one of the roles\"\"\"\n  requireMatchAny: [WG_ROLE]\n  \"\"\"the user must not match all of the roles\"\"\"\n  denyMatchAll: [WG_ROLE]\n  \"\"\"the user must not match any of the roles\"\"\"\n  denyMatchAny: [WG_ROLE]\n) on QUERY | MUTATION | SUBSCRIPTION\n\nunion _Entity_federated = User_federated | Product_federated | Review_federated\n\ntype _Service_federated {\n  sdl: String\n}\n\nscalar _Any\n\ntype Query {\n  federated_me: User_federated\n  federated__entities(representations: [_Any!]!): [_Entity_federated]!\n  federated__service: _Service_federated!\n  federated_topProducts(first: Int = 5): [Product_federated]\n  countries_continents(filter: ContinentFilterInput_countries): [Continent_countries!]!\n  countries_continent(code: ID!): Continent_countries\n  countries_countries(filter: CountryFilterInput_countries): [Country_countries!]!\n  countries_country(code: ID!): Country_countries\n  countries_languages(filter: LanguageFilterInput_countries): [Language_countries!]!\n  countries_language(code: ID!): Language_countries\n  jsp_posts: [Post_jsp]\n  jsp_postComments(postID: String!): [Comment_jsp]\n  jsp_users: [User_jsp]\n  jsp_userPosts(userID: String!): [Post_jsp]\n}\n\ntype Entity_federated {\n  findUserByID(id: ID!): User_federated!\n  findProductByUpc(upc: String!): Product_federated!\n  findReviewByID(id: ID!): Review_federated!\n}\n\ntype User_federated {\n  id: ID!\n  name: String\n  username: String\n  reviews: [Review_federated]\n}\n\nscalar _FieldSet_federated\n\ntype Review_federated {\n  id: ID!\n  body: String\n  author: User_federated\n  product: Product_federated\n}\n\ntype Product_federated {\n  upc: String!\n  reviews: [Review_federated]\n  name: String\n  price: Int\n  weight: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\ntype Mutation {\n  federated_setPrice(upc: String!, price: Int!): Product_federated\n}\n\ntype Subscription {\n  federated_updatedPrice: Product_federated!\n}\n\nenum Claim {\n  EMAIL\n  EMAIL_VERIFIED\n  NAME\n  NICKNAME\n  LOCATION\n  PROVIDER\n}\n\nenum COMMON_REGEX_PATTERN {\n  EMAIL\n  DOMAIN\n}\n\nenum WunderGraphDateTimeFormat {\n  \"\"\"2006-01-02T15:04:05-0700\"\"\"\n  ISO8601\n  \"\"\"Mon Jan _2 15:04:05 2006\"\"\"\n  ANSIC\n  \"\"\"Mon Jan _2 15:04:05 MST 2006\"\"\"\n  UnixDate\n  \"\"\"Mon Jan 02 15:04:05 -0700 2006\"\"\"\n  RubyDate\n  \"\"\"02 Jan 06 15:04 MST\"\"\"\n  RFC822\n  \"\"\"02 Jan 06 15:04 -0700\"\"\"\n  RFC822Z\n  \"\"\"Monday, 02-Jan-06 15:04:05 MST\"\"\"\n  RFC850\n  \"\"\"Mon, 02 Jan 2006 15:04:05 MST\"\"\"\n  RFC1123\n  \"\"\"Mon, 02 Jan 2006 15:04:05 -0700\"\"\"\n  RFC1123Z\n  \"\"\"2006-01-02T15:04:05Z07:00\"\"\"\n  RFC3339\n  \"\"\"2006-01-02T15:04:05.999999999Z07:00\"\"\"\n  RFC3339Nano\n  \"\"\"3:04PM\"\"\"\n  Kitchen\n  \"\"\"Jan _2 15:04:05\"\"\"\n  Stamp\n  \"\"\"Jan _2 15:04:05.000\"\"\"\n  StampMilli\n  \"\"\"Jan _2 15:04:05.000000\"\"\"\n  StampMicro\n  \"\"\"Jan _2 15:04:05.000000000\"\"\"\n  StampNano\n}\n\ninput ContinentFilterInput_countries {\n  code: StringQueryOperatorInput_countries\n}\n\ninput StringQueryOperatorInput_countries {\n  eq: String\n  ne: String\n  in: [String]\n  nin: [String]\n  regex: String\n  glob: String\n}\n\ntype Continent_countries {\n  code: ID!\n  name: String!\n  countries: [Country_countries!]!\n}\n\ntype Country_countries {\n  code: ID!\n  name: String!\n  native: String!\n  phone: String!\n  continent: Continent_countries!\n  capital: String\n  currency: String\n  languages: [Language_countries!]!\n  emoji: String!\n  emojiU: String!\n  states: [State_countries!]!\n}\n\ntype Language_countries {\n  code: ID!\n  name: String\n  native: String\n  rtl: Boolean!\n}\n\ntype State_countries {\n  code: String\n  name: String!\n  country: Country_countries!\n}\n\ninput CountryFilterInput_countries {\n  code: StringQueryOperatorInput_countries\n  currency: StringQueryOperatorInput_countries\n  continent: StringQueryOperatorInput_countries\n}\n\ninput LanguageFilterInput_countries {\n  code: StringQueryOperatorInput_countries\n}\n\nenum CacheControlScope_countries {\n  PUBLIC\n  PRIVATE\n}\n\nscalar Upload_countries\n\ntype Post_jsp {\n  id: Int\n  userId: Int\n  title: String\n  body: String\n  comments: [Comment_jsp]\n}\n\ntype Comment_jsp {\n  id: Int\n  name: String\n  email: String\n  body: String\n  postId: Int\n}\n\ntype User_jsp {\n  id: Int\n  name: String\n  username: String\n  email: String\n  address: Address_jsp\n  phone: String\n  website: String\n  company: Company_jsp\n  posts: [Post_jsp]\n}\n\ntype Address_jsp {\n  street: String\n  suite: String\n  city: String\n  zipcode: String\n  geo: Geo_jsp\n}\n\ntype Geo_jsp {\n  lat: String\n  lng: String\n}\n\ntype Company_jsp {\n  name: String\n  catchPhrase: String\n  bs: String\n}\n\nenum WG_ROLE {\n  admin\n  user\n}\n",
       "datasourceConfigurations": [
         {
           "kind": 2,
@@ -295,17 +280,18 @@
             "subscription": {
               "enabled": false,
               "url": ""
-            }
+            },
+            "upstreamSchema": "directive @requires(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @provides(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @key(fields: _FieldSet!) on OBJECT | INTERFACE\n\ndirective @extends on OBJECT\n\ndirective @external on FIELD_DEFINITION\n\nunion _Entity = User\n\ntype _Service {\n  sdl: String\n}\n\nscalar _Any\n\ntype Query {\n  me: User\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n}\n\ntype Entity {\n  findUserByID(id: ID!): User!\n}\n\ntype User {\n  id: ID!\n  name: String\n  username: String\n}\n\nscalar _FieldSet\n"
           },
           "rootNodes": [
             {
               "typeName": "Query",
               "fieldNames": [
-                "me"
+                "federated_me"
               ]
             },
             {
-              "typeName": "User",
+              "typeName": "User_federated",
               "fieldNames": [
                 "id",
                 "name",
@@ -315,7 +301,7 @@
           ],
           "childNodes": [
             {
-              "typeName": "User",
+              "typeName": "User_federated",
               "fieldNames": [
                 "id",
                 "name",
@@ -342,11 +328,12 @@
             "subscription": {
               "enabled": false,
               "url": ""
-            }
+            },
+            "upstreamSchema": "directive @external on FIELD_DEFINITION\n\ndirective @requires(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @provides(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @key(fields: _FieldSet!) on OBJECT | INTERFACE\n\ndirective @extends on OBJECT\n\nscalar _Any\n\ntype Entity {\n  findProductByUpc(upc: String!): Product!\n  findReviewByID(id: ID!): Review!\n  findUserByID(id: ID!): User!\n}\n\ntype Review {\n  id: ID!\n  body: String\n  author: User\n  product: Product\n}\n\ntype User {\n  id: ID!\n  username: String\n  reviews: [Review]\n}\n\nunion _Entity = Product | Review | User\n\ntype _Service {\n  sdl: String\n}\n\ntype Query {\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n}\n\ntype Product {\n  upc: String!\n  reviews: [Review]\n}\n\nscalar _FieldSet\n"
           },
           "rootNodes": [
             {
-              "typeName": "Review",
+              "typeName": "Review_federated",
               "fieldNames": [
                 "id",
                 "body",
@@ -355,13 +342,13 @@
               ]
             },
             {
-              "typeName": "User",
+              "typeName": "User_federated",
               "fieldNames": [
                 "reviews"
               ]
             },
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "reviews"
               ]
@@ -369,7 +356,7 @@
           ],
           "childNodes": [
             {
-              "typeName": "Review",
+              "typeName": "Review_federated",
               "fieldNames": [
                 "id",
                 "body",
@@ -378,13 +365,13 @@
               ]
             },
             {
-              "typeName": "User",
+              "typeName": "User_federated",
               "fieldNames": [
                 "id"
               ]
             },
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "upc"
               ]
@@ -409,17 +396,18 @@
             "subscription": {
               "enabled": true,
               "url": "ws://localhost:4003/graphql"
-            }
+            },
+            "upstreamSchema": "directive @requires(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @provides(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @key(fields: _FieldSet!) on OBJECT | INTERFACE\n\ndirective @extends on OBJECT\n\ndirective @external on FIELD_DEFINITION\n\ntype Mutation {\n  setPrice(upc: String!, price: Int!): Product\n}\n\nscalar _Any\n\nscalar _FieldSet\n\ntype _Service {\n  sdl: String\n}\n\ntype Query {\n  topProducts(first: Int = 5): [Product]\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n}\n\ntype Product {\n  upc: String!\n  name: String\n  price: Int\n  weight: Int\n}\n\nunion _Entity = Product\n\ntype Subscription {\n  updatedPrice: Product!\n}\n\ntype Entity {\n  findProductByUpc(upc: String!): Product!\n}\n"
           },
           "rootNodes": [
             {
               "typeName": "Query",
               "fieldNames": [
-                "topProducts"
+                "federated_topProducts"
               ]
             },
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "upc",
                 "name",
@@ -430,19 +418,19 @@
             {
               "typeName": "Subscription",
               "fieldNames": [
-                "updatedPrice"
+                "federated_updatedPrice"
               ]
             },
             {
               "typeName": "Mutation",
               "fieldNames": [
-                "setPrice"
+                "federated_setPrice"
               ]
             }
           ],
           "childNodes": [
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "upc",
                 "name",
@@ -470,11 +458,12 @@
             "subscription": {
               "enabled": false,
               "url": ""
-            }
+            },
+            "upstreamSchema": "directive @external on FIELD_DEFINITION\n\ndirective @requires(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @provides(fields: _FieldSet!) on FIELD_DEFINITION\n\ndirective @key(fields: _FieldSet!) on OBJECT | INTERFACE\n\ndirective @extends on OBJECT\n\nscalar _FieldSet\n\ntype _Service {\n  sdl: String\n}\n\ntype Product {\n  upc: String!\n  weight: Int\n  price: Int\n  inStock: Boolean\n  shippingEstimate: Int\n}\n\nscalar _Any\n\nunion _Entity = Product\n\ntype Query {\n  _entities(representations: [_Any!]!): [_Entity]!\n  _service: _Service!\n}\n\ntype Entity {\n  findProductByUpc(upc: String!): Product!\n}\n"
           },
           "rootNodes": [
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "inStock",
                 "shippingEstimate"
@@ -483,67 +472,13 @@
           ],
           "childNodes": [
             {
-              "typeName": "Product",
+              "typeName": "Product_federated",
               "fieldNames": [
                 "upc"
               ]
             }
           ],
           "overrideFieldPathFromAlias": true
-        },
-        {
-          "kind": 1,
-          "rootNodes": [
-            {
-              "typeName": "Query",
-              "fieldNames": [
-                "getUsers"
-              ]
-            }
-          ],
-          "childNodes": [],
-          "customRest": {
-            "fetch": {
-              "method": 0,
-              "url": "http://localhost:8881/users",
-              "body": "",
-              "header": {},
-              "query": []
-            },
-            "subscription": {
-              "enabled": false,
-              "pollingIntervalMillis": 500,
-              "skipPublishSameResponse": false
-            }
-          },
-          "overrideFieldPathFromAlias": false
-        },
-        {
-          "kind": 1,
-          "rootNodes": [
-            {
-              "typeName": "Query",
-              "fieldNames": [
-                "getUsersUserId"
-              ]
-            }
-          ],
-          "childNodes": [],
-          "customRest": {
-            "fetch": {
-              "method": 0,
-              "url": "http://localhost:8881/users/{{ .arguments.user_id }}",
-              "body": "",
-              "header": {},
-              "query": []
-            },
-            "subscription": {
-              "enabled": false,
-              "pollingIntervalMillis": 500,
-              "skipPublishSameResponse": false
-            }
-          },
-          "overrideFieldPathFromAlias": false
         },
         {
           "kind": 2,
@@ -562,24 +497,25 @@
             "subscription": {
               "enabled": false,
               "url": ""
-            }
+            },
+            "upstreamSchema": "directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE\n\ntype Query {\n  continents(filter: ContinentFilterInput): [Continent!]!\n  continent(code: ID!): Continent\n  countries(filter: CountryFilterInput): [Country!]!\n  country(code: ID!): Country\n  languages(filter: LanguageFilterInput): [Language!]!\n  language(code: ID!): Language\n}\n\ninput ContinentFilterInput {\n  code: StringQueryOperatorInput\n}\n\ninput StringQueryOperatorInput {\n  eq: String\n  ne: String\n  in: [String]\n  nin: [String]\n  regex: String\n  glob: String\n}\n\ntype Continent {\n  code: ID!\n  name: String!\n  countries: [Country!]!\n}\n\ntype Country {\n  code: ID!\n  name: String!\n  native: String!\n  phone: String!\n  continent: Continent!\n  capital: String\n  currency: String\n  languages: [Language!]!\n  emoji: String!\n  emojiU: String!\n  states: [State!]!\n}\n\ntype Language {\n  code: ID!\n  name: String\n  native: String\n  rtl: Boolean!\n}\n\ntype State {\n  code: String\n  name: String!\n  country: Country!\n}\n\ninput CountryFilterInput {\n  code: StringQueryOperatorInput\n  currency: StringQueryOperatorInput\n  continent: StringQueryOperatorInput\n}\n\ninput LanguageFilterInput {\n  code: StringQueryOperatorInput\n}\n\nenum CacheControlScope {\n  PUBLIC\n  PRIVATE\n}\n\nscalar Upload\n"
           },
           "rootNodes": [
             {
               "typeName": "Query",
               "fieldNames": [
-                "continents",
-                "continent",
-                "countries",
-                "country",
-                "languages",
-                "language"
+                "countries_continents",
+                "countries_continent",
+                "countries_countries",
+                "countries_country",
+                "countries_languages",
+                "countries_language"
               ]
             }
           ],
           "childNodes": [
             {
-              "typeName": "Continent",
+              "typeName": "Continent_countries",
               "fieldNames": [
                 "code",
                 "name",
@@ -587,7 +523,7 @@
               ]
             },
             {
-              "typeName": "Country",
+              "typeName": "Country_countries",
               "fieldNames": [
                 "code",
                 "name",
@@ -603,7 +539,7 @@
               ]
             },
             {
-              "typeName": "Language",
+              "typeName": "Language_countries",
               "fieldNames": [
                 "code",
                 "name",
@@ -612,7 +548,7 @@
               ]
             },
             {
-              "typeName": "State",
+              "typeName": "State_countries",
               "fieldNames": [
                 "code",
                 "name",
@@ -628,7 +564,7 @@
             {
               "typeName": "Query",
               "fieldNames": [
-                "posts"
+                "jsp_posts"
               ]
             }
           ],
@@ -655,7 +591,7 @@
             {
               "typeName": "Query",
               "fieldNames": [
-                "postComments"
+                "jsp_postComments"
               ]
             }
           ],
@@ -682,7 +618,7 @@
             {
               "typeName": "Query",
               "fieldNames": [
-                "users"
+                "jsp_users"
               ]
             }
           ],
@@ -709,7 +645,7 @@
             {
               "typeName": "Query",
               "fieldNames": [
-                "userPosts"
+                "jsp_userPosts"
               ]
             }
           ],
@@ -734,7 +670,7 @@
           "kind": 1,
           "rootNodes": [
             {
-              "typeName": "JSP_User",
+              "typeName": "User_jsp",
               "fieldNames": [
                 "posts"
               ]
@@ -761,7 +697,7 @@
           "kind": 1,
           "rootNodes": [
             {
-              "typeName": "Post",
+              "typeName": "Post_jsp",
               "fieldNames": [
                 "comments"
               ]
@@ -787,30 +723,58 @@
       ],
       "fieldConfigurations": [
         {
-          "typeName": "User",
+          "typeName": "Query",
+          "fieldName": "federated_me",
+          "disableDefaultFieldMapping": false,
+          "path": [
+            "me"
+          ],
+          "argumentsConfiguration": [],
+          "requiresFields": []
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "federated__entities",
+          "disableDefaultFieldMapping": false,
+          "path": [
+            "_entities"
+          ],
+          "argumentsConfiguration": [],
+          "requiresFields": []
+        },
+        {
+          "typeName": "Query",
+          "fieldName": "federated__service",
+          "disableDefaultFieldMapping": false,
+          "path": [
+            "_service"
+          ],
+          "argumentsConfiguration": [],
+          "requiresFields": []
+        },
+        {
+          "typeName": "User_federated",
           "fieldName": "reviews",
           "requiresFields": [
             "id"
           ],
           "argumentsConfiguration": [],
-          "respectOverrideFieldPathFromAlias": true,
           "path": [],
           "disableDefaultFieldMapping": false
         },
         {
-          "typeName": "Product",
+          "typeName": "Product_federated",
           "fieldName": "reviews",
           "requiresFields": [
             "upc"
           ],
           "argumentsConfiguration": [],
-          "respectOverrideFieldPathFromAlias": true,
           "path": [],
           "disableDefaultFieldMapping": false
         },
         {
           "typeName": "Query",
-          "fieldName": "topProducts",
+          "fieldName": "federated_topProducts",
           "argumentsConfiguration": [
             {
               "name": "first",
@@ -820,13 +784,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "topProducts"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Mutation",
-          "fieldName": "setPrice",
+          "fieldName": "federated_setPrice",
           "argumentsConfiguration": [
             {
               "name": "upc",
@@ -842,53 +807,44 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "setPrice"
+          ],
+          "requiresFields": []
         },
         {
-          "typeName": "Product",
+          "typeName": "Subscription",
+          "fieldName": "federated_updatedPrice",
+          "disableDefaultFieldMapping": false,
+          "path": [
+            "updatedPrice"
+          ],
+          "argumentsConfiguration": [],
+          "requiresFields": []
+        },
+        {
+          "typeName": "Product_federated",
           "fieldName": "inStock",
           "requiresFields": [
             "upc"
           ],
           "argumentsConfiguration": [],
-          "respectOverrideFieldPathFromAlias": true,
           "path": [],
           "disableDefaultFieldMapping": false
         },
         {
-          "typeName": "Product",
+          "typeName": "Product_federated",
           "fieldName": "shippingEstimate",
           "requiresFields": [
             "upc"
           ],
           "argumentsConfiguration": [],
-          "respectOverrideFieldPathFromAlias": true,
           "path": [],
           "disableDefaultFieldMapping": false
         },
         {
           "typeName": "Query",
-          "fieldName": "getUsers",
-          "disableDefaultFieldMapping": true,
-          "argumentsConfiguration": [],
-          "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
-        },
-        {
-          "typeName": "Query",
-          "fieldName": "getUsersUserId",
-          "disableDefaultFieldMapping": true,
-          "argumentsConfiguration": [],
-          "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
-        },
-        {
-          "typeName": "Query",
-          "fieldName": "continents",
+          "fieldName": "countries_continents",
           "argumentsConfiguration": [
             {
               "name": "filter",
@@ -898,13 +854,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "continents"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "continent",
+          "fieldName": "countries_continent",
           "argumentsConfiguration": [
             {
               "name": "code",
@@ -914,13 +871,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "continent"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "countries",
+          "fieldName": "countries_countries",
           "argumentsConfiguration": [
             {
               "name": "filter",
@@ -930,13 +888,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "countries"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "country",
+          "fieldName": "countries_country",
           "argumentsConfiguration": [
             {
               "name": "code",
@@ -946,13 +905,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "country"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "languages",
+          "fieldName": "countries_languages",
           "argumentsConfiguration": [
             {
               "name": "filter",
@@ -962,13 +922,14 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "languages"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "language",
+          "fieldName": "countries_language",
           "argumentsConfiguration": [
             {
               "name": "code",
@@ -978,48 +939,45 @@
             }
           ],
           "disableDefaultFieldMapping": false,
-          "path": [],
-          "requiresFields": [],
-          "respectOverrideFieldPathFromAlias": true
+          "path": [
+            "language"
+          ],
+          "requiresFields": []
         },
         {
           "typeName": "Query",
-          "fieldName": "posts",
+          "fieldName": "jsp_posts",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
         },
         {
           "typeName": "Query",
-          "fieldName": "postComments",
+          "fieldName": "jsp_postComments",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
         },
         {
           "typeName": "Query",
-          "fieldName": "users",
+          "fieldName": "jsp_users",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
         },
         {
           "typeName": "Query",
-          "fieldName": "userPosts",
+          "fieldName": "jsp_userPosts",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
         },
         {
-          "typeName": "JSP_User",
+          "typeName": "User_jsp",
           "fieldName": "posts",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [
@@ -1033,11 +991,10 @@
             }
           ],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
         },
         {
-          "typeName": "Post",
+          "typeName": "Post_jsp",
           "fieldName": "comments",
           "disableDefaultFieldMapping": true,
           "argumentsConfiguration": [
@@ -1051,8 +1008,77 @@
             }
           ],
           "requiresFields": [],
-          "path": [],
-          "respectOverrideFieldPathFromAlias": false
+          "path": []
+        }
+      ],
+      "typeConfigurations": [
+        {
+          "typeName": "_Entity_federated",
+          "renameTo": "_Entity"
+        },
+        {
+          "typeName": "_Service_federated",
+          "renameTo": "_Service"
+        },
+        {
+          "typeName": "Entity_federated",
+          "renameTo": "Entity"
+        },
+        {
+          "typeName": "User_federated",
+          "renameTo": "User"
+        },
+        {
+          "typeName": "_FieldSet_federated",
+          "renameTo": "_FieldSet"
+        },
+        {
+          "typeName": "Review_federated",
+          "renameTo": "Review"
+        },
+        {
+          "typeName": "Product_federated",
+          "renameTo": "Product"
+        },
+        {
+          "typeName": "ContinentFilterInput_countries",
+          "renameTo": "ContinentFilterInput"
+        },
+        {
+          "typeName": "StringQueryOperatorInput_countries",
+          "renameTo": "StringQueryOperatorInput"
+        },
+        {
+          "typeName": "Continent_countries",
+          "renameTo": "Continent"
+        },
+        {
+          "typeName": "Country_countries",
+          "renameTo": "Country"
+        },
+        {
+          "typeName": "Language_countries",
+          "renameTo": "Language"
+        },
+        {
+          "typeName": "State_countries",
+          "renameTo": "State"
+        },
+        {
+          "typeName": "CountryFilterInput_countries",
+          "renameTo": "CountryFilterInput"
+        },
+        {
+          "typeName": "LanguageFilterInput_countries",
+          "renameTo": "LanguageFilterInput"
+        },
+        {
+          "typeName": "CacheControlScope_countries",
+          "renameTo": "CacheControlScope"
+        },
+        {
+          "typeName": "Upload_countries",
+          "renameTo": "Upload"
         }
       ]
     },

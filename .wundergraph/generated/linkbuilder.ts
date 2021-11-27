@@ -71,13 +71,13 @@ const targetStep = <T, F extends keyof T, R>(field: F) => ({
 });
 
 interface TargetTypes {
-	_Service: "sdl";
-	User: "id" | "name" | "username" | "reviews";
-	Product: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate";
-	Review: "id" | "body" | "author" | "product";
-	OasUser: "id" | "name" | "country_code";
-	Continent: "code" | "name" | "countries";
-	Country:
+	_Service_federated: "sdl";
+	Entity_federated: "findUserByID" | "findProductByUpc" | "findReviewByID";
+	User_federated: "id" | "name" | "username" | "reviews";
+	Review_federated: "id" | "body" | "author" | "product";
+	Product_federated: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate";
+	Continent_countries: "code" | "name" | "countries";
+	Country_countries:
 		| "code"
 		| "name"
 		| "native"
@@ -89,53 +89,49 @@ interface TargetTypes {
 		| "emoji"
 		| "emojiU"
 		| "states";
-	Language: "code" | "name" | "native" | "rtl";
-	State: "code" | "name" | "country";
-	Post: "id" | "userId" | "title" | "body" | "comments";
-	Comment: "id" | "name" | "email" | "body" | "postId";
-	JSP_User: "id" | "name" | "username" | "email" | "address" | "phone" | "website" | "company" | "posts";
-	Address: "street" | "suite" | "city" | "zipcode" | "geo";
-	Geo: "lat" | "lng";
-	Company: "name" | "catchPhrase" | "bs";
+	Language_countries: "code" | "name" | "native" | "rtl";
+	State_countries: "code" | "name" | "country";
+	Post_jsp: "id" | "userId" | "title" | "body" | "comments";
+	Comment_jsp: "id" | "name" | "email" | "body" | "postId";
+	User_jsp: "id" | "name" | "username" | "email" | "address" | "phone" | "website" | "company" | "posts";
+	Address_jsp: "street" | "suite" | "city" | "zipcode" | "geo";
+	Geo_jsp: "lat" | "lng";
+	Company_jsp: "name" | "catchPhrase" | "bs";
 }
 
 interface SourceFields {
-	me: {};
-	_entities: {
+	federated_me: {};
+	federated__entities: {
 		representations: null;
 	};
-	_service: {};
-	topProducts: {
+	federated__service: {};
+	federated_topProducts: {
 		first: null;
 	};
-	getUsers: {};
-	getUsersUserId: {
-		user_id: null;
-	};
-	continents: {
+	countries_continents: {
 		filter: null;
 	};
-	continent: {
+	countries_continent: {
 		code: null;
 	};
-	countries: {
+	countries_countries: {
 		filter: null;
 	};
-	country: {
+	countries_country: {
 		code: null;
 	};
-	languages: {
+	countries_languages: {
 		filter: null;
 	};
-	language: {
+	countries_language: {
 		code: null;
 	};
-	posts: {};
-	postComments: {
+	jsp_posts: {};
+	jsp_postComments: {
 		postID: null;
 	};
-	users: {};
-	userPosts: {
+	jsp_users: {};
+	jsp_userPosts: {
 		userID: null;
 	};
 }

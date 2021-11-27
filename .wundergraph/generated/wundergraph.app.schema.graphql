@@ -123,7 +123,38 @@ directive @jsonSchema(
   commonPattern: COMMON_REGEX_PATTERN
 ) on VARIABLE_DEFINITION
 
-directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
+"""
+The directive @injectCurrentDateTime injects a DateTime string of the current date and time into the variable.
+This variable MUST be a string compatible scalar. 
+
+The default format, is: ISO 8601
+If no format is chosen, the default format is used.
+Custom formats are allowed by specifying a format conforming to the Golang specification for specifying a date time format.
+"""
+directive @injectCurrentDateTime(
+  format: WunderGraphDateTimeFormat = ISO8601
+  """customFormat must conform to the Golang specification for specifying a date time format"""
+  customFormat: String
+) on VARIABLE_DEFINITION
+
+"""
+The directive @injectGeneratedUUID injects a generated UUID into the variable.
+This variable MUST be a string.
+At the same time, it removes the variable from the input definition,
+disallowing the user to supply it.
+
+This means, the UUID is 100% generated server-side and can be considered untempered.
+"""
+directive @injectGeneratedUUID on VARIABLE_DEFINITION
+
+"""
+The @internalOperation Directive marks an Operation as internal.
+By doing so, the Operation is no longer accessible from the public API.
+It can only be accessed by internal services, like hooks.
+"""
+directive @internalOperation on QUERY | MUTATION | SUBSCRIPTION
+
+directive @cacheControl(maxAge: Int, scope: CacheControlScope_countries) on FIELD_DEFINITION | OBJECT | INTERFACE
 
 directive @rbac(
   """the user must match all roles"""
@@ -136,45 +167,56 @@ directive @rbac(
   denyMatchAny: [WG_ROLE]
 ) on QUERY | MUTATION | SUBSCRIPTION
 
-scalar _FieldSet
+union _Entity_federated = User_federated | Product_federated | Review_federated
 
-type _Service {
+type _Service_federated {
   sdl: String
-}
-
-type User {
-  id: ID!
-  name: String
-  username: String
-  reviews: [Review]
-}
-
-type Query {
-  me: User
-  _entities(representations: [_Any!]!): [_Entity]!
-  _service: _Service!
-  topProducts(first: Int = 5): [Product]
-  getUsers: [OasUser]
-  getUsersUserId(user_id: Int!): OasUser
-  continents(filter: ContinentFilterInput): [Continent!]!
-  continent(code: ID!): Continent
-  countries(filter: CountryFilterInput): [Country!]!
-  country(code: ID!): Country
-  languages(filter: LanguageFilterInput): [Language!]!
-  language(code: ID!): Language
-  posts: [Post]
-  postComments(postID: String!): [Comment]
-  users: [JSP_User]
-  userPosts(userID: String!): [Post]
 }
 
 scalar _Any
 
-union _Entity = User | Product | Review
+type Query {
+  federated_me: User_federated
+  federated__entities(representations: [_Any!]!): [_Entity_federated]!
+  federated__service: _Service_federated!
+  federated_topProducts(first: Int = 5): [Product_federated]
+  countries_continents(filter: ContinentFilterInput_countries): [Continent_countries!]!
+  countries_continent(code: ID!): Continent_countries
+  countries_countries(filter: CountryFilterInput_countries): [Country_countries!]!
+  countries_country(code: ID!): Country_countries
+  countries_languages(filter: LanguageFilterInput_countries): [Language_countries!]!
+  countries_language(code: ID!): Language_countries
+  jsp_posts: [Post_jsp]
+  jsp_postComments(postID: String!): [Comment_jsp]
+  jsp_users: [User_jsp]
+  jsp_userPosts(userID: String!): [Post_jsp]
+}
 
-type Product {
+type Entity_federated {
+  findUserByID(id: ID!): User_federated!
+  findProductByUpc(upc: String!): Product_federated!
+  findReviewByID(id: ID!): Review_federated!
+}
+
+type User_federated {
+  id: ID!
+  name: String
+  username: String
+  reviews: [Review_federated]
+}
+
+scalar _FieldSet_federated
+
+type Review_federated {
+  id: ID!
+  body: String
+  author: User_federated
+  product: Product_federated
+}
+
+type Product_federated {
   upc: String!
-  reviews: [Review]
+  reviews: [Review_federated]
   name: String
   price: Int
   weight: Int
@@ -182,19 +224,12 @@ type Product {
   shippingEstimate: Int
 }
 
-type Review {
-  id: ID!
-  body: String
-  author: User
-  product: Product
+type Mutation {
+  federated_setPrice(upc: String!, price: Int!): Product_federated
 }
 
 type Subscription {
-  updatedPrice: Product!
-}
-
-type Mutation {
-  setPrice(upc: String!, price: Int!): Product
+  federated_updatedPrice: Product_federated!
 }
 
 enum Claim {
@@ -211,17 +246,46 @@ enum COMMON_REGEX_PATTERN {
   DOMAIN
 }
 
-type OasUser {
-  id: Int
-  name: String
-  country_code: String
+enum WunderGraphDateTimeFormat {
+  """2006-01-02T15:04:05-0700"""
+  ISO8601
+  """Mon Jan _2 15:04:05 2006"""
+  ANSIC
+  """Mon Jan _2 15:04:05 MST 2006"""
+  UnixDate
+  """Mon Jan 02 15:04:05 -0700 2006"""
+  RubyDate
+  """02 Jan 06 15:04 MST"""
+  RFC822
+  """02 Jan 06 15:04 -0700"""
+  RFC822Z
+  """Monday, 02-Jan-06 15:04:05 MST"""
+  RFC850
+  """Mon, 02 Jan 2006 15:04:05 MST"""
+  RFC1123
+  """Mon, 02 Jan 2006 15:04:05 -0700"""
+  RFC1123Z
+  """2006-01-02T15:04:05Z07:00"""
+  RFC3339
+  """2006-01-02T15:04:05.999999999Z07:00"""
+  RFC3339Nano
+  """3:04PM"""
+  Kitchen
+  """Jan _2 15:04:05"""
+  Stamp
+  """Jan _2 15:04:05.000"""
+  StampMilli
+  """Jan _2 15:04:05.000000"""
+  StampMicro
+  """Jan _2 15:04:05.000000000"""
+  StampNano
 }
 
-input ContinentFilterInput {
-  code: StringQueryOperatorInput
+input ContinentFilterInput_countries {
+  code: StringQueryOperatorInput_countries
 }
 
-input StringQueryOperatorInput {
+input StringQueryOperatorInput_countries {
   eq: String
   ne: String
   in: [String]
@@ -230,65 +294,65 @@ input StringQueryOperatorInput {
   glob: String
 }
 
-type Continent {
+type Continent_countries {
   code: ID!
   name: String!
-  countries: [Country!]!
+  countries: [Country_countries!]!
 }
 
-type Country {
+type Country_countries {
   code: ID!
   name: String!
   native: String!
   phone: String!
-  continent: Continent!
+  continent: Continent_countries!
   capital: String
   currency: String
-  languages: [Language!]!
+  languages: [Language_countries!]!
   emoji: String!
   emojiU: String!
-  states: [State!]!
+  states: [State_countries!]!
 }
 
-type Language {
+type Language_countries {
   code: ID!
   name: String
   native: String
   rtl: Boolean!
 }
 
-type State {
+type State_countries {
   code: String
   name: String!
-  country: Country!
+  country: Country_countries!
 }
 
-input CountryFilterInput {
-  code: StringQueryOperatorInput
-  currency: StringQueryOperatorInput
-  continent: StringQueryOperatorInput
+input CountryFilterInput_countries {
+  code: StringQueryOperatorInput_countries
+  currency: StringQueryOperatorInput_countries
+  continent: StringQueryOperatorInput_countries
 }
 
-input LanguageFilterInput {
-  code: StringQueryOperatorInput
+input LanguageFilterInput_countries {
+  code: StringQueryOperatorInput_countries
 }
 
-enum CacheControlScope {
+enum CacheControlScope_countries {
   PUBLIC
   PRIVATE
 }
 
-scalar Upload
+scalar Upload_countries
 
-type Post {
+type Post_jsp {
   id: Int
   userId: Int
   title: String
   body: String
-  comments: [Comment]
+  comments: [Comment_jsp]
 }
 
-type Comment {
+type Comment_jsp {
   id: Int
   name: String
   email: String
@@ -296,32 +360,32 @@ type Comment {
   postId: Int
 }
 
-type JSP_User {
+type User_jsp {
   id: Int
   name: String
   username: String
   email: String
-  address: Address
+  address: Address_jsp
   phone: String
   website: String
-  company: Company
-  posts: [Post]
+  company: Company_jsp
+  posts: [Post_jsp]
 }
 
-type Address {
+type Address_jsp {
   street: String
   suite: String
   city: String
   zipcode: String
-  geo: Geo
+  geo: Geo_jsp
 }
 
-type Geo {
+type Geo_jsp {
   lat: String
   lng: String
 }
 
-type Company {
+type Company_jsp {
   name: String
   catchPhrase: String
   bs: String

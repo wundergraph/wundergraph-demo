@@ -1,16 +1,19 @@
 import Fastify from "fastify";
+import axios from "axios";
 import {
 	CountriesResponse,
-	FakeProductsInput,
 	FakeProductsResponse,
-	OasUsersResponse,
+	FakeProductsInput,
+	InternalFakeProductsInput,
+	InjectedFakeProductsInput,
 	PriceUpdatesResponse,
-	SetPriceInput,
 	SetPriceResponse,
+	SetPriceInput,
+	InternalSetPriceInput,
+	InjectedSetPriceInput,
 	TopProductsResponse,
 	UsersResponse,
 } from "./models";
-import { InternalFakeProductsInput, InternalSetPriceInput } from "./models";
 import { HooksConfiguration } from "@wundergraph/sdk/dist/configure";
 
 declare module "fastify" {
@@ -58,6 +61,46 @@ export interface AuthenticationDeny {
 	message?: string;
 }
 
+const internalClientAuthorizationHeader = "Bearer internalRequestToken";
+
+const internalRequest = async (operationName: string, input?: any): Promise<any> => {
+	const url = "http://localhost:9991/internal/api/main/operations/" + operationName;
+	const res = await axios.post(url, JSON.stringify(input || {}), {
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: internalClientAuthorizationHeader,
+		},
+	});
+	return res.data;
+};
+
+interface InternalClient {
+	queries: {
+		Countries: () => Promise<CountriesResponse>;
+		FakeProducts: (input: InternalFakeProductsInput) => Promise<FakeProductsResponse>;
+		TopProducts: () => Promise<TopProductsResponse>;
+		Users: () => Promise<UsersResponse>;
+	};
+	mutations: {
+		SetPrice: (input: InternalSetPriceInput) => Promise<SetPriceResponse>;
+	};
+}
+
+const client = {
+	queries: {
+		Countries: async () => internalRequest("Countries"),
+		FakeProducts: async (input: InternalFakeProductsInput) => internalRequest("FakeProducts", input),
+		TopProducts: async () => internalRequest("TopProducts"),
+		Users: async () => internalRequest("Users"),
+	},
+	mutations: {
+		SetPrice: async (input: InternalSetPriceInput) => internalRequest("SetPrice", input),
+	},
+};
+
+export const configureWunderGraphHooksWithClient = (config: (client: InternalClient) => HooksConfig) =>
+	configureWunderGraphHooks(config(client));
+
 export interface HooksConfig {
 	authentication?: {
 		postAuthentication?: (user: User) => Promise<void>;
@@ -72,21 +115,15 @@ export interface HooksConfig {
 			mutatingPostResolve?: (ctx: Context, response: CountriesResponse) => Promise<CountriesResponse>;
 		};
 		FakeProducts?: {
-			mockResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<FakeProductsResponse>;
-			preResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<void>;
-			mutatingPreResolve?: (ctx: Context, input: InternalFakeProductsInput) => Promise<InternalFakeProductsInput>;
-			postResolve?: (ctx: Context, input: InternalFakeProductsInput, response: FakeProductsResponse) => Promise<void>;
+			mockResolve?: (ctx: Context, input: InjectedFakeProductsInput) => Promise<FakeProductsResponse>;
+			preResolve?: (ctx: Context, input: InjectedFakeProductsInput) => Promise<void>;
+			mutatingPreResolve?: (ctx: Context, input: InjectedFakeProductsInput) => Promise<InjectedFakeProductsInput>;
+			postResolve?: (ctx: Context, input: InjectedFakeProductsInput, response: FakeProductsResponse) => Promise<void>;
 			mutatingPostResolve?: (
 				ctx: Context,
-				input: InternalFakeProductsInput,
+				input: InjectedFakeProductsInput,
 				response: FakeProductsResponse
 			) => Promise<FakeProductsResponse>;
-		};
-		OasUsers?: {
-			mockResolve?: (ctx: Context) => Promise<OasUsersResponse>;
-			preResolve?: (ctx: Context) => Promise<void>;
-			postResolve?: (ctx: Context, response: OasUsersResponse) => Promise<void>;
-			mutatingPostResolve?: (ctx: Context, response: OasUsersResponse) => Promise<OasUsersResponse>;
 		};
 		TopProducts?: {
 			mockResolve?: (ctx: Context) => Promise<TopProductsResponse>;
@@ -103,13 +140,13 @@ export interface HooksConfig {
 	};
 	mutations?: {
 		SetPrice?: {
-			mockResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<SetPriceResponse>;
-			preResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<void>;
-			mutatingPreResolve?: (ctx: Context, input: InternalSetPriceInput) => Promise<InternalSetPriceInput>;
-			postResolve?: (ctx: Context, input: InternalSetPriceInput, response: SetPriceResponse) => Promise<void>;
+			mockResolve?: (ctx: Context, input: InjectedSetPriceInput) => Promise<SetPriceResponse>;
+			preResolve?: (ctx: Context, input: InjectedSetPriceInput) => Promise<void>;
+			mutatingPreResolve?: (ctx: Context, input: InjectedSetPriceInput) => Promise<InjectedSetPriceInput>;
+			postResolve?: (ctx: Context, input: InjectedSetPriceInput, response: SetPriceResponse) => Promise<void>;
 			mutatingPostResolve?: (
 				ctx: Context,
-				input: InternalSetPriceInput,
+				input: InjectedSetPriceInput,
 				response: SetPriceResponse
 			) => Promise<SetPriceResponse>;
 		};
@@ -249,7 +286,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 
 			// mock
-			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
+			fastify.post<{ Body: { input: InjectedFakeProductsInput } }>(
 				"/operation/FakeProducts/mockResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -265,7 +302,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 
 			// preResolve
-			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
+			fastify.post<{ Body: { input: InjectedFakeProductsInput } }>(
 				"/operation/FakeProducts/preResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -280,7 +317,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// postResolve
-			fastify.post<{ Body: { input: InternalFakeProductsInput; response: FakeProductsResponse } }>(
+			fastify.post<{ Body: { input: InjectedFakeProductsInput; response: FakeProductsResponse } }>(
 				"/operation/FakeProducts/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -295,7 +332,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPreResolve
-			fastify.post<{ Body: { input: InternalFakeProductsInput } }>(
+			fastify.post<{ Body: { input: InjectedFakeProductsInput } }>(
 				"/operation/FakeProducts/mutatingPreResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -310,7 +347,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPostResolve
-			fastify.post<{ Body: { input: InternalFakeProductsInput; response: FakeProductsResponse } }>(
+			fastify.post<{ Body: { input: InjectedFakeProductsInput; response: FakeProductsResponse } }>(
 				"/operation/FakeProducts/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -325,62 +362,6 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 						request.log.error(err);
 						reply.code(500);
 						return { op: "FakeProducts", hook: "mutatingPostResolve", error: err };
-					}
-				}
-			);
-
-			// mock
-			fastify.post("/operation/OasUsers/mockResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					const mutated = await config?.queries?.OasUsers?.mockResolve?.(request.ctx);
-					return { op: "OasUsers", hook: "mock", response: mutated };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "OasUsers", hook: "mock", error: err };
-				}
-			});
-
-			// preResolve
-			fastify.post("/operation/OasUsers/preResolve", async (request, reply) => {
-				reply.type("application/json").code(200);
-				try {
-					await config?.queries?.OasUsers?.preResolve?.(request.ctx);
-					return { op: "OasUsers", hook: "preResolve" };
-				} catch (err) {
-					request.log.error(err);
-					reply.code(500);
-					return { op: "OasUsers", hook: "preResolve", error: err };
-				}
-			});
-			// postResolve
-			fastify.post<{ Body: { response: OasUsersResponse } }>(
-				"/operation/OasUsers/postResolve",
-				async (request, reply) => {
-					reply.type("application/json").code(200);
-					try {
-						await config?.queries?.OasUsers?.postResolve?.(request.ctx, request.body.response);
-						return { op: "OasUsers", hook: "postResolve" };
-					} catch (err) {
-						request.log.error(err);
-						reply.code(500);
-						return { op: "OasUsers", hook: "postResolve", error: err };
-					}
-				}
-			);
-			// mutatingPostResolve
-			fastify.post<{ Body: { response: OasUsersResponse } }>(
-				"/operation/OasUsers/mutatingPostResolve",
-				async (request, reply) => {
-					reply.type("application/json").code(200);
-					try {
-						const mutated = await config?.queries?.OasUsers?.mutatingPostResolve?.(request.ctx, request.body.response);
-						return { op: "OasUsers", hook: "mutatingPostResolve", response: mutated };
-					} catch (err) {
-						request.log.error(err);
-						reply.code(500);
-						return { op: "OasUsers", hook: "mutatingPostResolve", error: err };
 					}
 				}
 			);
@@ -502,7 +483,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			 */
 
 			// mock
-			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
+			fastify.post<{ Body: { input: InjectedSetPriceInput } }>(
 				"/operation/SetPrice/mockResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -518,7 +499,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			);
 
 			// preResolve
-			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
+			fastify.post<{ Body: { input: InjectedSetPriceInput } }>(
 				"/operation/SetPrice/preResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -533,7 +514,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// postResolve
-			fastify.post<{ Body: { input: InternalSetPriceInput; response: SetPriceResponse } }>(
+			fastify.post<{ Body: { input: InjectedSetPriceInput; response: SetPriceResponse } }>(
 				"/operation/SetPrice/postResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -548,7 +529,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPreResolve
-			fastify.post<{ Body: { input: InternalSetPriceInput } }>(
+			fastify.post<{ Body: { input: InjectedSetPriceInput } }>(
 				"/operation/SetPrice/mutatingPreResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);
@@ -563,7 +544,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 			// mutatingPostResolve
-			fastify.post<{ Body: { input: InternalSetPriceInput; response: SetPriceResponse } }>(
+			fastify.post<{ Body: { input: InjectedSetPriceInput; response: SetPriceResponse } }>(
 				"/operation/SetPrice/mutatingPostResolve",
 				async (request, reply) => {
 					reply.type("application/json").code(200);

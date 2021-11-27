@@ -1,16 +1,7 @@
 query {
-    users {
+    users: jsp_users {
         id
         name
         website
-        posts {
-            id
-            title
-            comments {
-                id
-                name
-                body
-            }
-        }
     }
 }

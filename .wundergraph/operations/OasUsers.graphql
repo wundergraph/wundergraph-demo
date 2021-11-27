@@ -1,7 +1,0 @@
-query {
-    getUsers {
-        country_code
-        id
-        name
-    }
-}

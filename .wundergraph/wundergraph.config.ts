@@ -6,11 +6,11 @@ import {
     templates,
     authProviders
 } from "@wundergraph/sdk";
-import transformApi from "@wundergraph/sdk/dist/transformations";
 import linkBuilder from "./generated/linkbuilder";
 import operations from "./wundergraph.operations";
 
 const jsonPlaceholder = introspect.openApi({
+    apiNamespace: "jsp",
     source: {
         kind: "file",
         filePath: "jsonplaceholder.v1.yaml",
@@ -18,6 +18,7 @@ const jsonPlaceholder = introspect.openApi({
 })
 
 const federatedApi = introspect.federation({
+    apiNamespace: "federated",
     upstreams: [
         {
             url: "http://localhost:4001/graphql"
@@ -35,25 +36,16 @@ const federatedApi = introspect.federation({
 });
 
 const countries = introspect.graphql({
+    apiNamespace: "countries",
     url: "https://countries.trevorblades.com/",
 })
-
-const openAPI = introspect.openApi({
-    source: {
-        kind: "file",
-        filePath: "users_oas.json"
-    },
-});
-
-const renamedJsonPlaceholder = transformApi.renameTypes(jsonPlaceholder,{from: "User",to: "JSP_User"});
 
 const myApplication = new Application({
     name: "app",
     apis: [
         federatedApi,
-        openAPI,
         countries,
-        renamedJsonPlaceholder,
+        jsonPlaceholder,
     ],
 });
 
@@ -64,7 +56,6 @@ configureWunderGraphApplication({
         {
             templates: [
                 templates.typescript.operations,
-                templates.typescript.namespaces,
                 templates.typescript.linkBuilder,
                 ...templates.typescript.all,
             ]
@@ -101,13 +92,13 @@ configureWunderGraphApplication({
     },
     links: [
         linkBuilder
-            .source("userPosts")
-            .target("JSP_User","posts")
+            .source("jsp_userPosts")
+            .target("User_jsp","posts")
             .argument("userID", "objectField", "id")
             .build(),
         linkBuilder
-            .source("postComments")
-            .target("Post","comments")
+            .source("jsp_postComments")
+            .target("Post_jsp","comments")
             .argument("postID", "objectField", "id")
             .build(),
     ]

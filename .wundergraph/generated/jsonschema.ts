@@ -9,10 +9,6 @@ interface Schema {
 		input: JSONSchema7;
 		response: JSONSchema7;
 	};
-	OasUsers: {
-		input: JSONSchema7;
-		response: JSONSchema7;
-	};
 	PriceUpdates: {
 		input: JSONSchema7;
 		response: JSONSchema7;
@@ -77,29 +73,6 @@ const jsonSchema: Schema = {
 								properties: { upc: { type: "string" }, name: { type: "string" }, price: { type: "integer" } },
 								additionalProperties: false,
 								required: ["upc"],
-							},
-						},
-					},
-					additionalProperties: false,
-				},
-			},
-			additionalProperties: false,
-		},
-	},
-	OasUsers: {
-		input: { type: "object", properties: {}, additionalProperties: false },
-		response: {
-			type: "object",
-			properties: {
-				data: {
-					type: "object",
-					properties: {
-						getUsers: {
-							type: "array",
-							items: {
-								type: "object",
-								properties: { country_code: { type: "string" }, id: { type: "integer" }, name: { type: "string" } },
-								additionalProperties: false,
 							},
 						},
 					},
@@ -246,30 +219,7 @@ const jsonSchema: Schema = {
 							type: "array",
 							items: {
 								type: "object",
-								properties: {
-									id: { type: "integer" },
-									name: { type: "string" },
-									website: { type: "string" },
-									posts: {
-										type: "array",
-										items: {
-											type: "object",
-											properties: {
-												id: { type: "integer" },
-												title: { type: "string" },
-												comments: {
-													type: "array",
-													items: {
-														type: "object",
-														properties: { id: { type: "integer" }, name: { type: "string" }, body: { type: "string" } },
-														additionalProperties: false,
-													},
-												},
-											},
-											additionalProperties: false,
-										},
-									},
-								},
+								properties: { id: { type: "integer" }, name: { type: "string" }, website: { type: "string" } },
 								additionalProperties: false,
 							},
 						},

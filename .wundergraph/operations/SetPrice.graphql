@@ -1,5 +1,5 @@
 mutation ($upc: String! $price: Int!) {
-    setPrice(upc: $upc, price: $price){
+    setPrice: federated_setPrice(upc: $upc, price: $price){
         upc
         name
         price
