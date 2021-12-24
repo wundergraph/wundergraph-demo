@@ -93,12 +93,12 @@ configureWunderGraphApplication({
     links: [
         linkBuilder
             .source("jsp_userPosts")
-            .target("User_jsp","posts")
+            .target("jsp_User","posts")
             .argument("userID", "objectField", "id")
             .build(),
         linkBuilder
             .source("jsp_postComments")
-            .target("Post_jsp","comments")
+            .target("jsp_Post","comments")
             .argument("postID", "objectField", "id")
             .build(),
     ]

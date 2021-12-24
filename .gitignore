@@ -3,3 +3,5 @@ node_modules
 .idea
 *.env
 .wundergraph/wundergraph.config.json
+/.wundergraph/generated/bundle/
+/.wundergraph/generated/prisma/
