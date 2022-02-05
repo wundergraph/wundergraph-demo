@@ -2,9 +2,9 @@
   "item": [
     {
       "_": {
-        "postman_id": "51db94e7-bc0e-4335-b2e4-51c0f9359454"
+        "postman_id": "af559e0c-dd90-441c-856c-8aa665bac6f0"
       },
-      "id": "51db94e7-bc0e-4335-b2e4-51c0f9359454",
+      "id": "af559e0c-dd90-441c-856c-8aa665bac6f0",
       "name": "Queries",
       "description": {
         "content": "All your query operations",
@@ -12,7 +12,7 @@
       },
       "item": [
         {
-          "id": "3765cba1-2407-4194-84d4-aa1809a84acf",
+          "id": "37a00d00-19bf-41bb-8805-88e47179aa8a",
           "name": "Countries",
           "request": {
             "url": {
@@ -40,7 +40,7 @@
           "event": []
         },
         {
-          "id": "46e66178-5739-47fb-974e-caf339f97546",
+          "id": "d6f3b79f-c7a2-4886-9993-fc8e8fde168d",
           "name": "FakeProducts",
           "request": {
             "url": {
@@ -78,7 +78,7 @@
           "event": []
         },
         {
-          "id": "3321c284-7813-44d1-a360-fe9ecaf4ebfe",
+          "id": "c16396f8-040f-4d0d-966c-b283f3c15a52",
           "name": "PriceUpdates",
           "request": {
             "url": {
@@ -106,7 +106,7 @@
           "event": []
         },
         {
-          "id": "fce21999-58a9-4f54-8ee9-3cc4f1307085",
+          "id": "8ecf07a6-7a4f-475b-b8e4-ee82c4516eb6",
           "name": "TopProducts",
           "request": {
             "url": {
@@ -134,7 +134,7 @@
           "event": []
         },
         {
-          "id": "5d3c2240-6a77-4d6d-9398-b7ab1ef42034",
+          "id": "396ba42f-4667-4950-96c9-79b406c3ff3a",
           "name": "Users",
           "request": {
             "url": {
@@ -166,9 +166,9 @@
     },
     {
       "_": {
-        "postman_id": "210099c9-7d31-47a8-90a4-8c40aa7a31ce"
+        "postman_id": "27743707-7217-46eb-b21c-a7c81f898963"
       },
-      "id": "210099c9-7d31-47a8-90a4-8c40aa7a31ce",
+      "id": "27743707-7217-46eb-b21c-a7c81f898963",
       "name": "Mutations",
       "description": {
         "content": "All your mutation operations",
@@ -176,7 +176,7 @@
       },
       "item": [
         {
-          "id": "a9efa082-f724-4bf9-a46f-0b974770d93c",
+          "id": "b24022c4-6cdc-40e1-94ea-7e3000e3f4b3",
           "name": "SetPrice",
           "request": {
             "url": {
@@ -233,7 +233,7 @@
     }
   ],
   "info": {
-    "_postman_id": "b07c70ac-15a3-425e-961b-a6a422454222",
+    "_postman_id": "993492e9-6562-46fd-bb16-7394e5d3a52d",
     "name": "Wundergraph",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

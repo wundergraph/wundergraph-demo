@@ -129,21 +129,22 @@
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
 
-"@wundergraph/protobuf@0.46.0":
-  version "0.46.0"
-  resolved "https://registry.yarnpkg.com/@wundergraph/protobuf/-/protobuf-0.46.0.tgz#d389114a91f28e400b4f224f2da74be8236e11e0"
-  integrity sha512-7KGuDD9Ztn34xALnW/a2aEQkMB1I+DkxwyrLaDELJ0Gql2YOge9JNGq10j/fYyDD5Sm5chxSp27gktB7OESmhg==
+"@wundergraph/protobuf@^0.48.2":
+  version "0.48.2"
+  resolved "https://registry.yarnpkg.com/@wundergraph/protobuf/-/protobuf-0.48.2.tgz#4812ac7105e8fdcc72dd9ebc42beef459ffdcf15"
+  integrity sha512-ixUv+4YyysHgK1nAjeZSdbkkYsrWI9+LZxywIn/TNJeX+LhDZhSIrGBLMskWJd48/aJ5gKgsqG88yWOqpkurrA==
   dependencies:
     ts-proto "^1.65.0"
 
-"@wundergraph/sdk@^0.60.1":
-  version "0.60.1"
-  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.60.1.tgz#7ab7bc42ddfbc79a936d601ed7361d727a0f9395"
-  integrity sha512-YfSh8tvEN+ekuihnZkh0Aj1qB9f+3VfW7kS+lXTtw/Q+JVef8bPghcUabVZzVfgRyiTcoDxRl/Kg8BRigbVutA==
+"@wundergraph/sdk@^0.72.0":
+  version "0.72.0"
+  resolved "https://registry.yarnpkg.com/@wundergraph/sdk/-/sdk-0.72.0.tgz#29301871664d57bf16cfddbfe9f1d86fd3d6e648"
+  integrity sha512-3my9+JfMxHBembv9IzvacEY8fudFBGZbWLZ9v2jqHLudWIJW0nJig4hxXNmOqHK2wEXuGoA0LJUgnV6iAuSlyA==
   dependencies:
     "@graphql-tools/schema" "^8.3.1"
-    "@wundergraph/protobuf" "0.46.0"
+    "@wundergraph/protobuf" "^0.48.2"
     axios "^0.24.0"
+    colors "^1.4.0"
     cross-spawn "^7.0.3"
     fastify "^3.24.1"
     google-protobuf "^3.19.1"
@@ -151,6 +152,8 @@
     handlebars "^4.7.7"
     js-yaml "^4.1.0"
     json-schema "^0.4.0"
+    lodash "^4.17.21"
+    long "^5.2.0"
     object-hash "^2.2.0"
     openapi-to-graphql "^2.2.5"
     openapi-types "^10.0.0"
@@ -387,6 +390,11 @@ color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
+
+colors@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
+  integrity sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==
 
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.8"
@@ -1182,7 +1190,7 @@ load-json-file@^1.0.0:
     pinkie-promise "^2.0.0"
     strip-bom "^2.0.0"
 
-lodash@4.17.21, lodash@^4.17.15:
+lodash@4.17.21, lodash@^4.17.15, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -1191,6 +1199,11 @@ long@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/long/-/long-4.0.0.tgz#9a7b71cfb7d361a194ea555241c92f7468d5bf28"
   integrity sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==
+
+long@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/long/-/long-5.2.0.tgz#2696dadf4b4da2ce3f6f6b89186085d94d52fd61"
+  integrity sha512-9RTUNjK60eJbx3uz+TEGF7fUr29ZDxR5QzXcyDpeSfeH28S9ycINflOgOlppit5U+4kNTe83KQnMEerw7GmE8w==
 
 loud-rejection@^1.0.0:
   version "1.6.0"

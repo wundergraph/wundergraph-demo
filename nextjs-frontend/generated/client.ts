@@ -103,9 +103,11 @@ export interface User {
 	roles: string[];
 }
 
+export type Headers = { [key: string]: string };
+
 export interface ClientConfig {
 	baseURL?: string;
-	extraHeaders?: HeadersInit;
+	extraHeaders?: Headers;
 }
 
 export enum AuthProviderId {
@@ -127,14 +129,14 @@ export class Client {
 	public setLogoutCallback(cb: () => void) {
 		this.logoutCallback = cb;
 	}
-	public setExtraHeaders = (headers: HeadersInit) => {
+	public setExtraHeaders = (headers: Headers) => {
 		this.extraHeaders = headers;
 	};
-	private extraHeaders?: HeadersInit;
+	private extraHeaders?: Headers;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "91ed6ed8";
+	private readonly applicationHash: string = "0a778712";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "unknown";
+	private readonly sdkVersion: string = "0.72.0";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener | undefined;
@@ -197,6 +199,7 @@ export class Client {
 			});
 		},
 	};
+
 	public subscription = {
 		PriceUpdates: (
 			options: RequestOptions<never, PriceUpdatesResponse>,
@@ -213,6 +216,7 @@ export class Client {
 			);
 		},
 	};
+
 	public liveQuery = {
 		Countries: (
 			options: RequestOptions<never, CountriesResponse>,
@@ -272,6 +276,7 @@ export class Client {
 			);
 		},
 	};
+
 	private doFetch = async <T>(fetchConfig: FetchConfig): Promise<Response<T>> => {
 		try {
 			const params =
@@ -288,14 +293,14 @@ export class Client {
 				});
 				this.csrfToken = await res.text();
 			}
-			const headers: Headers = new Headers({
+			const headers: Headers = {
 				...this.extraHeaders,
 				Accept: "application/json",
 				"WG-SDK-Version": this.sdkVersion,
-			});
+			};
 			if (fetchConfig.method === "POST") {
 				if (this.csrfToken) {
-					headers.set("X-CSRF-Token", this.csrfToken);
+					headers["X-CSRF-Token"] = this.csrfToken;
 				}
 			}
 			const body = fetchConfig.method === "POST" ? JSON.stringify(fetchConfig.input) : undefined;
@@ -341,7 +346,9 @@ export class Client {
 				if (res.status === 200) {
 					const json = await res.json();
 					delete this.inflight[key];
-					process.nextTick(() => inflight.forEach((cb) => cb.resolve(json)));
+					setTimeout(() => {
+						inflight.forEach((cb) => cb.resolve(json));
+					}, 0);
 				}
 				if (res.status >= 401 && res.status <= 499) {
 					this.csrfToken = undefined;
@@ -356,6 +363,7 @@ export class Client {
 			}
 		});
 	};
+
 	private startSubscription = <T>(fetchConfig: FetchConfig, cb: (response: Response<T>) => void) => {
 		(async () => {
 			try {
@@ -408,6 +416,7 @@ export class Client {
 			}
 		})();
 	};
+
 	private queryString = (input?: Object): string => {
 		if (!input) {
 			return "";

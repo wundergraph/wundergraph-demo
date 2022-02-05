@@ -159,6 +159,67 @@ directive @internalOperation on QUERY | MUTATION | SUBSCRIPTION
 """The directive @injectEnvironmentVariable allows you to inject an environment variable into the variable definition."""
 directive @injectEnvironmentVariable(name: String!) on VARIABLE_DEFINITION
 
+"""
+The @export directive instructs the Execution Planner to export the field during the execution into the variable of the 'as' argument.
+As the execution is depth first, a field can only be used after it has been exported.
+Additionally, a field can only be used after using the '_join' field or on a different data source.
+It's not possible to export a field and use it in for the same data source.
+
+Note that the @export directive only works on fields that return a single value.
+It's not possible to export a list or object field.
+"""
+directive @export(
+  """The argument 'as' is the name of the variable to export the field to."""
+  as: String!
+) on FIELD
+
+"""
+The directive @internal marks a variable definition as internal so that clients can't access it.
+The field is also not visible in the public API.
+It's only being used as an internal variable to export fields into.
+"""
+directive @internal on VARIABLE_DEFINITION
+
+"""
+The @transform directive allows to apply transformations to the response.
+By applying the directive, the shape of the response can be altered,
+which will also modify the JSON-Schema of the response.
+That is, you will keep full type safety and code-generation for transformed fields.
+"""
+directive @transform(
+  """
+  Using the 'get' transformation allows you to extract a nested field using a JSON path.
+  This is useful to unnest data, e.g. when using the '_join' field, which adds an extra layer of nesting.
+  
+  Example:
+  
+  query GetName {
+      name: me @transform(get: "info.name") {
+          info {
+              name
+          }
+      }
+  }
+  
+  Before the transformation, the resolve looks like this:
+  
+  {
+      "name": {
+          "info": {
+              "name": "John Doe"
+          }
+      }
+  }
+  
+  With the transformation applied, the response will be reshaped like this:
+  
+  {
+      "name": "John Doe"
+  }
+  """
+  get: String
+) on FIELD
+
 """"""
 directive @countries_cacheControl(maxAge: Int, scope: countries_CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -193,6 +254,15 @@ type federated_User {
   name: String
   username: String
   reviews: [federated_Review]
+  _join: Query!
+}
+
+type federated_Review {
+  id: ID!
+  body: String
+  author: federated_User
+  product: federated_Product
+  _join: Query!
 }
 
 type federated_Product {
@@ -203,13 +273,7 @@ type federated_Product {
   weight: Int
   inStock: Boolean
   shippingEstimate: Int
-}
-
-type federated_Review {
-  id: ID!
-  body: String
-  author: federated_User
-  product: federated_Product
+  _join: Query!
 }
 
 type Subscription {
@@ -288,6 +352,7 @@ type countries_Continent {
   code: ID!
   name: String!
   countries: [countries_Country!]!
+  _join: Query!
 }
 
 type countries_Country {
@@ -302,6 +367,7 @@ type countries_Country {
   emoji: String!
   emojiU: String!
   states: [countries_State!]!
+  _join: Query!
 }
 
 type countries_Language {
@@ -309,12 +375,14 @@ type countries_Language {
   name: String
   native: String
   rtl: Boolean!
+  _join: Query!
 }
 
 type countries_State {
   code: String
   name: String!
   country: countries_Country!
+  _join: Query!
 }
 
 """"""
@@ -345,6 +413,7 @@ type jsp_Post {
   userId: Int
   title: String
   body: String
+  _join: Query!
   comments: [jsp_Comment]
 }
 
@@ -354,6 +423,7 @@ type jsp_Comment {
   email: String
   body: String
   postId: Int
+  _join: Query!
 }
 
 type jsp_User {
@@ -365,6 +435,7 @@ type jsp_User {
   phone: String
   website: String
   company: jsp_Company
+  _join: Query!
   posts: [jsp_Post]
 }
 
@@ -374,17 +445,20 @@ type jsp_Address {
   city: String
   zipcode: String
   geo: jsp_Geo
+  _join: Query!
 }
 
 type jsp_Geo {
   lat: String
   lng: String
+  _join: Query!
 }
 
 type jsp_Company {
   name: String
   catchPhrase: String
   bs: String
+  _join: Query!
 }
 
 enum WG_ROLE {

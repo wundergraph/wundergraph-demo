@@ -66,7 +66,6 @@ const operations = configureWunderGraphOperations({
                 required: false,
             }
         }),
-        OasUsers: enableAuth,
         PriceUpdates: config => ({
             ...config,
             authentication: {
