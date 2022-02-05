@@ -134,7 +134,7 @@ export class Client {
 	};
 	private extraHeaders?: Headers;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "0a778712";
+	private readonly applicationHash: string = "e61fb966";
 	private readonly applicationPath: string = "api/main";
 	private readonly sdkVersion: string = "0.72.0";
 	private csrfToken: string | undefined;

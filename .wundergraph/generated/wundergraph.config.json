@@ -450,10 +450,6 @@
           "overrideFieldPathFromAlias": true,
           "directives": [
             {
-              "directiveName": "federated_extends",
-              "renameTo": "extends"
-            },
-            {
               "directiveName": "federated_external",
               "renameTo": "external"
             },
@@ -468,6 +464,10 @@
             {
               "directiveName": "federated_key",
               "renameTo": "key"
+            },
+            {
+              "directiveName": "federated_extends",
+              "renameTo": "extends"
             }
           ]
         },
@@ -552,14 +552,6 @@
           "overrideFieldPathFromAlias": true,
           "directives": [
             {
-              "directiveName": "federated_requires",
-              "renameTo": "requires"
-            },
-            {
-              "directiveName": "federated_provides",
-              "renameTo": "provides"
-            },
-            {
               "directiveName": "federated_key",
               "renameTo": "key"
             },
@@ -570,6 +562,14 @@
             {
               "directiveName": "federated_external",
               "renameTo": "external"
+            },
+            {
+              "directiveName": "federated_requires",
+              "renameTo": "requires"
+            },
+            {
+              "directiveName": "federated_provides",
+              "renameTo": "provides"
             }
           ]
         },
@@ -631,6 +631,10 @@
           "overrideFieldPathFromAlias": true,
           "directives": [
             {
+              "directiveName": "federated_extends",
+              "renameTo": "extends"
+            },
+            {
               "directiveName": "federated_external",
               "renameTo": "external"
             },
@@ -645,10 +649,6 @@
             {
               "directiveName": "federated_key",
               "renameTo": "key"
-            },
-            {
-              "directiveName": "federated_extends",
-              "renameTo": "extends"
             }
           ]
         },
