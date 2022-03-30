@@ -6,8 +6,8 @@ import {
     templates,
     authProviders
 } from "@wundergraph/sdk";
-import linkBuilder from "./generated/linkbuilder";
 import operations from "./wundergraph.operations";
+import server from "./wundergraph.server";
 
 const jsonPlaceholder = introspect.openApi({
     apiNamespace: "jsp",
@@ -16,6 +16,11 @@ const jsonPlaceholder = introspect.openApi({
         filePath: "jsonplaceholder.v1.yaml",
     },
 })
+
+const weather = introspect.graphql({
+    apiNamespace: "weather",
+    url: "https://graphql-weather-api.herokuapp.com/",
+});
 
 const federatedApi = introspect.federation({
     apiNamespace: "federated",
@@ -41,17 +46,20 @@ const countries = introspect.graphql({
 })
 
 const myApplication = new Application({
-    name: "app",
+    name: "api",
     apis: [
         federatedApi,
         countries,
         jsonPlaceholder,
+        weather,
     ],
 });
 
 // configureWunderGraph emits the configuration
 configureWunderGraphApplication({
     application: myApplication,
+    server,
+    operations,
     codeGenerators: [
         {
             templates: [
@@ -73,7 +81,6 @@ configureWunderGraphApplication({
             "http://localhost:3000"
         ]
     },
-    operations,
     authentication: {
         cookieBased: {
             providers: [
@@ -90,7 +97,7 @@ configureWunderGraphApplication({
           "user"
       ]
     },
-    links: [
+    /*links: [
         linkBuilder
             .source("jsp_userPosts")
             .target("jsp_User","posts")
@@ -101,5 +108,5 @@ configureWunderGraphApplication({
             .target("jsp_Post","comments")
             .argument("postID", "objectField", "id")
             .build(),
-    ]
+    ]*/
 });

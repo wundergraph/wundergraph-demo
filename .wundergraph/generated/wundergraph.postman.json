@@ -2,9 +2,9 @@
   "item": [
     {
       "_": {
-        "postman_id": "51db94e7-bc0e-4335-b2e4-51c0f9359454"
+        "postman_id": "Queries"
       },
-      "id": "51db94e7-bc0e-4335-b2e4-51c0f9359454",
+      "id": "Queries",
       "name": "Queries",
       "description": {
         "content": "All your query operations",
@@ -12,7 +12,7 @@
       },
       "item": [
         {
-          "id": "3765cba1-2407-4194-84d4-aa1809a84acf",
+          "id": "Countries",
           "name": "Countries",
           "request": {
             "url": {
@@ -40,7 +40,45 @@
           "event": []
         },
         {
-          "id": "46e66178-5739-47fb-974e-caf339f97546",
+          "id": "CountryWeather",
+          "name": "CountryWeather",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "main",
+                "operations",
+                "CountryWeather"
+              ],
+              "host": [
+                "{{apiBaseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": true,
+                  "description": {
+                    "content": "Type string, Optional",
+                    "type": "text/plain"
+                  },
+                  "key": "code",
+                  "value": ""
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "id": "FakeProducts",
           "name": "FakeProducts",
           "request": {
             "url": {
@@ -78,7 +116,7 @@
           "event": []
         },
         {
-          "id": "3321c284-7813-44d1-a360-fe9ecaf4ebfe",
+          "id": "PriceUpdates",
           "name": "PriceUpdates",
           "request": {
             "url": {
@@ -106,7 +144,7 @@
           "event": []
         },
         {
-          "id": "fce21999-58a9-4f54-8ee9-3cc4f1307085",
+          "id": "TopProducts",
           "name": "TopProducts",
           "request": {
             "url": {
@@ -134,7 +172,7 @@
           "event": []
         },
         {
-          "id": "5d3c2240-6a77-4d6d-9398-b7ab1ef42034",
+          "id": "Users",
           "name": "Users",
           "request": {
             "url": {
@@ -166,9 +204,9 @@
     },
     {
       "_": {
-        "postman_id": "210099c9-7d31-47a8-90a4-8c40aa7a31ce"
+        "postman_id": "Mutations"
       },
-      "id": "210099c9-7d31-47a8-90a4-8c40aa7a31ce",
+      "id": "Mutations",
       "name": "Mutations",
       "description": {
         "content": "All your mutation operations",
@@ -176,12 +214,13 @@
       },
       "item": [
         {
-          "id": "a9efa082-f724-4bf9-a46f-0b974770d93c",
+          "id": "SetPrice",
           "name": "SetPrice",
           "request": {
             "url": {
               "path": [
                 "api",
+                "main",
                 "main",
                 "operations",
                 "SetPrice"
@@ -233,7 +272,7 @@
     }
   ],
   "info": {
-    "_postman_id": "b07c70ac-15a3-425e-961b-a6a422454222",
+    "_postman_id": "Wundergraph",
     "name": "Wundergraph",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

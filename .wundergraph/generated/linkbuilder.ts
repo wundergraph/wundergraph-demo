@@ -73,10 +73,9 @@ const targetStep = <T, F extends keyof T, R>(field: F) => ({
 });
 
 interface TargetTypes {
-	federated_User: "id" | "name" | "username" | "reviews";
-	federated_Product: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate";
-	federated_Review: "id" | "body" | "author" | "product";
-	countries_Continent: "code" | "name" | "countries";
+	federated_User: "id" | "name" | "username" | "reviews" | "_join";
+	federated_Review: "id" | "body" | "author" | "product" | "_join";
+	federated_Product: "upc" | "reviews" | "name" | "price" | "weight" | "inStock" | "shippingEstimate" | "_join";
 	countries_Country:
 		| "code"
 		| "name"
@@ -88,15 +87,24 @@ interface TargetTypes {
 		| "languages"
 		| "emoji"
 		| "emojiU"
-		| "states";
-	countries_Language: "code" | "name" | "native" | "rtl";
-	countries_State: "code" | "name" | "country";
-	jsp_Post: "id" | "userId" | "title" | "body" | "comments";
-	jsp_Comment: "id" | "name" | "email" | "body" | "postId";
-	jsp_User: "id" | "name" | "username" | "email" | "address" | "phone" | "website" | "company" | "posts";
-	jsp_Address: "street" | "suite" | "city" | "zipcode" | "geo";
-	jsp_Geo: "lat" | "lng";
-	jsp_Company: "name" | "catchPhrase" | "bs";
+		| "states"
+		| "_join";
+	countries_Continent: "code" | "name" | "countries" | "_join";
+	countries_Language: "code" | "name" | "native" | "rtl" | "_join";
+	countries_State: "code" | "name" | "country" | "_join";
+	jsp_Post: "id" | "userId" | "title" | "body" | "_join";
+	jsp_Comment: "id" | "name" | "email" | "body" | "postId" | "_join";
+	jsp_User: "id" | "name" | "username" | "email" | "address" | "phone" | "website" | "company" | "_join";
+	jsp_Address: "street" | "suite" | "city" | "zipcode" | "geo" | "_join";
+	jsp_Geo: "lat" | "lng" | "_join";
+	jsp_Company: "name" | "catchPhrase" | "bs" | "_join";
+	weather_City: "id" | "name" | "country" | "coord" | "weather" | "_join";
+	weather_Coordinates: "lon" | "lat" | "_join";
+	weather_Summary: "title" | "description" | "icon" | "_join";
+	weather_Temperature: "actual" | "feelsLike" | "min" | "max" | "_join";
+	weather_Wind: "speed" | "deg" | "_join";
+	weather_Clouds: "all" | "visibility" | "humidity" | "_join";
+	weather_Weather: "summary" | "temperature" | "wind" | "clouds" | "timestamp" | "_join";
 }
 
 interface SourceFields {
@@ -104,16 +112,16 @@ interface SourceFields {
 	federated_topProducts: {
 		first: null;
 	};
-	countries_continents: {
-		filter: null;
-	};
-	countries_continent: {
-		code: null;
-	};
 	countries_countries: {
 		filter: null;
 	};
 	countries_country: {
+		code: null;
+	};
+	countries_continents: {
+		filter: null;
+	};
+	countries_continent: {
 		code: null;
 	};
 	countries_languages: {
@@ -129,6 +137,15 @@ interface SourceFields {
 	jsp_users: {};
 	jsp_userPosts: {
 		userID: null;
+	};
+	weather_getCityByName: {
+		name: null;
+		country: null;
+		config: null;
+	};
+	weather_getCityById: {
+		id: null;
+		config: null;
 	};
 }
 

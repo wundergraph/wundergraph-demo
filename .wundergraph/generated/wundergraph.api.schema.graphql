@@ -159,8 +159,68 @@ directive @internalOperation on QUERY | MUTATION | SUBSCRIPTION
 """The directive @injectEnvironmentVariable allows you to inject an environment variable into the variable definition."""
 directive @injectEnvironmentVariable(name: String!) on VARIABLE_DEFINITION
 
-""""""
-directive @countries_cacheControl(maxAge: Int, scope: countries_CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
+"""
+The @export directive instructs the Execution Planner to export the field during the execution into the variable of the 'as' argument.
+As the execution is depth first, a field can only be used after it has been exported.
+Additionally, a field can only be used after using the '_join' field or on a different data source.
+It's not possible to export a field and use it in for the same data source.
+
+Note that the @export directive only works on fields that return a single value.
+It's not possible to export a list or object field.
+"""
+directive @export(
+  """The argument 'as' is the name of the variable to export the field to."""
+  as: String!
+) on FIELD
+
+"""
+The directive @internal marks a variable definition as internal so that clients can't access it.
+The field is also not visible in the public API.
+It's only being used as an internal variable to export fields into.
+"""
+directive @internal on VARIABLE_DEFINITION
+
+"""
+The @transform directive allows to apply transformations to the response.
+By applying the directive, the shape of the response can be altered,
+which will also modify the JSON-Schema of the response.
+That is, you will keep full type safety and code-generation for transformed fields.
+"""
+directive @transform(
+  """
+  Using the 'get' transformation allows you to extract a nested field using a JSON path.
+  This is useful to unnest data, e.g. when using the '_join' field, which adds an extra layer of nesting.
+  
+  Example:
+  
+  query GetName {
+      name: me @transform(get: "info.name") {
+          info {
+              name
+          }
+      }
+  }
+  
+  Before the transformation, the resolve looks like this:
+  
+  {
+      "name": {
+          "info": {
+              "name": "John Doe"
+          }
+      }
+  }
+  
+  With the transformation applied, the response will be reshaped like this:
+  
+  {
+      "name": "John Doe"
+  }
+  """
+  get: String
+) on FIELD
+
+directive @weather_cacheControl(maxAge: Int, scope: weather_CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
 directive @rbac(
   """the user must match all roles"""
@@ -176,16 +236,18 @@ directive @rbac(
 type Query {
   federated_me: federated_User
   federated_topProducts(first: Int = 5): [federated_Product]
-  countries_continents(filter: countries_ContinentFilterInput): [countries_Continent!]!
-  countries_continent(code: ID!): countries_Continent
   countries_countries(filter: countries_CountryFilterInput): [countries_Country!]!
   countries_country(code: ID!): countries_Country
+  countries_continents(filter: countries_ContinentFilterInput): [countries_Continent!]!
+  countries_continent(code: ID!): countries_Continent
   countries_languages(filter: countries_LanguageFilterInput): [countries_Language!]!
   countries_language(code: ID!): countries_Language
   jsp_posts: [jsp_Post]
   jsp_postComments(postID: String!): [jsp_Comment]
   jsp_users: [jsp_User]
   jsp_userPosts(userID: String!): [jsp_Post]
+  weather_getCityByName(name: String!, country: String, config: weather_ConfigInput): weather_City
+  weather_getCityById(id: [String!], config: weather_ConfigInput): [weather_City]
 }
 
 type federated_User {
@@ -193,6 +255,15 @@ type federated_User {
   name: String
   username: String
   reviews: [federated_Review]
+  _join: Query!
+}
+
+type federated_Review {
+  id: ID!
+  body: String
+  author: federated_User
+  product: federated_Product
+  _join: Query!
 }
 
 type federated_Product {
@@ -203,13 +274,7 @@ type federated_Product {
   weight: Int
   inStock: Boolean
   shippingEstimate: Int
-}
-
-type federated_Review {
-  id: ID!
-  body: String
-  author: federated_User
-  product: federated_Product
+  _join: Query!
 }
 
 type Subscription {
@@ -269,27 +334,6 @@ enum WunderGraphDateTimeFormat {
   StampNano
 }
 
-""""""
-input countries_ContinentFilterInput {
-  code: countries_StringQueryOperatorInput
-}
-
-""""""
-input countries_StringQueryOperatorInput {
-  eq: String
-  ne: String
-  in: [String]
-  nin: [String]
-  regex: String
-  glob: String
-}
-
-type countries_Continent {
-  code: ID!
-  name: String!
-  countries: [countries_Country!]!
-}
-
 type countries_Country {
   code: ID!
   name: String!
@@ -302,6 +346,14 @@ type countries_Country {
   emoji: String!
   emojiU: String!
   states: [countries_State!]!
+  _join: Query!
+}
+
+type countries_Continent {
+  code: ID!
+  name: String!
+  countries: [countries_Country!]!
+  _join: Query!
 }
 
 type countries_Language {
@@ -309,43 +361,45 @@ type countries_Language {
   name: String
   native: String
   rtl: Boolean!
+  _join: Query!
 }
 
 type countries_State {
   code: String
   name: String!
   country: countries_Country!
+  _join: Query!
 }
 
-""""""
+input countries_StringQueryOperatorInput {
+  eq: String
+  ne: String
+  in: [String]
+  nin: [String]
+  regex: String
+  glob: String
+}
+
 input countries_CountryFilterInput {
   code: countries_StringQueryOperatorInput
   currency: countries_StringQueryOperatorInput
   continent: countries_StringQueryOperatorInput
 }
 
-""""""
-input countries_LanguageFilterInput {
+input countries_ContinentFilterInput {
   code: countries_StringQueryOperatorInput
 }
 
-""""""
-enum countries_CacheControlScope {
-  """"""
-  PUBLIC
-  """"""
-  PRIVATE
+input countries_LanguageFilterInput {
+  code: countries_StringQueryOperatorInput
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar countries_Upload
 
 type jsp_Post {
   id: Int
   userId: Int
   title: String
   body: String
-  comments: [jsp_Comment]
+  _join: Query!
 }
 
 type jsp_Comment {
@@ -354,6 +408,7 @@ type jsp_Comment {
   email: String
   body: String
   postId: Int
+  _join: Query!
 }
 
 type jsp_User {
@@ -365,7 +420,7 @@ type jsp_User {
   phone: String
   website: String
   company: jsp_Company
-  posts: [jsp_Post]
+  _join: Query!
 }
 
 type jsp_Address {
@@ -374,18 +429,144 @@ type jsp_Address {
   city: String
   zipcode: String
   geo: jsp_Geo
+  _join: Query!
 }
 
 type jsp_Geo {
   lat: String
   lng: String
+  _join: Query!
 }
 
 type jsp_Company {
   name: String
   catchPhrase: String
   bs: String
+  _join: Query!
 }
+
+type weather_City {
+  id: ID
+  name: String
+  country: String
+  coord: weather_Coordinates
+  weather: weather_Weather
+  _join: Query!
+}
+
+type weather_Coordinates {
+  lon: Float
+  lat: Float
+  _join: Query!
+}
+
+type weather_Summary {
+  title: String
+  description: String
+  icon: String
+  _join: Query!
+}
+
+type weather_Temperature {
+  actual: Float
+  feelsLike: Float
+  min: Float
+  max: Float
+  _join: Query!
+}
+
+type weather_Wind {
+  speed: Float
+  deg: Int
+  _join: Query!
+}
+
+type weather_Clouds {
+  all: Int
+  visibility: Int
+  humidity: Int
+  _join: Query!
+}
+
+type weather_Weather {
+  summary: weather_Summary
+  temperature: weather_Temperature
+  wind: weather_Wind
+  clouds: weather_Clouds
+  timestamp: Int
+  _join: Query!
+}
+
+input weather_ConfigInput {
+  units: weather_Unit
+  lang: weather_Language
+}
+
+enum weather_Unit {
+  metric
+  imperial
+  kelvin
+}
+
+enum weather_Language {
+  af
+  al
+  ar
+  az
+  bg
+  ca
+  cz
+  da
+  de
+  el
+  en
+  eu
+  fa
+  fi
+  fr
+  gl
+  he
+  hi
+  hr
+  hu
+  id
+  it
+  ja
+  kr
+  la
+  lt
+  mk
+  no
+  nl
+  pl
+  pt
+  pt_br
+  ro
+  ru
+  sv
+  se
+  sk
+  sl
+  sp
+  es
+  sr
+  th
+  tr
+  ua
+  uk
+  vi
+  zh_cn
+  zh_tw
+  zu
+}
+
+enum weather_CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar weather_Upload
 
 enum WG_ROLE {
   admin
