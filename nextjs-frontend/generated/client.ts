@@ -2,6 +2,8 @@
 
 import {
 	CountriesResponse,
+	CountryWeatherResponse,
+	CountryWeatherInput,
 	FakeProductsResponse,
 	FakeProductsInput,
 	PriceUpdatesResponse,
@@ -134,9 +136,9 @@ export class Client {
 	};
 	private extraHeaders?: Headers;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "e61fb966";
+	private readonly applicationHash: string = "db7bbd7d";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "0.72.0";
+	private readonly sdkVersion: string = "0.73.5";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener | undefined;
@@ -160,6 +162,14 @@ export class Client {
 			return await this.doFetch<CountriesResponse>({
 				method: "GET",
 				path: "Countries",
+				input: options.input,
+				abortSignal: options.abortSignal,
+			});
+		},
+		CountryWeather: async (options: RequestOptions<CountryWeatherInput, CountryWeatherResponse>) => {
+			return await this.doFetch<CountryWeatherResponse>({
+				method: "GET",
+				path: "CountryWeather",
 				input: options.input,
 				abortSignal: options.abortSignal,
 			});
@@ -226,6 +236,21 @@ export class Client {
 				{
 					method: "GET",
 					path: "Countries",
+					input: options.input,
+					abortSignal: options.abortSignal,
+					liveQuery: true,
+				},
+				cb
+			);
+		},
+		CountryWeather: (
+			options: RequestOptions<CountryWeatherInput, CountryWeatherResponse>,
+			cb: (response: Response<CountryWeatherResponse>) => void
+		) => {
+			return this.startSubscription<CountryWeatherResponse>(
+				{
+					method: "GET",
+					path: "CountryWeather",
 					input: options.input,
 					abortSignal: options.abortSignal,
 					liveQuery: true,

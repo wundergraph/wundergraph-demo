@@ -7,6 +7,10 @@ interface Schema {
 		input: JSONSchema7;
 		response: JSONSchema7;
 	};
+	CountryWeather: {
+		input: JSONSchema7;
+		response: JSONSchema7;
+	};
 	FakeProducts: {
 		input: JSONSchema7;
 		response: JSONSchema7;
@@ -31,7 +35,7 @@ interface Schema {
 
 const jsonSchema: Schema = {
 	Countries: {
-		input: { type: "object", properties: {}, additionalProperties: false },
+		input: { type: "object", properties: {}, additionalProperties: false, definitions: {} },
 		response: {
 			type: "object",
 			properties: {
@@ -55,11 +59,59 @@ const jsonSchema: Schema = {
 			additionalProperties: false,
 		},
 	},
+	CountryWeather: {
+		input: {
+			type: "object",
+			properties: { code: { type: "string" } },
+			additionalProperties: false,
+			definitions: {},
+			required: ["code"],
+		},
+		response: {
+			type: "object",
+			properties: {
+				data: {
+					type: "object",
+					properties: {
+						countries_country: {
+							type: "object",
+							properties: {
+								code: { type: "string" },
+								name: { type: "string" },
+								capital: { type: "string" },
+								weather: {
+									type: "object",
+									properties: {
+										temperature: {
+											type: "object",
+											properties: { actual: { type: "number" } },
+											additionalProperties: false,
+										},
+										summary: {
+											type: "object",
+											properties: { title: { type: "string" }, description: { type: "string" } },
+											additionalProperties: false,
+										},
+									},
+									additionalProperties: false,
+								},
+							},
+							additionalProperties: false,
+							required: ["code", "name", "weather"],
+						},
+					},
+					additionalProperties: false,
+				},
+			},
+			additionalProperties: false,
+		},
+	},
 	FakeProducts: {
 		input: {
 			type: "object",
 			properties: { first: { type: "integer" } },
 			additionalProperties: false,
+			definitions: {},
 			required: ["first"],
 		},
 		response: {
@@ -85,7 +137,7 @@ const jsonSchema: Schema = {
 		},
 	},
 	PriceUpdates: {
-		input: { type: "object", properties: {}, additionalProperties: false },
+		input: { type: "object", properties: {}, additionalProperties: false, definitions: {} },
 		response: {
 			type: "object",
 			properties: {
@@ -133,6 +185,7 @@ const jsonSchema: Schema = {
 			type: "object",
 			properties: { upc: { type: "string" }, price: { type: "integer" } },
 			additionalProperties: false,
+			definitions: {},
 			required: ["upc", "price"],
 		},
 		response: {
@@ -160,7 +213,7 @@ const jsonSchema: Schema = {
 		},
 	},
 	TopProducts: {
-		input: { type: "object", properties: {}, additionalProperties: false },
+		input: { type: "object", properties: {}, additionalProperties: false, definitions: {} },
 		response: {
 			type: "object",
 			properties: {
@@ -188,6 +241,20 @@ const jsonSchema: Schema = {
 														id: { type: "string" },
 														name: { type: "string" },
 														username: { type: "string" },
+														reviews: {
+															type: "array",
+															items: {
+																type: "object",
+																properties: {
+																	product: {
+																		type: "object",
+																		properties: { name: { type: "string" } },
+																		additionalProperties: false,
+																	},
+																},
+																additionalProperties: false,
+															},
+														},
 													},
 													additionalProperties: false,
 													required: ["id"],
@@ -210,7 +277,7 @@ const jsonSchema: Schema = {
 		},
 	},
 	Users: {
-		input: { type: "object", properties: {}, additionalProperties: false },
+		input: { type: "object", properties: {}, additionalProperties: false, definitions: {} },
 		response: {
 			type: "object",
 			properties: {

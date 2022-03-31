@@ -4,6 +4,10 @@ import Fastify from "fastify";
 import axios from "axios";
 import {
 	CountriesResponse,
+	CountryWeatherResponse,
+	CountryWeatherInput,
+	InternalCountryWeatherInput,
+	InjectedCountryWeatherInput,
 	FakeProductsResponse,
 	FakeProductsInput,
 	InternalFakeProductsInput,
@@ -80,6 +84,7 @@ const internalRequest = async (operationName: string, input?: any): Promise<any>
 interface InternalClient {
 	queries: {
 		Countries: () => Promise<CountriesResponse>;
+		CountryWeather: (input: InternalCountryWeatherInput) => Promise<CountryWeatherResponse>;
 		FakeProducts: (input: InternalFakeProductsInput) => Promise<FakeProductsResponse>;
 		TopProducts: () => Promise<TopProductsResponse>;
 		Users: () => Promise<UsersResponse>;
@@ -92,6 +97,7 @@ interface InternalClient {
 const client = {
 	queries: {
 		Countries: async () => internalRequest("Countries"),
+		CountryWeather: async (input: InternalCountryWeatherInput) => internalRequest("CountryWeather", input),
 		FakeProducts: async (input: InternalFakeProductsInput) => internalRequest("FakeProducts", input),
 		TopProducts: async () => internalRequest("TopProducts"),
 		Users: async () => internalRequest("Users"),
@@ -120,6 +126,21 @@ export interface HooksConfig {
 			preResolve?: (ctx: Context) => Promise<void>;
 			postResolve?: (ctx: Context, response: CountriesResponse) => Promise<void>;
 			mutatingPostResolve?: (ctx: Context, response: CountriesResponse) => Promise<CountriesResponse>;
+		};
+		CountryWeather?: {
+			mockResolve?: (ctx: Context, input: InjectedCountryWeatherInput) => Promise<CountryWeatherResponse>;
+			preResolve?: (ctx: Context, input: InjectedCountryWeatherInput) => Promise<void>;
+			mutatingPreResolve?: (ctx: Context, input: InjectedCountryWeatherInput) => Promise<InjectedCountryWeatherInput>;
+			postResolve?: (
+				ctx: Context,
+				input: InjectedCountryWeatherInput,
+				response: CountryWeatherResponse
+			) => Promise<void>;
+			mutatingPostResolve?: (
+				ctx: Context,
+				input: InjectedCountryWeatherInput,
+				response: CountryWeatherResponse
+			) => Promise<CountryWeatherResponse>;
 		};
 		FakeProducts?: {
 			mockResolve?: (ctx: Context, input: InjectedFakeProductsInput) => Promise<FakeProductsResponse>;
@@ -183,7 +204,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 			fastify.addHook<{ Body: { user: User } }>("preHandler", async (req, reply) => {
 				req.setClientRequestHeaders = {};
 				req.ctx = {
-					user: req.body.user,
+					user: req?.body?.user,
 					setClientRequestHeader: (name, value) => (req.setClientRequestHeaders[name] = value),
 				};
 			});
@@ -313,6 +334,117 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 						request.log.error(err);
 						reply.code(500);
 						return { op: "Countries", hook: "mutatingPostResolve", error: err };
+					}
+				}
+			);
+
+			// mock
+			fastify.post<{ Body: { input: InjectedCountryWeatherInput } }>(
+				"/operation/CountryWeather/mockResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.queries?.CountryWeather?.mockResolve?.(request.ctx, request.body.input);
+						return {
+							op: "CountryWeather",
+							hook: "mock",
+							response: mutated,
+							setClientRequestHeaders: request.setClientRequestHeaders,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "CountryWeather", hook: "mock", error: err };
+					}
+				}
+			);
+
+			// preResolve
+			fastify.post<{ Body: { input: InjectedCountryWeatherInput } }>(
+				"/operation/CountryWeather/preResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.CountryWeather?.preResolve?.(request.ctx, request.body.input);
+						return {
+							op: "CountryWeather",
+							hook: "preResolve",
+							setClientRequestHeaders: request.setClientRequestHeaders,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "CountryWeather", hook: "preResolve", error: err };
+					}
+				}
+			);
+			// postResolve
+			fastify.post<{ Body: { input: InjectedCountryWeatherInput; response: CountryWeatherResponse } }>(
+				"/operation/CountryWeather/postResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						await config?.queries?.CountryWeather?.postResolve?.(
+							request.ctx,
+							request.body.input,
+							request.body.response
+						);
+						return {
+							op: "CountryWeather",
+							hook: "postResolve",
+							setClientRequestHeaders: request.setClientRequestHeaders,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "CountryWeather", hook: "postResolve", error: err };
+					}
+				}
+			);
+			// mutatingPreResolve
+			fastify.post<{ Body: { input: InjectedCountryWeatherInput } }>(
+				"/operation/CountryWeather/mutatingPreResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.queries?.CountryWeather?.mutatingPreResolve?.(
+							request.ctx,
+							request.body.input
+						);
+						return {
+							op: "CountryWeather",
+							hook: "mutatingPreResolve",
+							input: mutated,
+							setClientRequestHeaders: request.setClientRequestHeaders,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "CountryWeather", hook: "mutatingPreResolve", error: err };
+					}
+				}
+			);
+			// mutatingPostResolve
+			fastify.post<{ Body: { input: InjectedCountryWeatherInput; response: CountryWeatherResponse } }>(
+				"/operation/CountryWeather/mutatingPostResolve",
+				async (request, reply) => {
+					reply.type("application/json").code(200);
+					try {
+						const mutated = await config?.queries?.CountryWeather?.mutatingPostResolve?.(
+							request.ctx,
+							request.body.input,
+							request.body.response
+						);
+						return {
+							op: "CountryWeather",
+							hook: "mutatingPostResolve",
+							response: mutated,
+							setClientRequestHeaders: request.setClientRequestHeaders,
+						};
+					} catch (err) {
+						request.log.error(err);
+						reply.code(500);
+						return { op: "CountryWeather", hook: "mutatingPostResolve", error: err };
 					}
 				}
 			);
@@ -677,7 +809,7 @@ export const configureWunderGraphHooks = (config: HooksConfig) => {
 				}
 			);
 
-			fastify.listen(9992, (err, address) => {
+			fastify.listen(9992, "localhost", (err, address) => {
 				if (err) {
 					console.error(err);
 					process.exit(0);

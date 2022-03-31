@@ -2,11 +2,13 @@
 
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { WunderGraphContext } from "./provider";
-import { RequestOptions, MutateRequestOptions, SubscriptionRequestOptions, Response } from "./client";
+import { RequestOptions, MutateRequestOptions, SubscriptionRequestOptions, Response } from "@wundergraph/sdk";
 import {
+	CountryWeatherInput,
 	FakeProductsInput,
 	SetPriceInput,
 	CountriesResponse,
+	CountryWeatherResponse,
 	FakeProductsResponse,
 	TopProductsResponse,
 	UsersResponse,
@@ -44,8 +46,17 @@ const Query = <R extends {}, I extends {}>(
 	const [shouldFetch, setShouldFetch] = useState<boolean>(options === undefined || options.initialState === undefined);
 	const refetch = useCallback((options?: RequestOptions<I, R>) => {
 		if (options !== undefined) {
-			_setOptions(options);
+			_setOptions({
+				...options,
+				lazy: false,
+			});
+		} else if (_options && _options.lazy === true) {
+			_setOptions({
+				..._options,
+				lazy: false,
+			});
 		}
+		setResponse({ status: "loading" });
 		setShouldFetch(true);
 	}, []);
 	useEffect(() => {
@@ -59,6 +70,8 @@ const Query = <R extends {}, I extends {}>(
 					status: "ok",
 					body: options.initialState,
 			  }
+			: _options && _options.lazy === true
+			? { status: "lazy" }
 			: { status: "loading" }
 	);
 	useEffect(() => {
@@ -70,6 +83,9 @@ const Query = <R extends {}, I extends {}>(
 			return;
 		}
 		if (!shouldFetch) {
+			return;
+		}
+		if (_options && _options.lazy === true) {
 			return;
 		}
 		const abortController = new AbortController();
@@ -133,6 +149,7 @@ const Mutation = <R extends {}, I extends {}>(
 				abortSignal:
 					options !== undefined && options.abortSignal !== undefined ? options.abortSignal : _options?.abortSignal,
 			};
+			setResponse({ status: "loading" });
 			const result = await promiseFactory(combinedOptions);
 			setResponse(result);
 			if (result.status === "ok" && combinedOptions.refetchMountedQueriesOnSuccess === true) {
@@ -201,10 +218,23 @@ const Subscription = <R, I>(
 	};
 };
 
+export const useLoadingComplete = (...responses: Response<any>[]) => {
+	const [loading, setLoading] = useState(true);
+	useEffect(() => {
+		const isLoading = responses.some((r) => r.status === "loading");
+		if (isLoading !== loading) setLoading(isLoading);
+	}, responses);
+	return loading;
+};
+
 export const useQuery = {
 	Countries: (options?: RequestOptions<never, CountriesResponse>) => {
 		const { client } = useWunderGraph();
 		return Query(client.query.Countries, { requiresAuthentication: false }, options);
+	},
+	CountryWeather: (options: RequestOptions<CountryWeatherInput, CountryWeatherResponse>) => {
+		const { client } = useWunderGraph();
+		return Query(client.query.CountryWeather, { requiresAuthentication: false }, options);
 	},
 	FakeProducts: (options: RequestOptions<FakeProductsInput, FakeProductsResponse>) => {
 		const { client } = useWunderGraph();
@@ -230,7 +260,7 @@ export const useMutation = {
 export const useSubscription = {
 	PriceUpdates: (options?: SubscriptionRequestOptions) => {
 		const { client } = useWunderGraph();
-		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: false }, options);
+		return Subscription(client.subscription.PriceUpdates, { requiresAuthentication: true }, options);
 	},
 };
 
@@ -238,6 +268,10 @@ export const useLiveQuery = {
 	Countries: (options?: SubscriptionRequestOptions) => {
 		const { client } = useWunderGraph();
 		return Subscription(client.liveQuery.Countries, { requiresAuthentication: false }, options);
+	},
+	CountryWeather: (options: SubscriptionRequestOptions<CountryWeatherInput>) => {
+		const { client } = useWunderGraph();
+		return Subscription(client.liveQuery.CountryWeather, { requiresAuthentication: false }, options);
 	},
 	FakeProducts: (options: SubscriptionRequestOptions<FakeProductsInput>) => {
 		const { client } = useWunderGraph();
