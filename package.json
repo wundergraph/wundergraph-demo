@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@rjsf/core": "^3.2.0"
+    "@rjsf/core": "^3.2.0",
+    "@wundergraph/sdk": "^1.0.0-next.9"
   }
 }

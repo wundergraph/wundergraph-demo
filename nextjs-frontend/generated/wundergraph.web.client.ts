@@ -36,6 +36,7 @@ export class Client {
 		this.baseURL = config?.baseURL || this.baseURL;
 		this.extraHeaders = config?.extraHeaders;
 		this.user = null;
+		this.customFetch = config?.customFetch;
 	}
 	private logoutCallback: undefined | (() => void);
 	public setLogoutCallback(cb: () => void) {
@@ -44,11 +45,12 @@ export class Client {
 	public setExtraHeaders = (headers: Headers) => {
 		this.extraHeaders = headers;
 	};
+	private customFetch?: (input: RequestInfo, init?: RequestInit) => Promise<globalThis.Response>;
 	private extraHeaders?: Headers;
 	private readonly baseURL: string = "http://localhost:9991";
-	private readonly applicationHash: string = "3bb5fb28";
+	private readonly applicationHash: string = "6dc5aa4c";
 	private readonly applicationPath: string = "api/main";
-	private readonly sdkVersion: string = "1.0.0-next.7";
+	private readonly sdkVersion: string = "1.0.0-next.9";
 	private csrfToken: string | undefined;
 	private user: User | null;
 	private userListener: UserListener<User> | undefined;
@@ -222,7 +224,8 @@ export class Client {
 					  })
 					: "";
 			if (fetchConfig.method === "POST" && this.csrfToken === undefined) {
-				const res = await fetch(this.baseURL + "/" + this.applicationPath + "/auth/cookie/csrf", {
+				const f = this.customFetch || fetch;
+				const res = await f(this.baseURL + "/" + this.applicationPath + "/auth/cookie/csrf", {
 					credentials: "include",
 					mode: "cors",
 				});
@@ -276,7 +279,8 @@ export class Client {
 			}
 			this.inflight[key] = [{ resolve, reject }];
 			try {
-				const res = await fetch(input, init);
+				const f = this.customFetch || fetch;
+				const res = await f(input, init);
 				const inflight = this.inflight[key];
 				if (res.status === 200) {
 					const json = await res.json();
@@ -306,7 +310,8 @@ export class Client {
 					wg_variables: fetchConfig.input,
 					wg_live: fetchConfig.liveQuery === true ? true : undefined,
 				});
-				const response = await fetch(
+				const f = this.customFetch || fetch;
+				const response = await f(
 					this.baseURL + "/" + this.applicationPath + "/operations/" + fetchConfig.path + params,
 					{
 						headers: {
@@ -372,19 +377,17 @@ export class Client {
 	public fetchUser = async (revalidate?: boolean): Promise<User | null> => {
 		try {
 			const revalidateTrailer = revalidate === undefined ? "" : "?revalidate=true";
-			const response = await fetch(
-				this.baseURL + "/" + this.applicationPath + "/auth/cookie/user" + revalidateTrailer,
-				{
-					headers: {
-						...this.extraHeaders,
-						"Content-Type": "application/json",
-						"WG-SDK-Version": this.sdkVersion,
-					},
-					method: "GET",
-					credentials: "include",
-					mode: "cors",
-				}
-			);
+			const f = this.customFetch || fetch;
+			const response = await f(this.baseURL + "/" + this.applicationPath + "/auth/cookie/user" + revalidateTrailer, {
+				headers: {
+					...this.extraHeaders,
+					"Content-Type": "application/json",
+					"WG-SDK-Version": this.sdkVersion,
+				},
+				method: "GET",
+				credentials: "include",
+				mode: "cors",
+			});
 			if (response.status === 200) {
 				const user = await response.json();
 				this.setUser(user);
@@ -406,7 +409,8 @@ export class Client {
 		},
 	];
 	public logout = async (options?: LogoutOptions): Promise<boolean> => {
-		const response = await fetch(
+		const f = this.customFetch || fetch;
+		const response = await f(
 			this.baseURL + "/" + this.applicationPath + "/auth/cookie/user/logout" + this.queryString(options),
 			{
 				headers: {

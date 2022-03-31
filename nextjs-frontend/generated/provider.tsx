@@ -24,15 +24,16 @@ export const WunderGraphContext = createContext<Config | undefined>(undefined);
 export interface Props {
 	endpoint?: string;
 	extraHeaders?: { [key: string]: string };
+	customFetch?: (input: RequestInfo, init?: RequestInit) => Promise<globalThis.Response>;
 }
 
-export const WunderGraphProvider: FunctionComponent<Props> = ({ endpoint, extraHeaders, children }) => {
+export const WunderGraphProvider: FunctionComponent<Props> = ({ endpoint, extraHeaders, customFetch, children }) => {
 	const [initialized, setInitialized] = useState(false);
 	const [initializing, setInitializing] = useState(false);
 	const [refetchMountedQueries, setRefetchMountedQueries] = useState(new Date());
 	const queryCache: { [key: string]: Object } = {};
 	const client = useMemo<Client>(() => {
-		const client = new Client({ baseURL: endpoint, extraHeaders });
+		const client = new Client({ baseURL: endpoint, extraHeaders, customFetch });
 		client.setLogoutCallback(() => {
 			Object.keys(queryCache).forEach((key) => {
 				delete queryCache[key];
