@@ -48,17 +48,22 @@ cd federation
 docker-compose up
 ```
 
-2. Start the local WunderGraph dev environment
+2. Install Dependencies
+
+```shell
+yarn
+# or
+npm install
+```
+
+3. Start the local WunderGraph dev environment
 
 ```shell
 cd .wundergraph
-npm install
-or
-yarn
-wunderctl up
+wunderctl up --debug
 ```
 
-3. Start the frontend
+4. Start the frontend
 
 ```shell
 cd nextjs-frontend
