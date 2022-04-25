@@ -13,34 +13,6 @@ export interface SetPriceInput {
 	price: number;
 }
 
-export interface InternalCountryWeatherInput {
-	capital: string;
-	code: string;
-}
-
-export interface InternalFakeProductsInput {
-	first: number;
-}
-
-export interface InternalSetPriceInput {
-	upc: string;
-	price: number;
-}
-
-export interface InjectedCountryWeatherInput {
-	capital: string;
-	code: string;
-}
-
-export interface InjectedFakeProductsInput {
-	first: number;
-}
-
-export interface InjectedSetPriceInput {
-	upc: string;
-	price: number;
-}
-
 export interface CountriesResponse {
 	data?: CountriesResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
