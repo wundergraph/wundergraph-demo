@@ -62,13 +62,14 @@ func (s *subscriptionResolver) UpdatedPrice(ctx context.Context) (<-chan *Produc
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.After(time.Second):
+			default:
 				rand.Seed(time.Now().UnixNano())
 				product := products[rand.Intn(len(products)-1)]
 				min := 10
 				max := 1499
 				product.Price = num(rand.Intn(max-min+1) + min)
 				updatedPrice <- product
+				time.Sleep(time.Second * 1)
 			}
 		}
 	}()
@@ -83,7 +84,7 @@ func (m mutationResolver) SetPrice(ctx context.Context, upc string, price int) (
 			productsMux.Lock()
 			defer productsMux.Unlock()
 			products[i].Price = num(price)
-			return products[i],nil
+			return products[i], nil
 		}
 	}
 	return nil, fmt.Errorf("product not found")

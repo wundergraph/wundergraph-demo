@@ -1,12 +1,7 @@
 import '../styles/globals.css'
-import {WunderGraphProvider} from "../generated/provider";
 
-function MyApp({ Component, pageProps }) {
-  return(<div>
-    <WunderGraphProvider>
-      <Component {...pageProps} />
-    </WunderGraphProvider>
-  </div>)
+function MyApp({Component, pageProps}) {
+    return (<Component {...pageProps} />)
 }
 
 export default MyApp

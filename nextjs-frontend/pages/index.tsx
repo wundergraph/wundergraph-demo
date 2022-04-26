@@ -1,43 +1,45 @@
-import {GetServerSideProps, NextPage} from 'next'
-import {useLiveQuery, useMutation, useQuery, useSubscription, useWunderGraph} from "../generated/hooks";
-import {FakeProductsResponse} from "../generated/models";
-import {Client} from "../generated/client";
+import {NextPage} from 'next'
+import {
+    AuthProviders,
+    useLiveQuery,
+    useMutation,
+    useQuery,
+    useSubscription,
+    useWunderGraph,
+    withWunderGraph
+} from "../generated/wundergraph.nextjs.integration";
 
-interface Props {
-    products?: FakeProductsResponse;
-}
-
-const IndexPage: NextPage<Props> = ({products}) => {
-    const {client: {login, logout}, user} = useWunderGraph();
-    const fakeProducts = useQuery.FakeProducts({input: {first: 5}, initialState: products});
-    const {mutate: setPrice, response: price} = useMutation.SetPrice({input: {price: 0, upc: "1"}});
+const IndexPage: NextPage = () => {
+    const {login, logout, user} = useWunderGraph();
+    const fakeProducts = useQuery.FakeProducts({input: {first: 5}});
+    const {mutate: setPrice, result: price} = useMutation.SetPrice();
     const priceUpdate = useSubscription.PriceUpdates();
     const countries = useQuery.Countries();
-    const {response: liveProducts} = useLiveQuery.TopProducts();
+    const {result: liveProducts} = useLiveQuery.TopProducts();
     const users = useQuery.Users();
     return (
         <div>
             <h1>
-                Hello Wundergraph
+                Hello WunderGraph
             </h1>
             <h2>
                 User
             </h2>
             <p>
-                {user === undefined && "user not logged in!"}
-                {user !== undefined && `name: ${user.name}, email: ${user.email}`}
+                {user === null && "user not logged in!"}
+                {user !== null && `name: ${user.name}, email: ${user.email}`}
             </p>
             <p>
-                {user === undefined && <button onClick={() => login.github()}>login</button>}
-                {user !== undefined && <button onClick={() => logout()}>logout</button>}
+                {user === null && <button onClick={() => login(AuthProviders.github)}>login</button>}
+                {user !== null && <button onClick={() => logout()}>logout</button>}
             </p>
             <h2>
                 FakeProducts
             </h2>
             <p>
-                {JSON.stringify(fakeProducts.response)}
+                {JSON.stringify(fakeProducts.result)}
             </p>
-            <button onClick={() => fakeProducts.refetch()}>refetch</button>
+            <button onClick={() => fakeProducts.refetch({input: {first: 5}})}>refetch</button>
             <h2>
                 Set Price
             </h2>
@@ -76,16 +78,6 @@ const IndexPage: NextPage<Props> = ({products}) => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    const client = new Client();
-    const products = await client.query.FakeProducts({input: {first: 5}});
-    return {
-        props: {
-            products: products.status === "ok" ? products.body : null,
-        }
-    }
-}
-
 const randomInt = (max: number) => Math.floor(Math.random() * Math.floor(max)) + 1
 
-export default IndexPage;
+export default withWunderGraph(IndexPage);
