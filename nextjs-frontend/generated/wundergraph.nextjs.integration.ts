@@ -43,7 +43,7 @@ export const AuthProviders = {
 const defaultWunderGraphContextProperties: WunderGraphContextProperties<Role> = {
 	ssrCache: {},
 	client: new Client({
-		applicationHash: "03b64ea9",
+		applicationHash: "5265da82",
 		applicationPath: "api/main",
 		baseURL: "http://localhost:9991",
 		sdkVersion: "1.0.0-next.25",
