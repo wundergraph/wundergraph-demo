@@ -63,7 +63,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		TopProducts        func(childComplexity int, first *int) int
+		TopProducts        func(childComplexity int, first *int, random *bool) int
 		__resolve__service func(childComplexity int) int
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
 	}
@@ -84,7 +84,7 @@ type MutationResolver interface {
 	SetPrice(ctx context.Context, upc string, price int) (*Product, error)
 }
 type QueryResolver interface {
-	TopProducts(ctx context.Context, first *int) ([]*Product, error)
+	TopProducts(ctx context.Context, first *int, random *bool) ([]*Product, error)
 }
 type SubscriptionResolver interface {
 	UpdatedPrice(ctx context.Context) (<-chan *Product, error)
@@ -167,7 +167,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TopProducts(childComplexity, args["first"].(*int)), true
+		return e.complexity.Query.TopProducts(childComplexity, args["first"].(*int), args["random"].(*bool)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -284,7 +284,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "schema.graphql", Input: `type Query @extends {
-  topProducts(first: Int = 5): [Product]
+  topProducts(first: Int = 5, random: Boolean): [Product]
 }
 
 type Product @key(fields: "upc") {
@@ -418,6 +418,15 @@ func (ec *executionContext) field_Query_topProducts_args(ctx context.Context, ra
 		}
 	}
 	args["first"] = arg0
+	var arg1 *bool
+	if tmp, ok := rawArgs["random"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("random"))
+		arg1, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["random"] = arg1
 	return args, nil
 }
 
@@ -696,7 +705,7 @@ func (ec *executionContext) _Query_topProducts(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TopProducts(rctx, args["first"].(*int))
+		return ec.resolvers.Query().TopProducts(rctx, args["first"].(*int), args["random"].(*bool))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

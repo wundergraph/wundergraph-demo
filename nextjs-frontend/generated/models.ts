@@ -8,9 +8,23 @@ export interface FakeProductsInput {
 	first: number;
 }
 
+export interface ProtectedSetPriceInput {
+	upc: string;
+	price: number;
+}
+
+export interface ProtectedWeatherInput {
+	city: string;
+}
+
 export interface SetPriceInput {
 	upc: string;
 	price: number;
+}
+
+export interface AllPricesResponse {
+	data?: AllPricesResponseData;
+	errors?: ReadonlyArray<GraphQLError>;
 }
 
 export interface CountriesResponse {
@@ -33,6 +47,16 @@ export interface PriceUpdatesResponse {
 	errors?: ReadonlyArray<GraphQLError>;
 }
 
+export interface ProtectedSetPriceResponse {
+	data?: ProtectedSetPriceResponseData;
+	errors?: ReadonlyArray<GraphQLError>;
+}
+
+export interface ProtectedWeatherResponse {
+	data?: ProtectedWeatherResponseData;
+	errors?: ReadonlyArray<GraphQLError>;
+}
+
 export interface SetPriceResponse {
 	data?: SetPriceResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
@@ -46,6 +70,13 @@ export interface TopProductsResponse {
 export interface UsersResponse {
 	data?: UsersResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
+}
+
+export interface AllPricesResponseData {
+	prices?: {
+		upc: string;
+		price?: number;
+	}[];
 }
 
 export interface CountriesResponseData {
@@ -93,6 +124,29 @@ export interface PriceUpdatesResponseData {
 				name?: string;
 			};
 		}[];
+	};
+}
+
+export interface ProtectedSetPriceResponseData {
+	setPrice?: {
+		upc: string;
+		name?: string;
+		price?: number;
+		weight?: number;
+	};
+}
+
+export interface ProtectedWeatherResponseData {
+	weather_getCityByName?: {
+		weather?: {
+			temperature?: {
+				actual?: number;
+			};
+			summary?: {
+				title?: string;
+				description?: string;
+			};
+		};
 	};
 }
 

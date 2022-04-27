@@ -39,16 +39,18 @@ func (r *entityResolver) FindProductByUpc(ctx context.Context, upc string) (*Pro
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) TopProducts(ctx context.Context, first *int) ([]*Product, error) {
+func (r *queryResolver) TopProducts(ctx context.Context, first *int, random *bool) ([]*Product, error) {
 	if first == nil || *first > len(products) {
 		first = num(len(products))
 	}
-	productsMux.Lock()
-	defer productsMux.Unlock()
-	for _, product := range products {
-		min := 10
-		max := 1499
-		product.Price = num(rand.Intn(max-min+1) + min)
+	if random != nil && *random {
+	    productsMux.Lock()
+    	defer productsMux.Unlock()
+    	for _, product := range products {
+    		min := 10
+    		max := 1499
+    		product.Price = num(rand.Intn(max-min+1) + min)
+    	}
 	}
 	return products[0:*first], nil
 }

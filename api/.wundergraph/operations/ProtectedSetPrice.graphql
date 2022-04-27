@@ -1,0 +1,8 @@
+mutation ($upc: String! $price: Int!) {
+    setPrice: federated_setPrice(upc: $upc, price: $price){
+        upc
+        name
+        price
+        weight
+    }
+}

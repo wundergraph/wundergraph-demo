@@ -1,5 +1,5 @@
 type Query @extends {
-  topProducts(first: Int = 5): [Product]
+  topProducts(first: Int = 5, random: Boolean): [Product]
 }
 
 type Product @key(fields: "upc") {

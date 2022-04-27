@@ -1,0 +1,6 @@
+{
+    prices: federated_topProducts {
+        upc
+        price
+    }
+}

@@ -86,9 +86,9 @@ configureWunderGraphApplication({
             providers: [
                 authProviders.demo(),
             ],
-            authorizedRedirectUris: [
-                "http://localhost:3000/"
-            ]
+            authorizedRedirectUriRegexes: [
+                "http://localhost:3000/*"
+            ],
         }
     },
     authorization: {
