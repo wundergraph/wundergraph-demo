@@ -48,27 +48,21 @@ cd federation
 docker-compose up
 ```
 
-2. Install Dependencies
+2. Run the API Server (WunderGraph)
 
 ```shell
-yarn
-# or
+cd api
 npm install
-```
-
-3. Start the local WunderGraph dev environment
-
-```shell
 cd .wundergraph
 wunderctl up --debug
 ```
 
-4. Start the frontend
+3. Start the frontend
 
 ```shell
 cd nextjs-frontend
-yarn
-yarn dev
+npm install
+npm run dev
 ```
 
 Open your browser and go to `http://localhost:3000`
@@ -82,14 +76,20 @@ The following code-snipped introspects the different APIs and merges them all to
 
 ```typescript
 const jsonPlaceholder = introspect.openApi({
+    apiNamespace: "jsp",
     source: {
         kind: "file",
         filePath: "jsonplaceholder.v1.yaml",
-    }
+    },
 })
 
+const weather = introspect.graphql({
+    apiNamespace: "weather",
+    url: "https://graphql-weather-api.herokuapp.com/",
+});
+
 const federatedApi = introspect.federation({
-    source: IntrospectionPolicy.Network,
+    apiNamespace: "federated",
     upstreams: [
         {
             url: "http://localhost:4001/graphql"
@@ -107,35 +107,26 @@ const federatedApi = introspect.federation({
 });
 
 const countries = introspect.graphql({
+    apiNamespace: "countries",
     url: "https://countries.trevorblades.com/",
-    source: IntrospectionPolicy.Network,
 })
 
-const openAPI = introspect.openApi({
-    source: {
-        kind: "file",
-        filePath: "users_oas.json"
-    },
-    headers: {
-        "Authorization": "token"
-    }
-});
-
-const renamedJsonPlaceholder = transformApi.renameTypes(jsonPlaceholder,{from: "User",to: "JSP_User"});
-
 const myApplication = new Application({
-    name: "app",
+    name: "api",
     apis: [
         federatedApi,
-        openAPI,
         countries,
-        renamedJsonPlaceholder,
+        jsonPlaceholder,
+        weather,
     ],
 });
 ```
 
 Once everything is merged, and the configuration is built,
-the WunderGraph engine is able to delegate all Requests to the correct upstream(s).
+the WunderGraph engine is able to delegate all Requests tox the correct upstream(s).
+
+By applying namespaces to each individual API,
+we're able to avoid naming conflicts when merging multiple APIs.
 
 ### Request Flow
 
@@ -157,7 +148,7 @@ Additionally, our GraphQL Gateway Engine is capable of doing Subscriptions for A
 
 ### Modifying Operations
 
-Go to `.wundergraph/operations`, add, remove or modify the operations.
+Go to `api/.wundergraph/operations`, add, remove or modify the operations.
 
 ### Updating the Frontend
 
@@ -165,4 +156,4 @@ Go to `nextjs-frontend/pages/index.tsx` and modify the UI, it definitely needs s
 
 ### Adding or Removing DataSources
 
-Go to `.wundergraph/wundergraph.config.ts` and modify the introspected DataSources. 
+Go to `api/.wundergraph/wundergraph.config.ts` and modify the introspected DataSources. 
