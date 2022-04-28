@@ -1,4 +1,5 @@
 import NextLink from "next/link";
+import {withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
 
 interface PageInfo {
     title: string;
@@ -77,6 +78,14 @@ const pages: PageInfo[] = [
     {
         title: "Universal Subscription",
         slug: "universal-subscription",
+    },
+    {
+        title: "Client-Side Live-Query",
+        slug: "client-side-live-query"
+    },
+    {
+        title: "Universal Live-Query",
+        slug: "universal-live-query"
     }
 ];
 
@@ -97,4 +106,4 @@ const Patterns = () => {
     )
 }
 
-export default Patterns;
+export default withWunderGraph(Patterns);

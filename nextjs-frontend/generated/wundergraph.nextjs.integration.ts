@@ -23,6 +23,7 @@ import type {
 	SetPriceInput,
 	SetPriceResponseData,
 	TopProductsResponse,
+	TopProductsInput,
 	TopProductsResponseData,
 	UsersResponse,
 	UsersResponseData,
@@ -35,7 +36,6 @@ import {
 	hooks,
 	WunderGraphContextProperties,
 	Client,
-	User,
 } from "@wundergraph/sdk/dist/nextjs";
 
 export type Role = "admin" | "user";
@@ -48,13 +48,15 @@ export const AuthProviders = {
 	github: AuthProvider.github,
 };
 
+export enum S3Provider {}
+
 const defaultWunderGraphContextProperties: WunderGraphContextProperties<Role> = {
 	ssrCache: {},
 	client: new Client({
-		applicationHash: "57bbef48",
+		applicationHash: "4ff727f0",
 		applicationPath: "api/main",
 		baseURL: "http://localhost:9991",
-		sdkVersion: "1.0.0-next.25",
+		sdkVersion: "1.0.0-next.27",
 	}),
 	user: null,
 	setUser: (value) => {},
@@ -73,7 +75,7 @@ export const withWunderGraph = hooks.withWunderGraphContextWrapper(
 	defaultWunderGraphContextProperties
 );
 
-export const useWunderGraph = hooks.useWunderGraph(WunderGraphContext);
+export const useWunderGraph = hooks.useWunderGraph<Role, AuthProvider, S3Provider>(WunderGraphContext);
 
 export const useQuery = {
 	CountryWeather: (args: QueryArgsWithInput<CountryWeatherInput>) =>
@@ -91,16 +93,17 @@ export const useQuery = {
 			operationName: "ProtectedWeather",
 			requiresAuthentication: true,
 		})(args),
+	TopProducts: (args: QueryArgsWithInput<TopProductsInput>) =>
+		hooks.useQueryWithInput<TopProductsInput, TopProductsResponseData, Role>(WunderGraphContext, {
+			operationName: "TopProducts",
+			requiresAuthentication: false,
+		})(args),
 	AllPrices: hooks.useQueryWithoutInput<AllPricesResponseData, Role>(WunderGraphContext, {
 		operationName: "AllPrices",
 		requiresAuthentication: false,
 	}),
 	Countries: hooks.useQueryWithoutInput<CountriesResponseData, Role>(WunderGraphContext, {
 		operationName: "Countries",
-		requiresAuthentication: false,
-	}),
-	TopProducts: hooks.useQueryWithoutInput<TopProductsResponseData, Role>(WunderGraphContext, {
-		operationName: "TopProducts",
 		requiresAuthentication: false,
 	}),
 	Users: hooks.useQueryWithoutInput<UsersResponseData, Role>(WunderGraphContext, {
@@ -150,6 +153,12 @@ export const useLiveQuery = {
 			isLiveQuery: true,
 			requiresAuthentication: true,
 		})(args),
+	TopProducts: (args: SubscriptionArgsWithInput<TopProductsInput>) =>
+		hooks.useSubscriptionWithInput<TopProductsInput, TopProductsResponseData, Role>(WunderGraphContext, {
+			operationName: "TopProducts",
+			isLiveQuery: true,
+			requiresAuthentication: false,
+		})(args),
 	AllPrices: (args?: SubscriptionArgs) =>
 		hooks.useSubscriptionWithoutInput<AllPricesResponseData, Role>(WunderGraphContext, {
 			operationName: "AllPrices",
@@ -159,12 +168,6 @@ export const useLiveQuery = {
 	Countries: (args?: SubscriptionArgs) =>
 		hooks.useSubscriptionWithoutInput<CountriesResponseData, Role>(WunderGraphContext, {
 			operationName: "Countries",
-			isLiveQuery: true,
-			requiresAuthentication: false,
-		})(args),
-	TopProducts: (args?: SubscriptionArgs) =>
-		hooks.useSubscriptionWithoutInput<TopProductsResponseData, Role>(WunderGraphContext, {
-			operationName: "TopProducts",
 			isLiveQuery: true,
 			requiresAuthentication: false,
 		})(args),

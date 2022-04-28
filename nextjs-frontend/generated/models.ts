@@ -22,6 +22,10 @@ export interface SetPriceInput {
 	price: number;
 }
 
+export interface TopProductsInput {
+	random?: boolean;
+}
+
 export interface AllPricesResponse {
 	data?: AllPricesResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
