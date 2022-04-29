@@ -13,6 +13,8 @@ import type {
 	FakeProductsResponseData,
 	PriceUpdatesResponse,
 	PriceUpdatesResponseData,
+	ProtectedPriceUpdatesResponse,
+	ProtectedPriceUpdatesResponseData,
 	ProtectedSetPriceResponse,
 	ProtectedSetPriceInput,
 	ProtectedSetPriceResponseData,
@@ -53,7 +55,7 @@ export enum S3Provider {}
 const defaultWunderGraphContextProperties: WunderGraphContextProperties<Role> = {
 	ssrCache: {},
 	client: new Client({
-		applicationHash: "4ff727f0",
+		applicationHash: "ca220663",
 		applicationPath: "api/main",
 		baseURL: "http://localhost:9991",
 		sdkVersion: "1.0.0-next.27",
@@ -131,6 +133,12 @@ export const useSubscription = {
 			operationName: "PriceUpdates",
 			isLiveQuery: false,
 			requiresAuthentication: false,
+		})(args),
+	ProtectedPriceUpdates: (args?: SubscriptionArgs) =>
+		hooks.useSubscriptionWithoutInput<ProtectedPriceUpdatesResponseData, Role>(WunderGraphContext, {
+			operationName: "ProtectedPriceUpdates",
+			isLiveQuery: false,
+			requiresAuthentication: true,
 		})(args),
 };
 

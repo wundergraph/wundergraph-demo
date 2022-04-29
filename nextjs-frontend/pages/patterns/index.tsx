@@ -80,6 +80,10 @@ const pages: PageInfo[] = [
         slug: "universal-subscription",
     },
     {
+        title: "Protected Subscription",
+        slug: "protected-subscription",
+    },
+    {
         title: "Client-Side Live-Query",
         slug: "client-side-live-query"
     },

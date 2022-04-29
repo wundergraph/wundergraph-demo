@@ -51,6 +51,11 @@ export interface PriceUpdatesResponse {
 	errors?: ReadonlyArray<GraphQLError>;
 }
 
+export interface ProtectedPriceUpdatesResponse {
+	data?: ProtectedPriceUpdatesResponseData;
+	errors?: ReadonlyArray<GraphQLError>;
+}
+
 export interface ProtectedSetPriceResponse {
 	data?: ProtectedSetPriceResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
@@ -116,6 +121,22 @@ export interface FakeProductsResponseData {
 }
 
 export interface PriceUpdatesResponseData {
+	updatedPrice: {
+		upc: string;
+		name?: string;
+		price?: number;
+		reviews?: {
+			id: string;
+			body?: string;
+			author?: {
+				id: string;
+				name?: string;
+			};
+		}[];
+	};
+}
+
+export interface ProtectedPriceUpdatesResponseData {
 	updatedPrice: {
 		upc: string;
 		name?: string;

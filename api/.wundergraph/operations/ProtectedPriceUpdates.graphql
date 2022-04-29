@@ -1,0 +1,15 @@
+subscription {
+    updatedPrice: federated_updatedPrice {
+        upc
+        name
+        price
+        reviews {
+            id
+            body
+            author {
+                id
+                name
+            }
+        }
+    }
+}

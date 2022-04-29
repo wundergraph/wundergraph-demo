@@ -57,6 +57,7 @@ export default configureWunderGraphOperations<OperationsConfiguration>({
                 }),
                 ProtectedWeather: enableAuth,
                 ProtectedSetPrice: enableAuth,
+                ProtectedPriceUpdates: enableAuth,
                 Users: enableCaching,
             }
         }
