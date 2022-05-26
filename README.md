@@ -1,5 +1,8 @@
 # WunderGraph Demo joining Apollo Federation (with Subscriptions), REST and GraphQL APIs and consuming it from a NextJS application
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/wundergraph/wundergraph-demo)
+
+
 This repository demonstrates how to combine multiple APIs into one unified API
 and exposing it as a secure JSON API without losing on developer experience.
 
