@@ -41,7 +41,7 @@ import {
 	hooks,
 	WunderGraphContextProperties,
 	Client,
-} from "@wundergraph/sdk/dist/nextjs";
+} from "@wundergraph/nextjs";
 
 export type Role = "admin" | "user";
 
@@ -58,10 +58,10 @@ export enum S3Provider {}
 const defaultWunderGraphContextProperties: WunderGraphContextProperties<Role> = {
 	ssrCache: {},
 	client: new Client({
-		applicationHash: "54710b26",
+		applicationHash: "a50b320d",
 		applicationPath: "api/main",
 		baseURL: "http://localhost:9991",
-		sdkVersion: "1.0.0-next.27",
+		sdkVersion: "0.90.6",
 	}),
 	user: null,
 	setUser: (value) => {},

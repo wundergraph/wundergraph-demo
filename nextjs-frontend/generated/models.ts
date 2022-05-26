@@ -4,6 +4,10 @@ export interface CountryWeatherInput {
 	code: string;
 }
 
+export interface DemoInput {
+	city: string;
+}
+
 export interface FakeProductsInput {
 	first: number;
 }
@@ -38,6 +42,11 @@ export interface CountriesResponse {
 
 export interface CountryWeatherResponse {
 	data?: CountryWeatherResponseData;
+	errors?: ReadonlyArray<GraphQLError>;
+}
+
+export interface DemoResponse {
+	data?: DemoResponseData;
 	errors?: ReadonlyArray<GraphQLError>;
 }
 
@@ -107,6 +116,24 @@ export interface CountryWeatherResponseData {
 			summary?: {
 				title?: string;
 				description?: string;
+			};
+		};
+	};
+}
+
+export interface DemoResponseData {
+	weather_getCityByName?: {
+		name?: string;
+		weather?: {
+			summary?: {
+				title?: string;
+				description?: string;
+			};
+			temperature?: {
+				actual?: number;
+				feelsLike?: number;
+				min?: number;
+				max?: number;
 			};
 		};
 	};

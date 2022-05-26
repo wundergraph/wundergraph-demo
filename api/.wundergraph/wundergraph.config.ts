@@ -8,6 +8,7 @@ import {
 } from "@wundergraph/sdk";
 import operations from "./wundergraph.operations";
 import server from "./wundergraph.server";
+import {NextJsTemplate} from '@wundergraph/nextjs/template';
 
 const jsonPlaceholder = introspect.openApi({
     apiNamespace: "jsp",
@@ -20,6 +21,7 @@ const jsonPlaceholder = introspect.openApi({
 const weather = introspect.graphql({
     apiNamespace: "weather",
     url: "https://graphql-weather-api.herokuapp.com/",
+    headers: builder => builder.addClientRequestHeader("Hello","Hello"),
 });
 
 const federatedApi = introspect.federation({
@@ -70,7 +72,7 @@ configureWunderGraphApplication({
         },
         {
             templates: [
-                ...templates.typescript.nextjs,
+                new NextJsTemplate(),
             ],
             path: "../../nextjs-frontend/generated"
         }

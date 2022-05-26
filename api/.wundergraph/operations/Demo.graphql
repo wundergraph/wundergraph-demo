@@ -1,0 +1,17 @@
+query ($city: String!) {
+    weather_getCityByName(name: $city){
+        name
+        weather {
+            summary {
+                title
+                description
+            }
+            temperature {
+                actual
+                feelsLike
+                min
+                max
+            }
+        }
+    }
+}

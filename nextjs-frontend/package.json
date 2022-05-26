@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "run-federation-services": "cd ../federation && docker-compose up",
+    "start-wundergraph": "cd ../api/.wundergraph && wunderctl up --debug",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
