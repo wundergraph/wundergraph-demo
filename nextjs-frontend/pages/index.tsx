@@ -7,7 +7,7 @@ import {
     useSubscription,
     useWunderGraph,
     withWunderGraph
-} from "../generated/wundergraph.nextjs.integration";
+} from "../generated/nextjs";
 
 const IndexPage: NextPage = () => {
     const {login, logout, user} = useWunderGraph();
