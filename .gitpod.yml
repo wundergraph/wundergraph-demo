@@ -20,3 +20,7 @@ ports:
     visibility: public
   - port: 4004
     visibility: public
+
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker
