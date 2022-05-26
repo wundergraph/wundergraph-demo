@@ -48,7 +48,7 @@ yarn global add @wundergraph/wunderctl
 npm install && npm start
 ```
 
-Open your browser and go to `http://localhost:3000`
+Open your browser and go to  [`http://localhost:3000`](http://localhost:3000).
 
 ## How does it work?
 
