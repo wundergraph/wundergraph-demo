@@ -1,5 +1,5 @@
-query ($random: Boolean){
-    topProducts: federated_topProducts(random: $random) {
+query {
+    topProducts: federated_topProducts {
         upc
         name
         price

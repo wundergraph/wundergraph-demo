@@ -1,0 +1,20 @@
+# Commands to start on workspace startup
+tasks:
+  - init: npm install
+    command: npm start
+    name: "Start demo"
+# Ports to expose on workspace startup
+ports:
+  - port: 3000
+    onOpen: open-preview
+    visibility: public
+  - port: 9991
+    visibility: public
+  - port: 4001
+    visibility: public
+  - port: 4002
+    visibility: public
+  - port: 4003
+    visibility: public
+  - port: 4004
+    visibility: public

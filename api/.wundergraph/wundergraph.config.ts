@@ -8,7 +8,7 @@ import {
 } from "@wundergraph/sdk";
 import operations from "./wundergraph.operations";
 import server from "./wundergraph.server";
-import {NextJsTemplate} from '@wundergraph/nextjs/template';
+import {NextJsTemplate} from '@wundergraph/nextjs/dist/template';
 
 const jsonPlaceholder = introspect.openApi({
     apiNamespace: "jsp",
@@ -98,6 +98,9 @@ configureWunderGraphApplication({
           "admin",
           "user"
       ]
+    },
+    security: {
+        enableGraphQLEndpoint: true,
     },
     /*links: [
         linkBuilder

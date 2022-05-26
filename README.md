@@ -41,28 +41,8 @@ yarn global add @wundergraph/wunderctl
 
 ## Getting started
 
-1. Start all four federated GraphQL services.
-
 ```shell
-cd federation
-docker-compose up
-```
-
-2. Run the API Server (WunderGraph)
-
-```shell
-cd api
-npm install
-cd .wundergraph
-wunderctl up --debug
-```
-
-3. Start the frontend
-
-```shell
-cd nextjs-frontend
-npm install
-npm run dev
+npm install && npm start
 ```
 
 Open your browser and go to `http://localhost:3000`

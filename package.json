@@ -1,0 +1,32 @@
+{
+  "name": "wundergraph-demo",
+  "version": "1.0.0",
+  "description": "This repository demonstrates how to combine multiple APIs into one unified API and exposing it as a secure JSON API without losing on developer experience.",
+  "main": "index.js",
+  "scripts": {
+    "start": "run-p -l start:services generate:api && run-p start:api start:nextjs",
+    "start:services": "cd federation && docker-compose up -d",
+    "start:nextjs": "cd nextjs-frontend && npm run dev",
+    "generate:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run generate",
+    "start:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run start",
+    "cleanup": "cd federation && docker-compose down"
+  },
+  "workspaces": [
+    "api",
+    "nextjs-frontend"
+  ],
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "wait-on": "^6.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wundergraph/wundergraph-demo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wundergraph/wundergraph-demo/issues"
+  },
+  "homepage": "https://github.com/wundergraph/wundergraph-demo#readme"
+}
