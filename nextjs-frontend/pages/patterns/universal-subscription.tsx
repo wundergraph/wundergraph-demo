@@ -1,4 +1,4 @@
-import {useSubscription, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {useSubscription, withWunderGraph} from "../../generated/nextjs";
 
 const UniversalSubscription = () => {
     const data = useSubscription.PriceUpdates();

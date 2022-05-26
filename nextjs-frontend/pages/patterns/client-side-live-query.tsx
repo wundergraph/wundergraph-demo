@@ -1,4 +1,4 @@
-import {useLiveQuery, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {useLiveQuery, withWunderGraph} from "../../generated/nextjs";
 
 const ClientSideLiveQuery = () => {
     const data = useLiveQuery.CountryWeather({

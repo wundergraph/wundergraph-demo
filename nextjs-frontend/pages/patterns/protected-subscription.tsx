@@ -3,7 +3,7 @@ import {
     useSubscription,
     useWunderGraph,
     withWunderGraph
-} from "../../generated/wundergraph.nextjs.integration";
+} from "../../generated/nextjs";
 
 const ProtectedSubscription = () => {
     const {login,logout,user} = useWunderGraph();

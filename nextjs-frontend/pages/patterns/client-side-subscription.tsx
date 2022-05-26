@@ -1,4 +1,4 @@
-import {useQuery, useSubscription, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {useQuery, useSubscription, withWunderGraph} from "../../generated/nextjs";
 
 const ClientSideSubscription = () => {
     const data = useSubscription.PriceUpdates({

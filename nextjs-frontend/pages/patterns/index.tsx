@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import {withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {withWunderGraph} from "../../generated/nextjs";
 
 interface PageInfo {
     title: string;

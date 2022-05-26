@@ -1,4 +1,4 @@
-import {useQuery, withWunderGraph} from "../generated/wundergraph.nextjs.integration";
+import {useQuery, withWunderGraph} from "../generated/nextjs";
 
 const Manual = () => {
     const data = useQuery.Countries();

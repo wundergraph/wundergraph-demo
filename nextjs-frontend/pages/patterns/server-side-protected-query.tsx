@@ -1,4 +1,4 @@
-import {AuthProviders, useQuery, useWunderGraph, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {AuthProviders, useQuery, useWunderGraph, withWunderGraph} from "../../generated/nextjs";
 
 const ServerSideProtectedQuery = () => {
     const {user,login,logout} = useWunderGraph();

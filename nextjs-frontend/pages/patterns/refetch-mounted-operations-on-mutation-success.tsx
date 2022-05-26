@@ -4,7 +4,7 @@ import {
     useQuery,
     useWunderGraph,
     withWunderGraph
-} from "../../generated/wundergraph.nextjs.integration";
+} from "../../generated/nextjs";
 import {useState} from "react";
 import {MutationArgsWithInput} from "@wundergraph/sdk/dist/integrations/nextjs";
 import {SetPriceInput} from "../../generated/models";

@@ -1,4 +1,4 @@
-import {AuthProviders, useWunderGraph, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {AuthProviders, useWunderGraph, withWunderGraph} from "../../generated/nextjs";
 
 const RefetchUserOnWindowFocus = () => {
     const {user,login,logout} = useWunderGraph();

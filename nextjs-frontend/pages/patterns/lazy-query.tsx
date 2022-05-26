@@ -1,4 +1,4 @@
-import {useQuery, withWunderGraph} from "../../generated/wundergraph.nextjs.integration";
+import {useQuery, withWunderGraph} from "../../generated/nextjs";
 import {useState} from "react";
 import {QueryArgsWithInput} from "@wundergraph/sdk/dist/nextjs";
 import {CountryWeatherInput} from "../../generated/models";
