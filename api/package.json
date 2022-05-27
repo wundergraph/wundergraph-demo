@@ -1,7 +1,9 @@
 {
   "scripts": {
     "start": "cd .wundergraph && wunderctl up --debug",
-    "generate": "cd .wundergraph && wunderctl generate"
+    "generate": "cd .wundergraph && wunderctl generate",
+    "gitpod:start": "cd .wundergraph && ./wunderctl up --debug",
+    "gitpod:generate": "cd .wundergraph && ./wunderctl generate"
   },
   "dependencies": {
     "@rjsf/core": "^3.2.0",
