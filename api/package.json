@@ -7,7 +7,7 @@
     "@rjsf/core": "^3.2.0",
     "@wundergraph/nextjs": "^0.0.11",
     "@wundergraph/sdk": "^0.90.6",
-    "@wundergraph/wunderctl": "^0.90.17",
+    "@wundergraph/wunderctl": "^0.90.23",
     "next": "^12.1.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
