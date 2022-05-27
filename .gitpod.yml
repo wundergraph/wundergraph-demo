@@ -3,7 +3,10 @@ tasks:
   - before: curl -s -L https://github.com/wundergraph/wundergraph/releases/download/v0.90.17/wunderctl_0.90.17_Linux_x86_64.tar.gz | tar xzvf - && chmod +x wunderctl && mv wunderctl ./api
     name: "Download Wunderctl"
   - init: npm install
-    command: npm start
+    command: |
+      export NEXT_PUBLIC_WG_BASE_URL="https://9991-$GITPOD_WORKSPACE_ID.$GITPOD_WORKSPACE_CLUSTER_HOST"
+      echo "$NEXT_PUBLIC_WG_BASE_URL"
+      npm start
     name: "Start demo"
 # Ports to expose on workspace startup
 ports:

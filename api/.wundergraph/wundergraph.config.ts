@@ -4,7 +4,7 @@ import {
     cors,
     introspect,
     templates,
-    authProviders
+    authProviders, EnvironmentVariable
 } from "@wundergraph/sdk";
 import operations from "./wundergraph.operations";
 import server from "./wundergraph.server";
@@ -80,7 +80,7 @@ configureWunderGraphApplication({
     cors: {
         ...cors.allowAll,
         allowCredentials: true,
-        allowedOrigins: ["*"]
+        allowedOrigins: ["http://localhost:3000", new EnvironmentVariable("NEXT_PUBLIC_WG_BASE_URL")]
     },
     authentication: {
         cookieBased: {
@@ -88,7 +88,8 @@ configureWunderGraphApplication({
                 authProviders.demo(),
             ],
             authorizedRedirectUriRegexes: [
-                "http://localhost:3000/*"
+                "http://localhost:3000/*",
+                new EnvironmentVariable("NEXT_PUBLIC_WG_BASE_URL")
             ],
         }
     },

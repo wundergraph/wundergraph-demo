@@ -80,4 +80,6 @@ const IndexPage: NextPage = () => {
 
 const randomInt = (max: number) => Math.floor(Math.random() * Math.floor(max)) + 1
 
-export default withWunderGraph(IndexPage);
+export default withWunderGraph(IndexPage, {
+    baseURL: process.env.NEXT_PUBLIC_WG_BASE_URL,
+});
