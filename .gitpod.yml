@@ -5,7 +5,9 @@ tasks:
   - init: npm install
     command: |
       export NEXT_PUBLIC_WG_BASE_URL="https://9991-$GITPOD_WORKSPACE_ID.$GITPOD_WORKSPACE_CLUSTER_HOST"
+      export WG_ALLOWED_ORIGIN="https://3000-$GITPOD_WORKSPACE_ID.$GITPOD_WORKSPACE_CLUSTER_HOST"
       echo "$NEXT_PUBLIC_WG_BASE_URL"
+      echo "$WG_ALLOWED_ORIGIN"
       npm start
     name: "Start demo"
 # Ports to expose on workspace startup

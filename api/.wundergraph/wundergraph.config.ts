@@ -80,7 +80,7 @@ configureWunderGraphApplication({
     cors: {
         ...cors.allowAll,
         allowCredentials: true,
-        allowedOrigins: ["http://localhost:3000", new EnvironmentVariable("NEXT_PUBLIC_WG_BASE_URL")]
+        allowedOrigins: ["http://localhost:3000", new EnvironmentVariable("WG_ALLOWED_ORIGIN")]
     },
     authentication: {
         cookieBased: {
@@ -88,8 +88,7 @@ configureWunderGraphApplication({
                 authProviders.demo(),
             ],
             authorizedRedirectUriRegexes: [
-                "http://localhost:3000/*",
-                new EnvironmentVariable("NEXT_PUBLIC_WG_BASE_URL")
+                "http://localhost:3000/*"
             ],
         }
     },
