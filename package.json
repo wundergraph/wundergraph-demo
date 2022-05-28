@@ -5,13 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "run-p -l start:services generate:api && run-p start:api start:nextjs",
-    "start:gitpod": "run-p -l start:services gitpod:generate:api && run-p gitpod:start:api start:nextjs",
     "start:services": "cd federation && docker-compose up -d",
     "start:nextjs": "cd nextjs-frontend && npm run dev",
     "generate:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run generate",
     "start:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run start",
-    "gitpod:generate:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run gitpod:generate",
-    "gitpod:start:api": "wait-on http://localhost:4001 http://localhost:4002 http://localhost:4003 http://localhost:4004 && cd api && npm run gitpod:start",
     "cleanup": "cd federation && docker-compose down"
   },
   "workspaces": [
