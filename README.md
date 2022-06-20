@@ -29,19 +29,6 @@ Read the docs: https://wundergraph.com/docs
 
 If you have Questions, join our Discord: https://wundergraph.com/discord
 
-## Prerequisites
-
-For all the demos, you need wunderctl, the cli to manage WunderGraph applications.
-With wunderctl you can "init" new WunderGraph projects and start "up" a local dev environment.
-
-Install it:
-
-```shell
-npm install -g @wundergraph/wunderctl
-or
-yarn global add @wundergraph/wunderctl
-```
-
 ## Getting started
 
 ```shell
