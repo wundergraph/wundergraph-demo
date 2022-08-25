@@ -1,19 +1,18 @@
 {
   "scripts": {
-    "start": "cd .wundergraph && wunderctl up --debug",
-    "generate": "cd .wundergraph && wunderctl generate"
+    "start": "wunderctl up --debug",
+    "generate": "wunderctl generate"
   },
   "dependencies": {
-    "@rjsf/core": "^3.2.0",
-    "@wundergraph/nextjs": "^0.0.24",
-    "@wundergraph/sdk": "^0.93.0",
-    "next": "^12.1.5",
+    "@wundergraph/nextjs": "^0.1.2",
+    "@wundergraph/sdk": "^0.98.1",
+    "next": "^12.2.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.27",
-    "@types/react": "^18.0.6",
-    "typescript": "^4.2.3"
+    "@types/node": "^18.7.13",
+    "@types/react": "^18.0.17",
+    "typescript": "^4.7.4"
   }
 }
