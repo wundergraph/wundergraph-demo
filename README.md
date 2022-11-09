@@ -102,7 +102,7 @@ we're able to avoid naming conflicts when merging multiple APIs.
 
 All Operations from the `.wundergraph/operations` folder will be automatically turned into Persisted Operations.
 That is, each Operation will be pre-compiled and mounted on a unique URL Path.
-E.g. the Operation `Countries.graphql` will turn into the Endpoint `/api/main/operations/Contries`.
+E.g. the Operation `Countries.graphql` will turn into the Endpoint `/operations/Countries`.
 
 In addition to this Endpoint, `wunderctl up` will also start a code-generator that generates a TypeScript API Client, React Hooks, etc...
 Have a look at the folder `nextjs-frontend/generated` to see all the generated code.
@@ -126,4 +126,4 @@ Go to `nextjs-frontend/pages/index.tsx` and modify the UI, it definitely needs s
 
 ### Adding or Removing DataSources
 
-Go to `api/.wundergraph/wundergraph.config.ts` and modify the introspected DataSources. 
+Go to `api/.wundergraph/wundergraph.config.ts` and modify the introspected DataSources.
