@@ -1,5 +1,4 @@
 import {
-    Application,
     configureWunderGraphApplication,
     cors,
     introspect,
