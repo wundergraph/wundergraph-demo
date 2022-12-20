@@ -4,8 +4,8 @@
     "generate": "wunderctl generate"
   },
   "dependencies": {
-    "@wundergraph/nextjs": "^0.1.2",
-    "@wundergraph/sdk": "^0.98.1",
+    "@wundergraph/nextjs": "^0.7.1",
+    "@wundergraph/sdk": "^0.126.0",
     "next": "^12.2.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
